@@ -25,7 +25,6 @@ export default function DesignBestie() {
     "Cognitive Load Analysis",
   ];
 
-  // Canvas animation
   useEffect(() => {
     if (screen !== "home") return;
     const canvas = canvasRef.current;
@@ -129,13 +128,11 @@ export default function DesignBestie() {
     };
   }, [screen]);
 
-  // Auto progress on analysing screen
   useEffect(() => {
     if (screen !== "analysing") return;
     setStep(0);
     setApiError(false);
 
-    // Call Gemini API and track completion
     let apiDone = false;
     let stepsDone = false;
 
@@ -198,11 +195,9 @@ export default function DesignBestie() {
     handleFile(e.dataTransfer.files?.[0]);
   };
 
-  // ─── ANALYSING SCREEN ───────────────────────────────────────────────────────
   if (screen === "analysing") {
     return (
       <div style={{ minHeight: "100vh", background: "#F8F9FA", fontFamily: "Inter, sans-serif" }}>
-        {/* Navbar */}
         <nav style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "0 48px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 28, height: 28, background: "#2D0A4E", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -215,24 +210,15 @@ export default function DesignBestie() {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 64px)", padding: 48 }}>
           <div style={{ display: "flex", gap: 80, alignItems: "center", maxWidth: 960, width: "100%" }}>
-
-            {/* iPhone 15 Pro Mockup */}
             <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
               <div style={{ position: "relative", width: 240, height: 480 }}>
-                {/* Outer frame */}
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg, #3D3D3D, #1A1A1A)", borderRadius: 48, boxShadow: "0 32px 80px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.05)" }}>
-                  {/* Side buttons left */}
                   <div style={{ position: "absolute", left: -3, top: 88, width: 3, height: 28, background: "#2A2A2A", borderRadius: "2px 0 0 2px", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)" }} />
                   <div style={{ position: "absolute", left: -3, top: 124, width: 3, height: 44, background: "#2A2A2A", borderRadius: "2px 0 0 2px", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)" }} />
                   <div style={{ position: "absolute", left: -3, top: 176, width: 3, height: 44, background: "#2A2A2A", borderRadius: "2px 0 0 2px", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)" }} />
-                  {/* Side button right */}
                   <div style={{ position: "absolute", right: -3, top: 140, width: 3, height: 64, background: "#2A2A2A", borderRadius: "0 2px 2px 0", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)" }} />
-
-                  {/* Screen */}
                   <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, borderRadius: 40, overflow: "hidden", background: "#000" }}>
-                    {/* Dynamic Island */}
                     <div style={{ position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)", width: 90, height: 30, background: "#000", borderRadius: 15, zIndex: 10 }} />
-                    {/* Screen content */}
                     <div style={{ width: "100%", height: "100%", background: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                       {imagePreview ? (
                         <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -240,14 +226,12 @@ export default function DesignBestie() {
                         <span style={{ color: "#333", fontSize: 12 }}>Your design</span>
                       )}
                     </div>
-                    {/* Home indicator */}
                     <div style={{ position: "absolute", bottom: 6, left: "50%", transform: "translateX(-50%)", width: 80, height: 4, background: "rgba(255,255,255,0.25)", borderRadius: 2 }} />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Progress */}
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 11, letterSpacing: 3, color: "#2D0A4E", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>Processing</div>
               <h2 style={{ fontSize: 36, fontWeight: 700, color: "#1A1A1A", margin: "0 0 8px", lineHeight: 1.2 }}>Analysing Your Design...</h2>
@@ -285,9 +269,7 @@ export default function DesignBestie() {
     );
   }
 
-  // ─── RESULTS SCREEN ─────────────────────────────────────────────────────────
   if (screen === "results") {
-    // Use real API data if available, otherwise use dummy data
     const getSeverityStyle = (severity) => {
       if (severity === "critical") return { color: "#FF4444", bg: "#FFF5F5", borderColor: "#FECACA" };
       if (severity === "moderate") return { color: "#FF8C00", bg: "#FFF8F0", borderColor: "#FED7AA" };
@@ -305,10 +287,7 @@ export default function DesignBestie() {
     const priorityFixes = analysisResult?.priority_fixes || ["Increase CTA button height to minimum 48px", "Fix text contrast to meet WCAG 4.5:1 ratio", "Standardise spacing to 8pt grid system"];
 
     const issues = realIssues || [
-      { id: 1, severity: "critical", color: "#FF4444", bg: "#FFF5F5", borderColor: "#FECACA", element: "Primary CTA Button", law: "Fitts's Law", category: "ux_law", problem: "Touch target is approximately 28px height — well below the 44px minimum recommended by Apple HIG and Google Material Design. Users with larger fingers or motor impairments will frequently mis-tap this button.", learnWhy: "Fitts's Law states that the time to reach a target depends on its size and distance from the user. On this screen, the small CTA button means users take longer to tap accurately and make more errors. This directly increases frustration and reduces conversion rates. Apps like Swiggy and Zomato use minimum 48px height buttons for all primary actions to ensure reliable tapping.", fix: "Increase button height to minimum 48px (ideally 52-56px for primary CTAs). Ensure horizontal padding of at least 24px on each side." },
-      { id: 2, severity: "moderate", color: "#FF8C00", bg: "#FFF8F0", borderColor: "#FED7AA", element: "Text Contrast", law: "WCAG 2.2 — 1.4.3", category: "accessibility", problem: "Secondary text elements have an approximate contrast ratio of 2.8:1 against the white background, failing the WCAG AA minimum of 4.5:1 for normal text.", learnWhy: "WCAG contrast rules exist because low contrast text becomes invisible for users with visual impairments, colour blindness, or those viewing in bright sunlight. On this screen, the light grey text forces users to strain their eyes to read important information. Failing this standard excludes a significant portion of your users. Stripe uses carefully chosen grey tones (#6B7280 minimum) to ensure readability while maintaining a clean aesthetic.", fix: "Darken all secondary text from current grey to minimum #767676 to achieve 4.5:1 contrast ratio against white backgrounds." },
-      { id: 3, severity: "minor", color: "#FFB020", bg: "#FFFBF0", borderColor: "#FDE68A", element: "Spacing Consistency", law: "8pt Grid System", category: "ui_rule", problem: "Vertical spacing between sections appears inconsistent — some gaps are approximately 12px while others are 20px, breaking the visual rhythm.", learnWhy: "The 8pt grid system creates visual harmony by using multiples of 8 for all spacing values. On this screen, inconsistent spacing creates a subtle but noticeable lack of polish that experienced designers immediately notice. It makes the interface feel rushed rather than considered. Linear and Notion use strict 8pt grids throughout their products to create the premium feel that users trust.", fix: "Standardise all spacing to multiples of 8px: use 8, 16, 24, 32, or 48px. Audit every margin and padding value in the design." },
-      { id: 4, severity: "win", color: "#00A651", bg: "#F0FDF4", borderColor: "#BBF7D0", element: "Navigation Pattern", law: "Jakob's Law", category: "ux_law", problem: "", learnWhy: "Jakob's Law states that users spend most of their time on other apps and expect your app to work the same way. This screen follows familiar navigation conventions that users already know from apps like Amazon and Flipkart. By meeting user expectations, the app reduces the learning curve to near zero. This is a significant win that directly contributes to user retention and satisfaction.", fix: "Excellent pattern — maintain this consistent navigation structure. Avoid any temptation to 'innovate' on core navigation as it would confuse returning users." },
+      { id: 1, severity: "critical", color: "#FF4444", bg: "#FFF5F5", borderColor: "#FECACA", element: "Primary CTA Button", law: "Fitts's Law", category: "ux_law", problem: "Touch target is approximately 28px height — well below the 44px minimum.", learnWhy: "Fitts's Law states that the time to reach a target depends on its size and distance.", fix: "Increase button height to minimum 48px." },
     ];
 
     const toggleCard = (id) => {
@@ -319,7 +298,6 @@ export default function DesignBestie() {
 
     return (
       <div style={{ minHeight: "100vh", background: "#F8F9FA", fontFamily: "Inter, sans-serif" }}>
-        {/* Score bar */}
         <div style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "14px 32px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ position: "relative", width: 72, height: 72, flexShrink: 0 }}>
@@ -352,9 +330,7 @@ export default function DesignBestie() {
           <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); }} style={{ background: "#F8F9FA", border: "1px solid #E5E7EB", borderRadius: 8, padding: "10px 18px", cursor: "pointer", fontSize: 13, color: "#6B7280", whiteSpace: "nowrap", fontWeight: 500 }}>← New Analysis</button>
         </div>
 
-        {/* Main content */}
         <div style={{ display: "flex", height: "calc(100vh - 101px)" }}>
-          {/* Left — Annotated screenshot */}
           <div style={{ width: "44%", borderRight: "1px solid #E5E7EB", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid #E5E7EB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontWeight: 600, fontSize: 14, color: "#1A1A1A" }}>Annotated Design</span>
@@ -375,11 +351,12 @@ export default function DesignBestie() {
                 ) : (
                   <div style={{ height: 500, display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF", fontSize: 13 }}>Your uploaded design appears here</div>
                 )}
-            
-                  const loc = issue.location || { x: 5, y: 10, width: 90, height: 12 };
+                {issues.filter(i => i.severity !== "win").map((issue) => {
+                  const loc = issue.location;
+                  if (!loc || typeof loc.x !== "number") return null;
                   return (
-                    <div key={issue.id} style={{ position: "absolute", top: `${loc.y}%`, left: `${loc.x}%`, width: `${loc.width}%`, height: `${loc.height}%`, border: `2px solid ${issue.color}`, borderRadius: 6, pointerEvents: "none" }}>
-                      <div style={{ position: "absolute", top: -10, left: -10, width: 20, height: 20, background: issue.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 700 }}>{issue.id}</div>
+                    <div key={issue.id} style={{ position: "absolute", top: `${loc.y}%`, left: `${loc.x}%`, width: `${loc.width}%`, height: `${loc.height}%`, border: `2px solid ${issue.color}`, borderRadius: 4, pointerEvents: "none", boxShadow: "0 0 0 1px rgba(255,255,255,0.6)" }}>
+                      <div style={{ position: "absolute", top: -10, left: -10, width: 20, height: 20, background: issue.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 700, boxShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>{issue.id}</div>
                     </div>
                   );
                 })}
@@ -387,7 +364,6 @@ export default function DesignBestie() {
             </div>
           </div>
 
-          {/* Right — Critique cards */}
           <div style={{ flex: 1, overflow: "auto", padding: 24 }}>
             <div style={{ marginBottom: 20 }}>
               <h3 style={{ fontSize: 20, fontWeight: 700, color: "#1A1A1A", margin: "0 0 4px" }}>Detailed Critique</h3>
@@ -431,7 +407,7 @@ export default function DesignBestie() {
 
                   {expandedCards.includes(issue.id) && (
                     <div style={{ background: "#F5F3FF", border: "1px solid #DDD6FE", borderRadius: 8, padding: "12px 14px", marginBottom: 12 }}>
-                      <p style={{ fontSize: 13, color: "#4C1D95", lineHeight: 1.7, margin: 0 }}>{issue.learnWhy}</p>
+                      <p style={{ fontSize: 13, color: "#4C1D95", lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{issue.learnWhy}</p>
                     </div>
                   )}
 
@@ -443,7 +419,6 @@ export default function DesignBestie() {
               ))}
             </div>
 
-            {/* Priority fixes */}
             <div style={{ marginTop: 28 }}>
               <h4 style={{ fontSize: 15, fontWeight: 700, color: "#1A1A1A", margin: "0 0 14px" }}>Priority Fixes</h4>
               <div style={{ display: "flex", gap: 12 }}>
@@ -466,12 +441,10 @@ export default function DesignBestie() {
     );
   }
 
-  // ─── HOME SCREEN ────────────────────────────────────────────────────────────
   return (
     <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#fff", fontFamily: "Inter, sans-serif" }}>
       <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
 
-      {/* Navbar */}
       <nav style={{ position: "relative", zIndex: 10, background: "rgba(255,255,255,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(45,10,78,0.08)", padding: "0 48px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 28, height: 28, background: "#2D0A4E", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -487,7 +460,6 @@ export default function DesignBestie() {
         </div>
       </nav>
 
-      {/* Hero */}
       <div style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "calc(100vh - 64px)", padding: "24px" }}>
         <div style={{ background: "rgba(255,255,255,0.82)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", border: "1px solid rgba(255,255,255,0.9)", borderRadius: 28, padding: "40px 52px", maxWidth: 540, width: "100%", boxShadow: "0 8px 48px rgba(45,10,78,0.10)", textAlign: "center" }}>
 
@@ -505,7 +477,6 @@ export default function DesignBestie() {
             Upload any screen. Get instant expert critique against 50+ UX laws, accessibility standards and cognitive principles.
           </p>
 
-          {/* Upload zone — ONLY for file selection */}
           <div
             onClick={() => fileInputRef.current?.click()}
             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -535,7 +506,6 @@ export default function DesignBestie() {
             )}
           </div>
 
-          {/* Analyse button — COMPLETELY SEPARATE */}
           <button
             onClick={() => {
               if (uploaded && imagePreview) {
