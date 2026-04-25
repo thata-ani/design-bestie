@@ -12,29 +12,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a Design Architect with 20 years auditing digital products at companies like Airbnb, Stripe, and Linear. Analyze this design screen pixel by pixel against:
+    const prompt = `You are a Design Architect with 20 years auditing digital products at companies like Airbnb, Stripe, and Linear. Analyze this design screen against UX laws, WCAG 2.2 accessibility, Nielsen heuristics, Gestalt principles, 8pt grid, typography, visual hierarchy, and cognitive load.
 
-UX Laws: Fitts's Law, Hick's Law, Miller's Law, Jakob's Law, Aesthetic-Usability Effect, Von Restorff Effect, Law of Proximity, Law of Similarity, Figure-Ground
-UI Rules: 8pt grid, typography scale (16px min body), touch targets (44x44px min), color contrast, whitespace, shadows, border radius
-Accessibility WCAG 2.2: Contrast 4.5:1 normal text and 3:1 large text, focus states, error identification, touch target size
-Nielsen Heuristics: All 10
-Gestalt: Proximity, Similarity, Closure, Continuity, Figure-Ground
-Cognitive Load: Information density, F-pattern reading, scannability, chunking
-Benchmarks: Compare to Stripe, Linear, Notion, Apple, Swiggy, Zomato, Amazon
+Find 4-6 specific issues and 2-3 wins. For each, write a learn_why field with 4 sentences:
+1. What the law says
+2. How it applies to THIS exact element on THIS screen with specific measurements
+3. What happens to users if broken
+4. How a real app like Stripe, Linear, Apple, Swiggy, or Zomato handles this
 
-Find 4-6 specific issues and 2-3 wins. For each, the learn_why field MUST contain 4 sentences:
-1. What the law says in one sentence
-2. How it applies to THIS exact element on THIS screen with specific pixel measurements you can see
-3. What happens to real users if this stays broken
-4. A real example - how Stripe, Linear, Apple, Swiggy, or Zomato handles this exact pattern
+Reference exact elements you can see. Use exact numbers. Use plain language.
 
-Never be generic. Reference exact elements you can see in the screen. Use exact numbers and measurements. Use plain language.
+Location: percentages 0-100 of where element appears (x=left, y=top, width, height).
 
-Location: percentages 0-100 of where element actually appears on screen (x=left, y=top, width, height).
+Return ONLY raw JSON, no markdown:
 
-Return ONLY raw JSON, no markdown, no backticks, no explanation:
-
-{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence specific assessment of this exact screen","issues":[{"id":1,"element":"exact name","severity":"critical","category":"ux_law","rule_violated":"exact law","problem":"specific problem with measurements","learn_why":"4 sentence deep explanation as specified above","fix":"specific fix with pixel values","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux_law","rule_violated":"principle","problem":"","learn_why":"4 sentence explanation","fix":"maintain","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["specific fix 1","specific fix 2","specific fix 3"]}`;
+{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence assessment","issues":[{"id":1,"element":"name","severity":"critical","category":"ux_law","rule_violated":"law","problem":"specific problem","learn_why":"4 sentence explanation","fix":"specific fix","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux_law","rule_violated":"principle","problem":"","learn_why":"4 sentence explanation","fix":"maintain","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["fix 1","fix 2","fix 3"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -44,8 +36,8 @@ Return ONLY raw JSON, no markdown, no backticks, no explanation:
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 8000,
+        model: "claude-haiku-4-5",
+        max_tokens: 4000,
         messages: [
           {
             role: "user",
