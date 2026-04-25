@@ -9,133 +9,32 @@ export async function POST(req: NextRequest) {
     const { imageBase64, mimeType } = await req.json();
 
     if (!ANTHROPIC_API_KEY) {
-      return NextResponse.json(
-        { error: "API key not configured" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    // ✅ SYSTEM PROMPT (controls behavior)
-    const systemPrompt = `
-You are concise, structured, and practical.
-You prioritize clarity over completeness.
-You give actionable UX feedback, not essays.
-`;
+    const prompt = `You are a senior UX researcher reviewing this screen with a designer. Be sharp and concise - designers will skim, not read.
 
-    // ✅ MAIN PROMPT (this is your brain)
-    const prompt = `
-You are a senior UX researcher and product design mentor.
+Find exactly 3 issues that genuinely matter. Skip nitpicks. Find 2 wins.
 
-Your job is to help a designer quickly understand:
-- what is broken
-- why it matters
-- what to fix first
+For each issue, the "problem" field is ONE crisp sentence from the user's perspective - what they feel or do when they hit this issue. Real user voice, no jargon.
 
----
+The "learn_why" field is where depth goes - 4 short paragraphs:
+1. What the user actually experiences (2 sentences in their voice)
+2. The principle being violated and the research source (Baymard, NN/g, Apple HIG, Google UX)
+3. How a benchmark app (Stripe, Swiggy, Zomato, Amazon, Linear, Booking.com) handles this and why
+4. Business impact in one sentence (conversion loss, abandonment, support tickets)
 
-FOCUS:
-- Find ONLY 3–4 high-impact issues
-- Skip minor or visual nitpicks
-- Prioritize clarity, usability, and accessibility
+The "fix" field is a single sentence design direction using "consider" or "what if" - not a prescription.
 
----
+For wins, "learn_why" is 2 short paragraphs: why it works for the user, why it works for the business.
 
-FOR EACH ISSUE:
+Priority fixes: 3 items. Each frames the user's current state, the cost, and the direction. Format: "Your user [X]. This costs [impact]. Consider [direction]."
 
-1. USER MOMENT
-Describe what the user is trying to do and what feels confusing
+CRITICAL: Every issue and win MUST include accurate location coordinates. Look at the screen carefully and provide x (left edge), y (top edge), width, height as percentages 0-100. Header elements have low y (5-15), middle elements y around 40-60, bottom elements have high y (70-90). Coordinates are mandatory.
 
-2. CORE ISSUE
-Name the UI problem clearly
+Return ONLY raw JSON, no markdown:
 
-3. WHY IT BREAKS
-Explain using ONE principle (UX law, Nielsen heuristic, or WCAG if relevant)
-Explain simply — no long theory
-
-4. IMPACT
-What happens (confusion, hesitation, drop-off, errors)
-
-5. DESIGN MOVE
-Give ONE clear direction using “consider” or “what if”
-Include ONE example
-
----
-
-WINS:
-- Find 2 good patterns
-- Explain why they help users feel faster or more confident
-
----
-
-STRICT RULES:
-- Max 4–5 sentences per issue
-- No repetition
-- No long paragraphs
-- Every sentence must be useful
-
----
-
-ANNOTATION RULES (CRITICAL):
-- Coordinates must be precise (0–100 scale)
-- Anchor to ONE visible UI element only (button, text, input, icon)
-- DO NOT mark full sections or large containers
-- Max width: 40
-- Max height: 25
-- If unsure → make box smaller, not bigger
-
----
-
-OUTPUT:
-Return ONLY JSON:
-
-{
-  "overall_score": 0,
-  "scores": {
-    "usability": 0,
-    "accessibility": 0,
-    "visual_design": 0,
-    "hierarchy": 0,
-    "cognitive_load": 0
-  },
-  "summary": "2 short sentences: what the user struggles with + what to fix first",
-  "issues": [
-    {
-      "id": 1,
-      "element": "specific UI element",
-      "severity": "critical",
-      "category": "ux",
-      "rule_violated": "principle used",
-      "problem": "user experience in plain words",
-      "learn_why": "issue + principle + impact (short)",
-      "fix": "clear direction with example",
-      "location": { "x": 0, "y": 0, "width": 0, "height": 0 }
-    }
-  ],
-  "wins": [
-    {
-      "id": 1,
-      "element": "pattern",
-      "severity": "win",
-      "category": "ux",
-      "rule_violated": "best practice",
-      "problem": "",
-      "learn_why": "why it works for user",
-      "fix": "keep this",
-      "location": { "x": 0, "y": 0, "width": 0, "height": 0 }
-    }
-  ],
-  "priority_fixes": [
-    "User is [doing X], costing [impact], fix is [direction]",
-    "Second priority",
-    "Third priority"
-  ]
-}
-
----
-
-FINAL:
-Remove any sentence that does not add value.
-`;
+{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence honest take","issues":[{"id":1,"element":"plain name","severity":"critical","category":"ux","rule_violated":"principle plus source","problem":"ONE crisp sentence in user voice","learn_why":"4 short paragraphs as specified","fix":"single sentence design direction","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux","rule_violated":"pattern followed","problem":"","learn_why":"2 short paragraphs","fix":"keep doing this","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["Your user [X]. This costs [impact]. Consider [direction].","second","third"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -146,31 +45,13 @@ Remove any sentence that does not add value.
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-
-        // ✅ IMPORTANT FIXES
-        max_tokens: 1200,
-        temperature: 0.4,
-
+        max_tokens: 4000,
         messages: [
-          {
-            role: "system",
-            content: systemPrompt,
-          },
           {
             role: "user",
             content: [
-              {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: mimeType || "image/png",
-                  data: imageBase64,
-                },
-              },
-              {
-                type: "text",
-                text: prompt,
-              },
+              { type: "image", source: { type: "base64", media_type: mimeType || "image/png", data: imageBase64 } },
+              { type: "text", text: prompt },
             ],
           },
         ],
@@ -180,26 +61,17 @@ Remove any sentence that does not add value.
     const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: data?.error?.message || "Claude error", full: data },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: data?.error?.message || "Claude error", full: data }, { status: 500 });
     }
 
     const text = data.content?.[0]?.text;
-
     if (!text) {
-      return NextResponse.json(
-        { error: "No response from Claude", full: data },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "No response from Claude", full: data }, { status: 500 });
     }
 
-    // ✅ CLEAN RESPONSE
     const cleaned = text.replace(/```json|```/g, "").trim();
 
     let result;
-
     try {
       result = JSON.parse(cleaned);
     } catch {
@@ -208,32 +80,18 @@ Remove any sentence that does not add value.
         try {
           result = JSON.parse(cleaned.substring(0, lastBrace + 1));
         } catch {
-          return NextResponse.json(
-            {
-              error: "Claude returned malformed JSON",
-              raw: cleaned.substring(0, 1000),
-            },
-            { status: 500 }
-          );
+          return NextResponse.json({ error: "Claude returned malformed JSON", raw: cleaned.substring(0, 1000) }, { status: 500 });
         }
       } else {
-        return NextResponse.json(
-          {
-            error: "Claude returned malformed JSON",
-            raw: cleaned.substring(0, 1000),
-          },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Claude returned malformed JSON", raw: cleaned.substring(0, 1000) }, { status: 500 });
       }
     }
 
     return NextResponse.json(result);
+
   } catch (error) {
     console.error("API Error:", error);
-
-    const message =
-      error instanceof Error ? error.message : "Analysis failed";
-
+    const message = error instanceof Error ? error.message : "Analysis failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
