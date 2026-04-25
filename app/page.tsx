@@ -375,7 +375,8 @@ export default function DesignBestie() {
                 ) : (
                   <div style={{ height: 500, display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF", fontSize: 13 }}>Your uploaded design appears here</div>
                 )}
-                {/* Annotation boxes - use real coordinates from API */}
+                {/* {/* Annotation boxes - use real coordinates from API */}
+{issues.map((issue) => { - use real coordinates from API */}
                 {issues.map((issue) => {
                   const loc = issue.location || { x: 5, y: 10, width: 90, height: 12 };
                   return (
