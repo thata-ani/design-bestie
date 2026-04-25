@@ -49,7 +49,7 @@ Return ONLY raw valid JSON with absolutely no markdown, no backticks, no explana
 {"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence specific assessment of this exact screen","issues":[{"id":1,"element":"exact element name","severity":"critical","category":"ux_law","rule_violated":"exact law name","problem":"specific problem with exact numbers and measurements","learn_why":"4 sentence explanation connecting law to this specific screen","fix":"specific actionable fix with exact pixel values","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"exact element name","severity":"win","category":"ux_law","rule_violated":"principle followed","problem":"","learn_why":"4 sentence explanation of why this works on this specific screen","fix":"maintain this pattern","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["most critical fix with exact element","second fix with exact element","third fix with exact element"]}`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
