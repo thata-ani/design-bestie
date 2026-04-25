@@ -9,44 +9,133 @@ export async function POST(req: NextRequest) {
     const { imageBase64, mimeType } = await req.json();
 
     if (!ANTHROPIC_API_KEY) {
-      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+      return NextResponse.json(
+        { error: "API key not configured" },
+        { status: 500 }
+      );
     }
 
-    const prompt = `You are a senior UX researcher and design mentor reviewing this screen. You see designs through TWO lenses simultaneously: (1) the user actually living through this screen right now, and (2) the designer who needs research-backed feedback to defend in stakeholder meetings.
+    // ✅ SYSTEM PROMPT (controls behavior)
+    const systemPrompt = `
+You are concise, structured, and practical.
+You prioritize clarity over completeness.
+You give actionable UX feedback, not essays.
+`;
 
-Find 3-4 issues that genuinely matter. Skip nitpicks.
+    // ✅ MAIN PROMPT (this is your brain)
+    const prompt = `
+You are a senior UX researcher and product design mentor.
 
-For each issue, write feedback that includes ALL of these layers:
+Your job is to help a designer quickly understand:
+- what is broken
+- why it matters
+- what to fix first
 
-LAYER 1 - The user's reality (always start here):
-Write 1-2 sentences from the user's actual experience. What are they trying to do? What do they see? What confuses, frustrates, or slows them down? Use words a real user would think, not designer jargon.
+---
 
-LAYER 2 - What the designer sees:
-Name the design element in plain language and describe what's off, conversationally. No coordinates.
+FOCUS:
+- Find ONLY 3–4 high-impact issues
+- Skip minor or visual nitpicks
+- Prioritize clarity, usability, and accessibility
 
-LAYER 3 - Research validation:
-Cite real research naturally. Sources: Baymard Institute, Nielsen Norman Group, Google UX research, Apple HIG reasoning, published conversion studies. Use specific numbers when you genuinely know them. If unsure of exact stats, cite the principle without inventing numbers.
+---
 
-LAYER 4 - Business impact:
-What does this cost the business? Conversion loss, support tickets, abandonment, brand trust.
+FOR EACH ISSUE:
 
-LAYER 5 - Benchmark + reasoning:
-How does Stripe / Linear / Apple / Swiggy / Zomato / Amazon / Booking.com handle this exact pattern, and WHY did they make that choice.
+1. USER MOMENT
+Describe what the user is trying to do and what feels confusing
 
-LAYER 6 - Design direction:
-Suggest a direction using "consider" and "what if" - not prescription. Give one concrete example.
+2. CORE ISSUE
+Name the UI problem clearly
 
-Also find 2 wins - patterns that align with established research. Include the user's perspective for each win.
+3. WHY IT BREAKS
+Explain using ONE principle (UX law, Nielsen heuristic, or WCAG if relevant)
+Explain simply — no long theory
 
-End with: if they only fix ONE thing, what is it? Frame it as: "Your user right now is [doing X / feeling Y]. This costs you [impact]. The fix is [direction]."
+4. IMPACT
+What happens (confusion, hesitation, drop-off, errors)
 
-Tone: a senior researcher who genuinely cares about both users and the designer. Empathetic to users, respectful to the designer. Never preachy. Never robotic.
+5. DESIGN MOVE
+Give ONE clear direction using “consider” or “what if”
+Include ONE example
 
-CRITICAL: Every issue and win MUST include accurate location coordinates. Look at the screen carefully and provide the exact x (left edge), y (top edge), width, and height as percentages from 0-100 of where that element appears on the screen. Coordinates are mandatory - do not return any issue without them. Be precise: a button at the bottom of the screen has high y value (like 85), a header has low y (like 5).
+---
 
-Return ONLY raw JSON, no markdown:
+WINS:
+- Find 2 good patterns
+- Explain why they help users feel faster or more confident
 
-{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence honest take that mentions both what the user experiences and what the designer should focus on","issues":[{"id":1,"element":"plain name","severity":"critical","category":"ux","rule_violated":"the principle plus research source","problem":"the user's perspective in their words: what they're feeling, doing, thinking right now on this screen","learn_why":"5-6 sentences covering: user reality, designer view, research with source, business impact, benchmark with reasoning","fix":"design direction with concrete benchmark example and the user outcome it creates","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux","rule_violated":"the pattern being followed","problem":"","learn_why":"why this works for both the user and the business, backed by research","fix":"keep doing this","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["framed as: user is [feeling/doing X], costing [impact], fix is [direction]","second priority","third priority"]}`;
+---
+
+STRICT RULES:
+- Max 4–5 sentences per issue
+- No repetition
+- No long paragraphs
+- Every sentence must be useful
+
+---
+
+ANNOTATION RULES (CRITICAL):
+- Coordinates must be precise (0–100 scale)
+- Anchor to ONE visible UI element only (button, text, input, icon)
+- DO NOT mark full sections or large containers
+- Max width: 40
+- Max height: 25
+- If unsure → make box smaller, not bigger
+
+---
+
+OUTPUT:
+Return ONLY JSON:
+
+{
+  "overall_score": 0,
+  "scores": {
+    "usability": 0,
+    "accessibility": 0,
+    "visual_design": 0,
+    "hierarchy": 0,
+    "cognitive_load": 0
+  },
+  "summary": "2 short sentences: what the user struggles with + what to fix first",
+  "issues": [
+    {
+      "id": 1,
+      "element": "specific UI element",
+      "severity": "critical",
+      "category": "ux",
+      "rule_violated": "principle used",
+      "problem": "user experience in plain words",
+      "learn_why": "issue + principle + impact (short)",
+      "fix": "clear direction with example",
+      "location": { "x": 0, "y": 0, "width": 0, "height": 0 }
+    }
+  ],
+  "wins": [
+    {
+      "id": 1,
+      "element": "pattern",
+      "severity": "win",
+      "category": "ux",
+      "rule_violated": "best practice",
+      "problem": "",
+      "learn_why": "why it works for user",
+      "fix": "keep this",
+      "location": { "x": 0, "y": 0, "width": 0, "height": 0 }
+    }
+  ],
+  "priority_fixes": [
+    "User is [doing X], costing [impact], fix is [direction]",
+    "Second priority",
+    "Third priority"
+  ]
+}
+
+---
+
+FINAL:
+Remove any sentence that does not add value.
+`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -57,8 +146,16 @@ Return ONLY raw JSON, no markdown:
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 4000,
+
+        // ✅ IMPORTANT FIXES
+        max_tokens: 1200,
+        temperature: 0.4,
+
         messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
           {
             role: "user",
             content: [
@@ -70,7 +167,10 @@ Return ONLY raw JSON, no markdown:
                   data: imageBase64,
                 },
               },
-              { type: "text", text: prompt },
+              {
+                type: "text",
+                text: prompt,
+              },
             ],
           },
         ],
@@ -80,17 +180,26 @@ Return ONLY raw JSON, no markdown:
     const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json({ error: data?.error?.message || "Claude error", full: data }, { status: 500 });
+      return NextResponse.json(
+        { error: data?.error?.message || "Claude error", full: data },
+        { status: 500 }
+      );
     }
 
     const text = data.content?.[0]?.text;
+
     if (!text) {
-      return NextResponse.json({ error: "No response from Claude", full: data }, { status: 500 });
+      return NextResponse.json(
+        { error: "No response from Claude", full: data },
+        { status: 500 }
+      );
     }
 
+    // ✅ CLEAN RESPONSE
     const cleaned = text.replace(/```json|```/g, "").trim();
 
     let result;
+
     try {
       result = JSON.parse(cleaned);
     } catch {
@@ -99,18 +208,32 @@ Return ONLY raw JSON, no markdown:
         try {
           result = JSON.parse(cleaned.substring(0, lastBrace + 1));
         } catch {
-          return NextResponse.json({ error: "Claude returned malformed JSON", raw: cleaned.substring(0, 1000) }, { status: 500 });
+          return NextResponse.json(
+            {
+              error: "Claude returned malformed JSON",
+              raw: cleaned.substring(0, 1000),
+            },
+            { status: 500 }
+          );
         }
       } else {
-        return NextResponse.json({ error: "Claude returned malformed JSON", raw: cleaned.substring(0, 1000) }, { status: 500 });
+        return NextResponse.json(
+          {
+            error: "Claude returned malformed JSON",
+            raw: cleaned.substring(0, 1000),
+          },
+          { status: 500 }
+        );
       }
     }
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error("API Error:", error);
-    const message = error instanceof Error ? error.message : "Analysis failed";
+
+    const message =
+      error instanceof Error ? error.message : "Analysis failed";
+
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
