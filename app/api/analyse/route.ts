@@ -12,21 +12,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a Design Architect with 20 years auditing digital products at companies like Airbnb, Stripe, and Linear. Analyze this design screen against UX laws, WCAG 2.2 accessibility, Nielsen heuristics, Gestalt principles, 8pt grid, typography, visual hierarchy, and cognitive load.
+    const prompt = `You are a senior UX researcher and design mentor reviewing this screen. You see designs through TWO lenses simultaneously: (1) the user actually living through this screen right now, and (2) the designer who needs research-backed feedback to defend in stakeholder meetings.
 
-Find 4-6 specific issues and 2-3 wins. For each, write a learn_why field with 4 sentences:
-1. What the law says
-2. How it applies to THIS exact element on THIS screen with specific measurements
-3. What happens to users if broken
-4. How a real app like Stripe, Linear, Apple, Swiggy, or Zomato handles this
+Find 3-4 issues that genuinely matter. Skip nitpicks.
 
-Reference exact elements you can see. Use exact numbers. Use plain language.
+For each issue, write feedback that includes ALL of these layers:
 
-Location: percentages 0-100 of where element appears (x=left, y=top, width, height).
+LAYER 1 - The user's reality (always start here):
+Write 1-2 sentences from the user's actual experience. What are they trying to do? What do they see? What confuses, frustrates, or slows them down? Use words a real user would think, not designer jargon.
+
+LAYER 2 - What the designer sees:
+Name the design element in plain language and describe what's off, conversationally. No coordinates.
+
+LAYER 3 - Research validation:
+Cite real research naturally. Sources: Baymard Institute, Nielsen Norman Group, Google UX research, Apple HIG reasoning, published conversion studies. Use specific numbers when you genuinely know them. If unsure of exact stats, cite the principle without inventing numbers.
+
+LAYER 4 - Business impact:
+What does this cost the business? Conversion loss, support tickets, abandonment, brand trust.
+
+LAYER 5 - Benchmark + reasoning:
+How does Stripe / Linear / Apple / Swiggy / Zomato / Amazon / Booking.com handle this exact pattern, and WHY did they make that choice.
+
+LAYER 6 - Design direction:
+Suggest a direction using "consider" and "what if" - not prescription. Give one concrete example.
+
+Also find 2 wins - patterns that align with established research. Include the user's perspective for each win.
+
+End with: if they only fix ONE thing, what is it? Frame it as: "Your user right now is [doing X / feeling Y]. This costs you [impact]. The fix is [direction]."
+
+Tone: a senior researcher who genuinely cares about both users and the designer. Empathetic to users, respectful to the designer. Never preachy. Never robotic.
+
+Location must be accurate percentages 0-100 for annotation overlay.
 
 Return ONLY raw JSON, no markdown:
 
-{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence assessment","issues":[{"id":1,"element":"name","severity":"critical","category":"ux_law","rule_violated":"law","problem":"specific problem","learn_why":"4 sentence explanation","fix":"specific fix","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux_law","rule_violated":"principle","problem":"","learn_why":"4 sentence explanation","fix":"maintain","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["fix 1","fix 2","fix 3"]}`;
+{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"2 sentence honest take that mentions both what the user experiences and what the designer should focus on","issues":[{"id":1,"element":"plain name","severity":"critical","category":"ux","rule_violated":"the principle plus research source","problem":"the user's perspective in their words: what they're feeling, doing, thinking right now on this screen","learn_why":"5-6 sentences covering: user reality, designer view, research with source, business impact, benchmark with reasoning","fix":"design direction with concrete benchmark example and the user outcome it creates","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux","rule_violated":"the pattern being followed","problem":"","learn_why":"why this works for both the user and the business, backed by research","fix":"keep doing this","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["framed as: user is [feeling/doing X], costing [impact], fix is [direction]","second priority","third priority"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
