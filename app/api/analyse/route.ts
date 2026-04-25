@@ -76,6 +76,7 @@ Return ONLY raw valid JSON with absolutely no markdown, no backticks, no explana
     );
 
     const data = await response.json();
+    if (!response.ok) { return NextResponse.json({ error: data?.error?.message || "Gemini error", status: response.status, full: data }, { status: 500 }); }
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) {
