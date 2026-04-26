@@ -650,7 +650,7 @@ export default function DesignBestie() {
                 : <><span>🧪</span>{stressResult ? "Stress Test ✓" : "Stress Test"}</>}
             </button>
             <button
-              onClick={() => { if (!isRoasting) runRoast(); }}
+              onClick={() => { if (isRoasting) return; if (roastResult) setShowRoastModal(true); else runRoast(); }}
               style={{ background: roastResult ? "#FF3B30" : "none", color: roastResult ? "#fff" : "#FF3B30", border: `1px solid ${roastResult ? "#FF3B30" : "#FFBAB6"}`, borderRadius: 20, padding: "8px 16px", cursor: isRoasting ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}
             >
               {isRoasting
