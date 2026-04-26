@@ -88,8 +88,8 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
         x: bx + (Math.random() - 0.5) * 20,
         y: by + (Math.random() - 0.5) * 20,
         baseX: bx, baseY: by,
-        size: 13,
-        opacity: 0.18 + Math.random() * 0.10,
+        size: 10 + Math.random() * 16,
+        opacity: 0.08 + Math.random() * 0.06,
         vx: 0, vy: 0,
         rotation: (Math.random() - 0.5) * 0.5,
       });
