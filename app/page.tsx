@@ -123,7 +123,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
         ctx.save();
         ctx.translate(icon.x, icon.y);
         ctx.rotate(icon.rotation);
-        ctx.strokeStyle = `rgba(29,29,31,${icon.opacity})`;
+        ctx.strokeStyle = `rgba(255,255,255,${icon.opacity})`;
         ctx.lineWidth = 1.2;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
@@ -145,127 +145,145 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
   }, []);
 
   return (
-    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
-      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }} />
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#0F0F10", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
+      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.35 }} />
 
       {/* NAV */}
-      <nav style={{ position: "relative", zIndex: 10, background: "rgba(245,245,247,0.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 40px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+      <nav style={{ position: "relative", zIndex: 10, padding: "0 40px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 28, height: 28, background: "#1D1D1F", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ color: "#fff", fontSize: 14 }}>✦</span>
+          <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#7C3AED,#4F46E5)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(124,58,237,0.4)" }}>
+            <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
           </div>
-          <span style={{ fontWeight: 700, color: "#1D1D1F", fontSize: 16, letterSpacing: "-0.4px" }}>Design Bestie</span>
+          <span style={{ fontWeight: 700, color: "#fff", fontSize: 17, letterSpacing: "-0.5px" }}>Design Bestie</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 20, padding: "5px 14px" }}>
-            <span style={{ fontSize: 12, color: "#1D1D1F", fontWeight: 600 }}>✦ AI Design Partner</span>
-          </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", fontWeight: 500 }}>The design partner designers actually need</span>
         </div>
       </nav>
 
-      {/* SPLIT SCREEN */}
-      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 24, padding: "24px 48px", overflow: "hidden" }}>
+      {/* HERO TEXT */}
+      <div style={{ position: "relative", zIndex: 5, textAlign: "center", padding: "28px 24px 20px", flexShrink: 0 }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: 20, padding: "5px 14px", marginBottom: 14 }}>
+          <span style={{ width: 6, height: 6, background: "#7C3AED", borderRadius: "50%", display: "inline-block" }} />
+          <span style={{ fontSize: 12, color: "#A78BFA", fontWeight: 600, letterSpacing: 0.5 }}>AI-Powered Design Partner</span>
+        </div>
+        <h1 style={{ fontSize: 48, fontWeight: 900, color: "#fff", margin: "0 0 10px", letterSpacing: "-2px", lineHeight: 1.05 }}>
+          Your design partner,<br /><span style={{ background: "linear-gradient(90deg,#A78BFA,#60A5FA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>from brief to launch</span>
+        </h1>
+        <p style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", margin: 0, letterSpacing: "-0.2px" }}>
+          Two powerful modes — choose where you are in your design process
+        </p>
+      </div>
 
-        {/* LEFT — After Design */}
-        <div style={{ flex: 1, maxWidth: 560, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 36px", background: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", borderRadius: 24, border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
-          {/* Icon */}
-          <div style={{ width: 56, height: 56, background: "linear-gradient(135deg,#2D0A4E,#5A1F8A)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 8px 24px rgba(45,10,78,0.25)" }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <rect x="2" y="3" width="20" height="14" rx="2" stroke="#fff" strokeWidth="1.8"/>
-              <path d="M8 21h8M12 17v4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
-              <path d="M7 8l2.5 2.5L14 7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+      {/* CARDS */}
+      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, padding: "0 40px 16px", overflow: "hidden" }}>
+
+        {/* LEFT CARD — After Design — Purple */}
+        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 520, display: "flex", flexDirection: "column", padding: "28px 28px 24px", background: "linear-gradient(145deg,#1A0A2E,#2D1054)", borderRadius: 24, border: "1px solid rgba(124,58,237,0.25)", boxShadow: "0 24px 60px rgba(45,10,78,0.5)", position: "relative", overflow: "hidden" }}>
+          {/* Glow */}
+          <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(124,58,237,0.3),transparent 70%)", pointerEvents: "none" }} />
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            {/* Badge */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.35)", borderRadius: 20, padding: "4px 12px", marginBottom: 16 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", letterSpacing: 1.5, textTransform: "uppercase" }}>After Design</span>
+            </div>
+
+            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.8px", lineHeight: 1.15 }}>Review your design.<br />Get expert critique.</h2>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>Upload any screen. Get research-backed issues, wins, stress test results and a stakeholder report in seconds.</p>
+
+            {/* Feature pills */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
+              {[["🔍", "Issues & Wins"], ["🧪", "Stress Test"], ["🔥", "Roast Mode"], ["📊", "Stakeholder Report"]].map(([emoji, label]) => (
+                <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#C4B5FD", background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.25)", borderRadius: 20, padding: "4px 10px" }}><span>{emoji}</span>{label}</span>
+              ))}
+            </div>
+
+            {/* Upload zone */}
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              style={{ border: `2px dashed ${isDragging ? "#A78BFA" : uploaded ? "#A78BFA" : "rgba(255,255,255,0.15)"}`, borderRadius: 14, padding: "16px", marginBottom: 12, cursor: "pointer", background: isDragging ? "rgba(124,58,237,0.1)" : "rgba(255,255,255,0.03)", transition: "all 0.2s" }}
+            >
+              <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={handleInputChange} />
+              {uploaded && imagePreview ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 52, height: 38, borderRadius: 8, overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0 }}>
+                    <img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#fff", margin: 0 }}>{fileName}</p>
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", margin: 0 }}>Click to change</p>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 38, height: 38, background: "rgba(255,255,255,0.08)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)", margin: 0 }}>Drop your screenshot here</p>
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0 }}>PNG · JPG · PDF up to 10MB</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button onClick={onStart} style={{ width: "100%", background: uploaded ? "linear-gradient(135deg,#7C3AED,#4F46E5)" : "rgba(255,255,255,0.07)", color: uploaded ? "#fff" : "rgba(255,255,255,0.3)", border: uploaded ? "none" : "1px solid rgba(255,255,255,0.1)", padding: "13px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 4px 24px rgba(124,58,237,0.5)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {uploaded ? <>Analyse My Design <span style={{ fontSize: 17 }}>→</span></> : "Select a Screenshot to Begin"}
+            </button>
           </div>
-
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#2D0A4E", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>After Design</div>
-          <h2 style={{ fontSize: 30, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1px", lineHeight: 1.1 }}>Review your<br />design</h2>
-          <p style={{ fontSize: 14, color: "#6E6E73", margin: "0 0 20px", lineHeight: 1.6 }}>Upload any screen and get expert critique backed by UX research — issues, wins, and stakeholder report.</p>
-
-          {/* Feature pills */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 24 }}>
-            {[["🔍", "Issues & Wins"], ["🧪", "Stress Test"], ["🔥", "Roast Mode"], ["📊", "Stakeholder Report"]].map(([emoji, label]) => (
-              <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: "#2D0A4E", background: "rgba(45,10,78,0.06)", border: "1px solid rgba(45,10,78,0.12)", borderRadius: 20, padding: "5px 12px" }}><span>{emoji}</span>{label}</span>
-            ))}
-          </div>
-
-          {/* Upload area */}
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-            style={{ border: `2px dashed ${isDragging ? "#2D0A4E" : uploaded ? "#2D0A4E" : "rgba(0,0,0,0.15)"}`, borderRadius: 14, padding: "20px", marginBottom: 12, cursor: "pointer", background: isDragging ? "rgba(45,10,78,0.03)" : "rgba(0,0,0,0.01)", transition: "all 0.2s" }}
-          >
-            <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={handleInputChange} />
-            {uploaded && imagePreview ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 56, height: 40, borderRadius: 8, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)", flexShrink: 0 }}>
-                  <img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <div>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: "#1D1D1F", margin: 0 }}>{fileName}</p>
-                  <p style={{ fontSize: 11, color: "#999", margin: 0 }}>Click to change</p>
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 40, height: 40, background: "rgba(0,0,0,0.05)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="#1D1D1F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </div>
-                <div>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F", margin: 0 }}>Drop your screenshot here</p>
-                  <p style={{ fontSize: 12, color: "#999", margin: 0 }}>PNG · JPG · PDF up to 10MB</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <button onClick={onStart} style={{ width: "100%", background: uploaded ? "#2D0A4E" : "rgba(0,0,0,0.08)", color: uploaded ? "#fff" : "#999", border: "none", padding: "14px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 4px 24px rgba(45,10,78,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            {uploaded ? <>Analyse My Design <span style={{ fontSize: 18 }}>→</span></> : "Select a Screenshot to Begin"}
-          </button>
         </div>
 
         {/* DIVIDER */}
-        <div style={{ flexShrink: 0, width: 36, height: 36, background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#AEAEB2", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", zIndex: 2 }}>OR</div>
+        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <div style={{ width: 1, height: 60, background: "linear-gradient(to bottom,transparent,rgba(255,255,255,0.12))" }} />
+          <div style={{ width: 34, height: 34, background: "#1A1A1C", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)" }}>OR</div>
+          <div style={{ width: 1, height: 60, background: "linear-gradient(to bottom,rgba(255,255,255,0.12),transparent)" }} />
+        </div>
 
-        {/* RIGHT — Before Design */}
-        <div style={{ flex: 1, maxWidth: 560, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 36px", background: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", borderRadius: 24, border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
-          {/* Icon */}
-          <div style={{ width: 56, height: 56, background: "linear-gradient(135deg,#1a4a7a,#0A2540)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 8px 24px rgba(10,37,64,0.25)" }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
-              <rect x="9" y="3" width="6" height="4" rx="1" stroke="#fff" strokeWidth="1.8"/>
-              <path d="M9 12h6M9 16h4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
-            </svg>
+        {/* RIGHT CARD — Before Design — Navy */}
+        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 520, display: "flex", flexDirection: "column", padding: "28px 28px 24px", background: "linear-gradient(145deg,#071428,#0D2444)", borderRadius: 24, border: "1px solid rgba(96,165,250,0.2)", boxShadow: "0 24px 60px rgba(10,37,64,0.5)", position: "relative", overflow: "hidden" }}>
+          {/* Glow */}
+          <div style={{ position: "absolute", top: -60, left: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(96,165,250,0.25),transparent 70%)", pointerEvents: "none" }} />
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            {/* Badge */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(96,165,250,0.15)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 20, padding: "4px 12px", marginBottom: 16 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD", letterSpacing: 1.5, textTransform: "uppercase" }}>Before Design</span>
+            </div>
+
+            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.8px", lineHeight: 1.15 }}>Understand your<br />requirements first.</h2>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>Paste what your PM or BA gave you — messy Slack message, doc, anything. Get every screen, state and edge case before Figma.</p>
+
+            {/* Feature pills */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
+              {[["📱", "Screens Needed"], ["🔲", "Missing States"], ["⚠️", "Edge Cases"], ["❓", "Questions to Ask"]].map(([emoji, label]) => (
+                <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#93C5FD", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 20, padding: "4px 10px" }}><span>{emoji}</span>{label}</span>
+              ))}
+            </div>
+
+            {/* Textarea */}
+            <textarea
+              value={briefText}
+              onChange={(e) => setBriefText(e.target.value)}
+              placeholder="Paste requirements here — Slack message, BA doc, user story, anything..."
+              style={{ width: "100%", height: 100, borderRadius: 12, border: "1.5px solid rgba(255,255,255,0.1)", padding: "12px 14px", fontSize: 13, color: "#fff", resize: "none", fontFamily: "inherit", lineHeight: 1.6, boxSizing: "border-box", outline: "none", background: "rgba(255,255,255,0.05)", marginBottom: 12, caretColor: "#60A5FA" }}
+            />
+
+            <button onClick={onBrief} style={{ width: "100%", background: briefText.trim().length > 10 ? "linear-gradient(135deg,#1D4ED8,#0EA5E9)" : "rgba(255,255,255,0.07)", color: briefText.trim().length > 10 ? "#fff" : "rgba(255,255,255,0.3)", border: briefText.trim().length > 10 ? "none" : "1px solid rgba(255,255,255,0.1)", padding: "13px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: briefText.trim().length > 10 ? "pointer" : "default", transition: "all 0.25s", boxShadow: briefText.trim().length > 10 ? "0 4px 24px rgba(14,165,233,0.4)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {briefText.trim().length > 10 ? <>Generate Design Brief <span style={{ fontSize: 17 }}>→</span></> : "Paste your requirements above"}
+            </button>
           </div>
-
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#007AFF", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Before Design</div>
-          <h2 style={{ fontSize: 30, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1px", lineHeight: 1.1 }}>Understand your<br />requirements</h2>
-          <p style={{ fontSize: 14, color: "#6E6E73", margin: "0 0 20px", lineHeight: 1.6 }}>Paste what your PM or BA gave you. Get every screen, state, edge case and question to ask — before you open Figma.</p>
-
-          {/* Feature pills */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 24 }}>
-            {[["📱", "Screens Needed"], ["🔲", "Missing States"], ["⚠️", "Edge Cases"], ["❓", "Questions to Ask"]].map(([emoji, label]) => (
-              <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: "#007AFF", background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)", borderRadius: 20, padding: "5px 12px" }}><span>{emoji}</span>{label}</span>
-            ))}
-          </div>
-
-          {/* Text area */}
-          <textarea
-            value={briefText}
-            onChange={(e) => setBriefText(e.target.value)}
-            placeholder="Paste requirements here — Slack message, BA doc, user story, anything..."
-            style={{ width: "100%", height: 110, borderRadius: 14, border: "1.5px solid rgba(0,0,0,0.12)", padding: "14px 16px", fontSize: 14, color: "#1D1D1F", resize: "none", fontFamily: "inherit", lineHeight: 1.6, boxSizing: "border-box", outline: "none", background: "rgba(255,255,255,0.8)", marginBottom: 12 }}
-          />
-          <button onClick={onBrief} style={{ width: "100%", background: briefText.trim().length > 10 ? "#0A2540" : "rgba(0,0,0,0.08)", color: briefText.trim().length > 10 ? "#fff" : "#999", border: "none", padding: "14px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: briefText.trim().length > 10 ? "pointer" : "default", transition: "all 0.25s", boxShadow: briefText.trim().length > 10 ? "0 4px 24px rgba(10,37,64,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            {briefText.trim().length > 10 ? <>Generate Design Brief <span style={{ fontSize: 18 }}>→</span></> : "Paste your requirements above"}
-          </button>
         </div>
       </div>
 
       {/* BOTTOM TRUST BAR */}
-      <div style={{ position: "relative", zIndex: 5, display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap", padding: "10px 24px", borderTop: "1px solid rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)", flexShrink: 0 }}>
-        {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt", "Reading Patterns", "Business Impact"].map((b) => (
-          <span key={b} style={{ fontSize: 11, color: "#888", background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 20, padding: "4px 12px" }}>{b}</span>
+      <div style={{ position: "relative", zIndex: 5, display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap", padding: "10px 24px 14px", flexShrink: 0 }}>
+        {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Reading Patterns", "Business Impact"].map((b) => (
+          <span key={b} style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: "4px 12px" }}>{b}</span>
         ))}
       </div>
     </div>
