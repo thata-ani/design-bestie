@@ -144,127 +144,130 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
     };
   }, []);
 
-  const [activeMode, setActiveMode] = React.useState<"after" | "before">("after");
-
   return (
-    <div style={{ position: "relative", minHeight: "100vh", overflowY: "auto", overflowX: "hidden", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif" }}>
-      <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }} />
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
+      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }} />
 
       {/* NAV */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 10, background: "rgba(245,245,247,0.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <nav style={{ position: "relative", zIndex: 10, background: "rgba(245,245,247,0.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 40px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 28, height: 28, background: "#1D1D1F", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "#fff", fontSize: 14 }}>✦</span>
           </div>
           <span style={{ fontWeight: 700, color: "#1D1D1F", fontSize: 16, letterSpacing: "-0.4px" }}>Design Bestie</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <span style={{ fontSize: 14, color: "#6E6E73", cursor: "pointer" }}>How it works</span>
-          <button style={{ background: "#1D1D1F", color: "#fff", border: "none", padding: "10px 22px", borderRadius: 22, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>Try Free →</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 20, padding: "5px 14px" }}>
+            <span style={{ fontSize: 12, color: "#1D1D1F", fontWeight: 600 }}>✦ AI Design Partner</span>
+          </div>
         </div>
       </nav>
 
-      {/* HERO */}
-      <div style={{ position: "relative", zIndex: 5, padding: "60px 24px 0", textAlign: "center" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 20, padding: "6px 16px", marginBottom: 20 }}>
-          <span style={{ fontSize: 13, color: "#1D1D1F", fontWeight: 600 }}>✦ AI Design Partner</span>
-        </div>
-        <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.05, margin: "0 0 16px", letterSpacing: "-2.5px", color: "#1D1D1F", maxWidth: 700, marginLeft: "auto", marginRight: "auto" }}>
-          Your design partner<br /><span style={{ color: "#2D0A4E" }}>from brief to launch</span>
-        </h1>
-        <p style={{ fontSize: 18, color: "#6E6E73", lineHeight: 1.6, margin: "0 auto 48px", maxWidth: 520 }}>
-          Design Bestie helps you before you open Figma and after you close it. Two modes, full workflow.
-        </p>
+      {/* SPLIT SCREEN */}
+      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", overflow: "hidden" }}>
 
-        {/* MODE SWITCHER */}
-        <div style={{ display: "inline-flex", background: "rgba(0,0,0,0.06)", borderRadius: 16, padding: 4, marginBottom: 32, gap: 4 }}>
-          {([["after", "🖼️", "I have a design"], ["before", "📋", "I have requirements"]] as const).map(([mode, emoji, label]) => (
-            <button key={mode} onClick={() => setActiveMode(mode)} style={{ padding: "10px 24px", borderRadius: 12, border: "none", background: activeMode === mode ? "#fff" : "transparent", color: activeMode === mode ? "#1D1D1F" : "#6E6E73", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: activeMode === mode ? "0 2px 8px rgba(0,0,0,0.1)" : "none", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8 }}>
-              <span>{emoji}</span>{label}
-            </button>
-          ))}
-        </div>
+        {/* LEFT — After Design */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 40px", borderRight: "1px solid rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.6)", backdropFilter: "blur(20px)" }}>
+          {/* Icon */}
+          <div style={{ width: 56, height: 56, background: "linear-gradient(135deg,#2D0A4E,#5A1F8A)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 8px 24px rgba(45,10,78,0.25)" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="3" width="20" height="14" rx="2" stroke="#fff" strokeWidth="1.8"/>
+              <path d="M8 21h8M12 17v4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+              <path d="M7 8l2.5 2.5L14 7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
 
-        {/* AFTER DESIGN MODE */}
-        {activeMode === "after" && (
-          <div style={{ maxWidth: 560, margin: "0 auto 32px" }}>
-            <div style={{ background: "rgba(255,255,255,0.94)", backdropFilter: "blur(40px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 24, padding: "32px", boxShadow: "0 4px 60px rgba(0,0,0,0.07)" }}>
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={handleDrop}
-                style={{ border: `2px dashed ${isDragging ? "#2D0A4E" : uploaded ? "#2D0A4E" : "rgba(0,0,0,0.15)"}`, borderRadius: 16, padding: "28px 20px", marginBottom: 16, cursor: "pointer", background: isDragging ? "rgba(45,10,78,0.03)" : "rgba(0,0,0,0.01)", transition: "all 0.2s" }}
-              >
-                <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={handleInputChange} />
-                {uploaded && imagePreview ? (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 72, height: 52, borderRadius: 10, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)" }}>
-                      <img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    </div>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F", margin: 0 }}>{fileName}</p>
-                    <p style={{ fontSize: 12, color: "#999", margin: 0 }}>Click to change</p>
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 48, height: 48, background: "rgba(0,0,0,0.05)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="#1D1D1F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    </div>
-                    <p style={{ fontSize: 15, fontWeight: 600, color: "#1D1D1F", margin: 0 }}>Drop your screenshot here</p>
-                    <p style={{ fontSize: 12, color: "#999", margin: 0 }}>PNG · JPG · PDF up to 10MB</p>
-                  </div>
-                )}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#2D0A4E", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>After Design</div>
+          <h2 style={{ fontSize: 30, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1px", lineHeight: 1.1 }}>Review your<br />design</h2>
+          <p style={{ fontSize: 14, color: "#6E6E73", margin: "0 0 20px", lineHeight: 1.6 }}>Upload any screen and get expert critique backed by UX research — issues, wins, and stakeholder report.</p>
+
+          {/* Feature pills */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 24 }}>
+            {[["🔍", "Issues & Wins"], ["🧪", "Stress Test"], ["🔥", "Roast Mode"], ["📊", "Stakeholder Report"]].map(([emoji, label]) => (
+              <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: "#2D0A4E", background: "rgba(45,10,78,0.06)", border: "1px solid rgba(45,10,78,0.12)", borderRadius: 20, padding: "5px 12px" }}><span>{emoji}</span>{label}</span>
+            ))}
+          </div>
+
+          {/* Upload area */}
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={handleDrop}
+            style={{ border: `2px dashed ${isDragging ? "#2D0A4E" : uploaded ? "#2D0A4E" : "rgba(0,0,0,0.15)"}`, borderRadius: 14, padding: "20px", marginBottom: 12, cursor: "pointer", background: isDragging ? "rgba(45,10,78,0.03)" : "rgba(0,0,0,0.01)", transition: "all 0.2s" }}
+          >
+            <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={handleInputChange} />
+            {uploaded && imagePreview ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 56, height: 40, borderRadius: 8, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)", flexShrink: 0 }}>
+                  <img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "#1D1D1F", margin: 0 }}>{fileName}</p>
+                  <p style={{ fontSize: 11, color: "#999", margin: 0 }}>Click to change</p>
+                </div>
               </div>
-              <button onClick={onStart} style={{ width: "100%", background: uploaded ? "#2D0A4E" : "rgba(0,0,0,0.08)", color: uploaded ? "#fff" : "#999", border: "none", padding: 16, borderRadius: 14, fontSize: 16, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 4px 24px rgba(45,10,78,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                {uploaded ? <>Analyse My Design <span style={{ fontSize: 18 }}>→</span></> : "Select a Screenshot to Begin"}
-              </button>
-            </div>
-            {/* What you get */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 16 }}>
-              {[["🔍", "Issues & Wins", "3 issues + 2 wins backed by UX research"], ["🧪", "Stress Test", "Test through 7 user personas"], ["🔥", "Roast Mode", "Savage critique with real UX laws"], ["📊", "Stakeholder Report", "Business language for PMs & CEOs"]].map(([emoji, title, desc]) => (
-                <div key={title} style={{ background: "rgba(255,255,255,0.8)", borderRadius: 14, padding: "14px 16px", textAlign: "left", border: "1px solid rgba(0,0,0,0.06)" }}>
-                  <div style={{ fontSize: 20, marginBottom: 6 }}>{emoji}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1D1D1F", marginBottom: 3 }}>{title}</div>
-                  <div style={{ fontSize: 12, color: "#6E6E73", lineHeight: 1.4 }}>{desc}</div>
+            ) : (
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 40, height: 40, background: "rgba(0,0,0,0.05)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="#1D1D1F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
-              ))}
-            </div>
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F", margin: 0 }}>Drop your screenshot here</p>
+                  <p style={{ fontSize: 12, color: "#999", margin: 0 }}>PNG · JPG · PDF up to 10MB</p>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+          <button onClick={onStart} style={{ width: "100%", background: uploaded ? "#2D0A4E" : "rgba(0,0,0,0.08)", color: uploaded ? "#fff" : "#999", border: "none", padding: "14px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 4px 24px rgba(45,10,78,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {uploaded ? <>Analyse My Design <span style={{ fontSize: 18 }}>→</span></> : "Select a Screenshot to Begin"}
+          </button>
+        </div>
 
-        {/* BEFORE DESIGN MODE */}
-        {activeMode === "before" && (
-          <div style={{ maxWidth: 560, margin: "0 auto 32px" }}>
-            <div style={{ background: "rgba(255,255,255,0.94)", backdropFilter: "blur(40px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 24, padding: "32px", boxShadow: "0 4px 60px rgba(0,0,0,0.07)" }}>
-              <p style={{ fontSize: 14, color: "#6E6E73", margin: "0 0 12px", textAlign: "left" }}>Paste your requirements — Slack message, BA doc, user story, anything:</p>
-              <textarea
-                value={briefText}
-                onChange={(e) => setBriefText(e.target.value)}
-                placeholder={"We need to build a loyalty feature where users scan products to earn points. First scan wins — if another user scans the same product, the first user loses their points..."}
-                style={{ width: "100%", height: 140, borderRadius: 12, border: "1.5px solid rgba(0,0,0,0.12)", padding: "14px 16px", fontSize: 14, color: "#1D1D1F", resize: "none", fontFamily: "inherit", lineHeight: 1.6, boxSizing: "border-box", outline: "none", background: "#FAFAFA" }}
-              />
-              <button onClick={onBrief} style={{ width: "100%", background: briefText.trim().length > 10 ? "#2D0A4E" : "rgba(0,0,0,0.08)", color: briefText.trim().length > 10 ? "#fff" : "#999", border: "none", padding: 16, borderRadius: 14, fontSize: 16, fontWeight: 700, cursor: briefText.trim().length > 10 ? "pointer" : "default", marginTop: 12, transition: "all 0.25s", boxShadow: briefText.trim().length > 10 ? "0 4px 24px rgba(45,10,78,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                {briefText.trim().length > 10 ? <>Generate Design Brief <span style={{ fontSize: 18 }}>→</span></> : "Paste your requirements above"}
-              </button>
-            </div>
-            {/* What you get */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 16 }}>
-              {[["📋", "Screens to Design", "Full list of screens your feature needs"], ["⚠️", "Edge Cases", "Conflicts and missing logic flagged"], ["❓", "Questions to Ask", "What to clarify before opening Figma"], ["🔲", "Missing States", "Empty, error, loading, offline states"]].map(([emoji, title, desc]) => (
-                <div key={title} style={{ background: "rgba(255,255,255,0.8)", borderRadius: 14, padding: "14px 16px", textAlign: "left", border: "1px solid rgba(0,0,0,0.06)" }}>
-                  <div style={{ fontSize: 20, marginBottom: 6 }}>{emoji}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1D1D1F", marginBottom: 3 }}>{title}</div>
-                  <div style={{ fontSize: 12, color: "#6E6E73", lineHeight: 1.4 }}>{desc}</div>
-                </div>
-              ))}
-            </div>
+        {/* DIVIDER */}
+        <div style={{ width: 1, background: "rgba(0,0,0,0.08)", flexShrink: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ position: "absolute", width: 32, height: 32, background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#AEAEB2", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>OR</div>
+        </div>
+
+        {/* RIGHT — Before Design */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 40px", background: "rgba(245,245,247,0.6)", backdropFilter: "blur(20px)" }}>
+          {/* Icon */}
+          <div style={{ width: 56, height: 56, background: "linear-gradient(135deg,#1a4a7a,#0A2540)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 8px 24px rgba(10,37,64,0.25)" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+              <rect x="9" y="3" width="6" height="4" rx="1" stroke="#fff" strokeWidth="1.8"/>
+              <path d="M9 12h6M9 16h4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
           </div>
-        )}
+
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#007AFF", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Before Design</div>
+          <h2 style={{ fontSize: 30, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1px", lineHeight: 1.1 }}>Understand your<br />requirements</h2>
+          <p style={{ fontSize: 14, color: "#6E6E73", margin: "0 0 20px", lineHeight: 1.6 }}>Paste what your PM or BA gave you. Get every screen, state, edge case and question to ask — before you open Figma.</p>
+
+          {/* Feature pills */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 24 }}>
+            {[["📱", "Screens Needed"], ["🔲", "Missing States"], ["⚠️", "Edge Cases"], ["❓", "Questions to Ask"]].map(([emoji, label]) => (
+              <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: "#007AFF", background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)", borderRadius: 20, padding: "5px 12px" }}><span>{emoji}</span>{label}</span>
+            ))}
+          </div>
+
+          {/* Text area */}
+          <textarea
+            value={briefText}
+            onChange={(e) => setBriefText(e.target.value)}
+            placeholder="Paste requirements here — Slack message, BA doc, user story, anything..."
+            style={{ width: "100%", height: 110, borderRadius: 14, border: "1.5px solid rgba(0,0,0,0.12)", padding: "14px 16px", fontSize: 14, color: "#1D1D1F", resize: "none", fontFamily: "inherit", lineHeight: 1.6, boxSizing: "border-box", outline: "none", background: "rgba(255,255,255,0.8)", marginBottom: 12 }}
+          />
+          <button onClick={onBrief} style={{ width: "100%", background: briefText.trim().length > 10 ? "#0A2540" : "rgba(0,0,0,0.08)", color: briefText.trim().length > 10 ? "#fff" : "#999", border: "none", padding: "14px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: briefText.trim().length > 10 ? "pointer" : "default", transition: "all 0.25s", boxShadow: briefText.trim().length > 10 ? "0 4px 24px rgba(10,37,64,0.3)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {briefText.trim().length > 10 ? <>Generate Design Brief <span style={{ fontSize: 18 }}>→</span></> : "Paste your requirements above"}
+          </button>
+        </div>
       </div>
 
       {/* BOTTOM TRUST BAR */}
-      <div style={{ position: "relative", zIndex: 5, display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap", padding: "0 24px 48px" }}>
-        {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Reading Patterns", "Business Impact"].map((b) => (
-          <span key={b} style={{ fontSize: 12, color: "#888", background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 20, padding: "5px 13px" }}>{b}</span>
+      <div style={{ position: "relative", zIndex: 5, display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap", padding: "10px 24px", borderTop: "1px solid rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)", flexShrink: 0 }}>
+        {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt", "Reading Patterns", "Business Impact"].map((b) => (
+          <span key={b} style={{ fontSize: 11, color: "#888", background: "rgba(255,255,255,0.7)", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 20, padding: "4px 12px" }}>{b}</span>
         ))}
       </div>
     </div>
@@ -499,7 +502,7 @@ function StakeholderModal({ result, onClose }: { result: any; onClose: () => voi
 
           {/* Business Issues */}
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>Business Risks</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>Business Risks</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {(result.business_issues || []).map((issue: any, idx: number) => (
                 <div key={idx} style={{ background: "#F5F5F7", borderRadius: 12, padding: "14px 16px", borderLeft: `3px solid ${priorityColor(issue.priority)}` }}>
@@ -612,7 +615,7 @@ function RoastModal({ roastResult, onClose }: { roastResult: any; onClose: () =>
           </div>
         </div>
         <div style={{ padding: "24px 32px 32px" }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Roast 🔥</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Roast 🔥</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
             {(roastResult.roasts || []).map((r: any, idx: number) => (
               <div key={idx} style={{ background: "#FFF5F4", border: "1px solid #FFD5D2", borderLeft: `4px solid ${severityColor(r.severity)}`, borderRadius: 12, padding: "16px 18px" }}>
@@ -1154,24 +1157,24 @@ export default function DesignBestie() {
           </div>
         </nav>
 
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px" }}>
+        <div style={{ maxWidth: "100%", padding: "32px 48px" }}>
           {/* Header */}
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontSize: 12, color: "#AEAEB2", fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Design Brief</div>
-            <h1 style={{ fontSize: 32, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1px" }}>{briefResult.feature_name || "Your Feature"}</h1>
-            <p style={{ fontSize: 16, color: "#6E6E73", margin: 0, lineHeight: 1.6 }}>{briefResult.summary}</p>
+            <h1 style={{ fontSize: 40, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1.5px" }}>{briefResult.feature_name || "Your Feature"}</h1>
+            <p style={{ fontSize: 18, color: "#6E6E73", margin: 0, lineHeight: 1.6 }}>{briefResult.summary}</p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
 
             {/* Screens needed */}
             <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA", gridColumn: "1 / -1" }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: "#2D0A4E", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>📱 Screens to Design</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
                 {(briefResult.screens_needed || []).map((s: any, i: number) => (
                   <div key={i} style={{ background: "#F5F5F7", borderRadius: 10, padding: "12px 14px" }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1D1D1F", marginBottom: 3 }}>{s.screen}</div>
-                    <div style={{ fontSize: 12, color: "#6E6E73" }}>{s.purpose}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>{s.screen}</div>
+                    <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{s.purpose}</div>
                   </div>
                 ))}
               </div>
@@ -1179,13 +1182,13 @@ export default function DesignBestie() {
 
             {/* Missing states */}
             <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🔲 States to Design</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🔲 States to Design</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {(briefResult.states_needed || []).map((s: any, i: number) => (
                   <div key={i} style={{ display: "flex", gap: 10, padding: "10px 12px", background: "#FFF5F4", borderRadius: 8, borderLeft: "3px solid #FF3B30" }}>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", marginBottom: 2 }}>{s.state}</div>
-                      <div style={{ fontSize: 12, color: "#6E6E73" }}>{s.description}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", marginBottom: 2 }}>{s.state}</div>
+                      <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{s.description}</div>
                     </div>
                   </div>
                 ))}
@@ -1194,12 +1197,12 @@ export default function DesignBestie() {
 
             {/* Edge cases */}
             <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#FF9500", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>⚠️ Edge Cases</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#FF9500", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>⚠️ Edge Cases</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {(briefResult.edge_cases || []).map((e: any, i: number) => (
                   <div key={i} style={{ padding: "10px 12px", background: "#FFFBF0", borderRadius: 8, borderLeft: "3px solid #FF9500" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#FF9500", marginBottom: 2 }}>{e.case}</div>
-                    <div style={{ fontSize: 12, color: "#6E6E73" }}>{e.what_to_design}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#FF9500", marginBottom: 2 }}>{e.case}</div>
+                    <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{e.what_to_design}</div>
                   </div>
                 ))}
               </div>
@@ -1220,7 +1223,7 @@ export default function DesignBestie() {
             {/* Conflicts */}
             {briefResult.conflicts?.length > 0 && (
               <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🚨 Conflicts in Requirements</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🚨 Conflicts in Requirements</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {briefResult.conflicts.map((c: string, i: number) => (
                     <div key={i} style={{ padding: "10px 12px", background: "#FFF5F4", borderRadius: 8, fontSize: 13, color: "#3A3A3C", borderLeft: "3px solid #FF3B30" }}>
