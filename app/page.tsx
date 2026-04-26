@@ -416,6 +416,127 @@ function AnnotatedImage({ imagePreview, issues, activeIssueId }: { imagePreview:
   );
 }
 
+function StakeholderModal({ result, onClose }: { result: any; onClose: () => void }) {
+  const score: number = result.overall_business_score || 0;
+  const scoreColor = score >= 70 ? "#34C759" : score >= 50 ? "#FF9500" : "#FF3B30";
+  const effortColor = (e: string) => e === "Low" ? "#34C759" : e === "Medium" ? "#FF9500" : "#FF3B30";
+  const priorityColor = (p: string) => p === "Ship this sprint" ? "#FF3B30" : p === "Next sprint" ? "#FF9500" : "#AEAEB2";
+  const impactColor = (i: string) => i === "High" ? "#34C759" : i === "Medium" ? "#FF9500" : "#AEAEB2";
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+      <div style={{ background: "#fff", borderRadius: 24, maxWidth: 640, width: "100%", maxHeight: "90vh", overflow: "auto", boxShadow: "0 32px 100px rgba(0,0,0,0.3)" }}>
+
+        {/* Header */}
+        <div style={{ background: "linear-gradient(135deg,#0A2540,#1a4a7a)", borderRadius: "24px 24px 0 0", padding: "32px 32px 24px", position: "relative" }}>
+          <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", color: "#fff", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", marginBottom: 10 }}>Stakeholder Report</div>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.9)", lineHeight: 1.6, margin: "0 0 20px" }}>{result.executive_summary}</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 42, fontWeight: 800, color: scoreColor, lineHeight: 1 }}>{score}</div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 4, textTransform: "uppercase", letterSpacing: 1 }}>Business Score</div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.12)", borderRadius: 20, padding: "6px 16px", display: "inline-block" }}>
+              <span style={{ fontSize: 14, fontWeight: 700, color: scoreColor }}>{result.score_label}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: "24px 32px 32px", display: "flex", flexDirection: "column", gap: 24 }}>
+
+          {/* Business Issues */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>Business Risks</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {(result.business_issues || []).map((issue: any, idx: number) => (
+                <div key={idx} style={{ background: "#F5F5F7", borderRadius: 12, padding: "14px 16px", borderLeft: `3px solid ${priorityColor(issue.priority)}` }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F" }}>{issue.element}</span>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: priorityColor(issue.priority), background: "#fff", padding: "2px 8px", borderRadius: 8, border: `1px solid ${priorityColor(issue.priority)}` }}>{issue.priority}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: effortColor(issue.effort), background: "#fff", padding: "2px 8px", borderRadius: 8 }}>{issue.effort} effort</span>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 13, color: "#3A3A3C", margin: "0 0 4px", lineHeight: 1.5 }}>💸 {issue.business_impact}</p>
+                  <p style={{ fontSize: 12, color: "#6E6E73", margin: 0, lineHeight: 1.5 }}>👤 {issue.user_impact}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Wins */}
+          {result.wins_to_keep?.length > 0 && (
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#34C759", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>What's Working</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {result.wins_to_keep.map((win: string, idx: number) => (
+                  <div key={idx} style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 10, padding: "10px 14px", fontSize: 13, color: "#1C4A26" }}>✓ {win}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Priority Matrix */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#007AFF", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>Priority Matrix — Highest ROI First</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {(result.priority_matrix || []).map((item: any, idx: number) => (
+                <div key={idx} style={{ background: "#F0F8FF", border: "1px solid #C0DCFF", borderRadius: 10, padding: "12px 14px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#0A2540" }}>#{idx + 1} {item.action}</span>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <span style={{ fontSize: 11, color: impactColor(item.impact), fontWeight: 600 }}>↑ {item.impact} impact</span>
+                      <span style={{ fontSize: 11, color: effortColor(item.effort), fontWeight: 600 }}>⚡ {item.effort} effort</span>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 12, color: "#3A6A9A", margin: 0 }}>{item.why}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sprint Tickets */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#5856D6", letterSpacing: 2, textTransform: "uppercase", marginBottom: 12 }}>Ready for Sprint Planning</div>
+            <div style={{ background: "#F5F5F7", borderRadius: 12, overflow: "hidden" }}>
+              {(result.sprint_recommendation || []).map((ticket: string, idx: number) => (
+                <div key={idx} style={{ padding: "12px 16px", borderBottom: idx < result.sprint_recommendation.length - 1 ? "1px solid #E5E5EA" : "none", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 24, height: 24, background: "#5856D6", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, flexShrink: 0 }}>{idx + 1}</div>
+                  <span style={{ fontSize: 13, color: "#1D1D1F", lineHeight: 1.4 }}>{ticket}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Share */}
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={() => {
+                const text = `📊 Design Review — Stakeholder Summary
+
+${result.executive_summary}
+
+Business Score: ${score}/100 — "${result.score_label}"
+
+Top 3 actions:
+${(result.sprint_recommendation || []).map((t: string, i: number) => `${i+1}. ${t}`).join("
+")}
+
+Generated by Design Bestie — design-bestie.vercel.app`;
+                navigator.clipboard.writeText(text).then(() => alert("Copied! Ready to paste into Slack or Notion 📋"));
+              }}
+              style={{ flex: 1, background: "#0A2540", color: "#fff", border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+            >Copy for Slack / Notion 📋</button>
+            <button onClick={onClose} style={{ flex: 1, background: "none", border: "1px solid #D2D2D7", borderRadius: 12, padding: "13px", fontSize: 14, color: "#6E6E73", cursor: "pointer", fontWeight: 500 }}>Back to Results</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function RoastModal({ roastResult, onClose }: { roastResult: any; onClose: () => void }) {
   const score: number = roastResult.roast_score || 0;
   const scoreColor = score >= 70 ? "#34C759" : score >= 50 ? "#FF9500" : "#FF3B30";
@@ -501,6 +622,9 @@ export default function DesignBestie() {
   const [roastResult, setRoastResult] = useState<any>(null);
   const [isRoasting, setIsRoasting] = useState(false);
   const [showRoastModal, setShowRoastModal] = useState(false);
+  const [stakeholderResult, setStakeholderResult] = useState<any>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [showStakeholderModal, setShowStakeholderModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const analysingSteps = ["UX Laws and Principles", "UI Rules and Standards", "Accessibility WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Cognitive Load Analysis"];
@@ -560,6 +684,32 @@ export default function DesignBestie() {
       else { console.error("Roast API error:", json); alert("Roast failed: " + (json?.error || "Unknown error")); }
     } catch (e) { console.error("Roast fetch error:", e); alert("Roast network error. Check console."); }
     finally { setIsRoasting(false); }
+  };
+
+  const runStakeholder = async () => {
+    if (!analysisResult) return;
+    setIsTranslating(true);
+    setStakeholderResult(null);
+    try {
+      const res = await fetch("/api/stakeholder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analysisResult }),
+      });
+      const json = await res.json();
+      if (res.ok && json && json.executive_summary) {
+        setStakeholderResult(json);
+        setShowStakeholderModal(true);
+      } else {
+        console.error("Stakeholder API error:", json);
+        alert("Translation failed: " + (json?.error || "Unknown error"));
+      }
+    } catch (e) {
+      console.error("Stakeholder fetch error:", e);
+      alert("Network error. Check console.");
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
   const handleFile = (file: File | undefined) => {
@@ -672,6 +822,7 @@ export default function DesignBestie() {
 
         {/* ROAST MODAL — rendered as overlay inside results */}
         {showRoastModal && roastResult && <RoastModal roastResult={roastResult} onClose={() => setShowRoastModal(false)} />}
+        {showStakeholderModal && stakeholderResult && <StakeholderModal result={stakeholderResult} onClose={() => setShowStakeholderModal(false)} />}
 
         {showPersonaModal && <PersonaModal onClose={() => setShowPersonaModal(false)} onRun={runStressTest} />}
 
@@ -707,7 +858,10 @@ export default function DesignBestie() {
             <button onClick={() => { if (isRoasting) return; if (roastResult) setShowRoastModal(true); else runRoast(); }} style={{ background: roastResult ? "#FF3B30" : "none", color: roastResult ? "#fff" : "#FF3B30", border: `1px solid ${roastResult ? "#FF3B30" : "#FFBAB6"}`, borderRadius: 20, padding: "8px 16px", cursor: isRoasting ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
               {isRoasting ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Roasting…</> : <><span>🔥</span>{roastResult ? "View Roast" : "Roast It"}</>}
             </button>
-            <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setExpandedCards([]); setActiveTab("analysis"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}>← New Analysis</button>
+            <button onClick={() => { if (isTranslating) return; if (stakeholderResult) setShowStakeholderModal(true); else runStakeholder(); }} style={{ background: stakeholderResult ? "#007AFF" : "none", color: stakeholderResult ? "#fff" : "#007AFF", border: `1px solid ${stakeholderResult ? "#007AFF" : "#99C8FF"}`, borderRadius: 20, padding: "8px 16px", cursor: isTranslating ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+              {isTranslating ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Translating…</> : <><span>📊</span>{stakeholderResult ? "View Report" : "For Stakeholders"}</>}
+            </button>
+            <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setStakeholderResult(null); setExpandedCards([]); setActiveTab("analysis"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}>← New Analysis</button>
           </div>
         </div>
 
