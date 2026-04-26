@@ -27,7 +27,7 @@ For each issue:
   • What the user does when this goes wrong
   • How [Stripe / Swiggy / Amazon / Linear / Apple] handles this
 - "fix": one sentence starting with "Consider" or "What if"
-- "location": CRITICAL — look carefully at where the element actually appears. x=left edge %, y=top edge %, width=%, height=%. Header: y=0-15. Middle: y=30-60. Bottom: y=70-90. Be precise.
+- "zone": which of the 9 zones best describes where this element appears on screen. Choose exactly one: "top-left", "top-center", "top-right", "mid-left", "mid-center", "mid-right", "bottom-left", "bottom-center", "bottom-right"
 
 For each win:
 - "element": plain name
@@ -38,7 +38,7 @@ For each win:
   • Why this works for the user
   • Why this works for the business
 - "fix": "Keep this pattern"
-- "location": accurate coordinates as above
+- "zone": one of the 9 zones above
 
 Reading pattern analysis:
 Look at the overall layout and identify which reading pattern this screen follows. Choose exactly one:
@@ -63,7 +63,7 @@ NEVER invent statistics. Only cite principles you are certain about.
 
 Return ONLY raw JSON, no markdown, no backticks:
 
-{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"one crisp sentence","reading_pattern":{"type":"F-Pattern","is_following":true,"explanation":"one sentence for the designer","impact":"one sentence on user impact"},"issues":[{"id":1,"element":"name","severity":"critical","category":"ux","rule_violated":"law name and source","problem":"one sentence in user voice","learn_why":"• point 1\n• point 2\n• point 3\n• point 4","fix":"Consider or What if...","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","location":{"x":5,"y":80,"width":90,"height":10}}],"priority_fixes":["Your user [X]. This costs [impact]. Consider [direction].","second","third"]}`;
+{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"one crisp sentence","reading_pattern":{"type":"F-Pattern","is_following":true,"explanation":"one sentence for the designer","impact":"one sentence on user impact"},"issues":[{"id":1,"element":"name","severity":"critical","category":"ux","rule_violated":"law name and source","problem":"one sentence in user voice","learn_why":"• point 1\n• point 2\n• point 3\n• point 4","fix":"Consider or What if...","zone":"top-center"}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","zone":"bottom-center"}],"priority_fixes":["Your user [X]. This costs [impact]. Consider [direction].","second","third"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
