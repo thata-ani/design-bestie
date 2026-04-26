@@ -85,7 +85,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
             y: by + (Math.random() - 0.5) * 6,
             baseX: bx, baseY: by,
             size: 10 + Math.random() * 16,
-            opacity: 0.06 + Math.random() * 0.06,
+            opacity: 0.14 + Math.random() * 0.10,
             vx: 0, vy: 0,
             rotation: (Math.random() - 0.5) * 0.5,
           });
@@ -184,9 +184,51 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
           <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(124,58,237,0.3),transparent 70%)", pointerEvents: "none" }} />
 
           <div style={{ position: "relative", zIndex: 1 }}>
-            {/* Badge */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.35)", borderRadius: 20, padding: "4px 12px", marginBottom: 16 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", letterSpacing: 1.5, textTransform: "uppercase" }}>After Design</span>
+            {/* Left mascot — reviewer with magnifying glass */}
+            <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-end", gap: 12 }}>
+              <svg width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 4px 16px rgba(124,58,237,0.5))", flexShrink: 0 }}>
+                <defs>
+                  <radialGradient id="lbodyG" cx="40%" cy="35%" r="60%">
+                    <stop offset="0%" stopColor="#8B5CF6"/>
+                    <stop offset="100%" stopColor="#1A0A2E"/>
+                  </radialGradient>
+                  <radialGradient id="lfaceG" cx="40%" cy="30%" r="60%">
+                    <stop offset="0%" stopColor="#C4B5FD"/>
+                    <stop offset="100%" stopColor="#7C3AED"/>
+                  </radialGradient>
+                  <filter id="lglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                {/* Body */}
+                <path d="M14 52 Q12 70 20 75 Q36 80 52 75 Q60 70 58 52 Q50 57 36 57 Q22 57 14 52Z" fill="url(#lbodyG)"/>
+                {/* Neck */}
+                <rect x="31" y="41" width="10" height="12" rx="5" fill="url(#lfaceG)"/>
+                {/* Head */}
+                <ellipse cx="36" cy="30" rx="18" ry="18" fill="url(#lfaceG)"/>
+                {/* Head shine */}
+                <ellipse cx="30" cy="23" rx="6" ry="5" fill="rgba(255,255,255,0.2)" transform="rotate(-20 30 23)"/>
+                {/* Eyes */}
+                <circle cx="29" cy="29" r="4" fill="#1A0A2E"/>
+                <circle cx="29" cy="29" r="2.5" fill="white" filter="url(#lglow)" opacity="0.9"/>
+                <circle cx="30.2" cy="27.8" r="0.8" fill="#fff"/>
+                <circle cx="43" cy="29" r="4" fill="#1A0A2E"/>
+                <circle cx="43" cy="29" r="2.5" fill="white" filter="url(#lglow)" opacity="0.9"/>
+                <circle cx="44.2" cy="27.8" r="0.8" fill="#fff"/>
+                {/* Smile */}
+                <path d="M30 36 Q36 41 42 36" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                {/* Right arm holding magnifying glass */}
+                <path d="M56 56 Q65 50 68 42" stroke="url(#lbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
+                {/* Magnifying glass */}
+                <circle cx="68" cy="36" r="9" stroke="#A78BFA" strokeWidth="2.5" fill="rgba(167,139,250,0.15)"/>
+                <circle cx="68" cy="36" r="6" fill="rgba(124,58,237,0.2)"/>
+                <line x1="74" y1="42" x2="80" y2="49" stroke="#A78BFA" strokeWidth="2.5" strokeLinecap="round"/>
+                {/* Lens shine */}
+                <circle cx="65" cy="33" r="2" fill="rgba(255,255,255,0.4)"/>
+                {/* Left arm */}
+                <path d="M16 56 Q8 50 6 42" stroke="url(#lbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
+              </svg>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.35)", borderRadius: 20, padding: "4px 12px", marginBottom: 4 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", letterSpacing: 1.5, textTransform: "uppercase" }}>After Design</span>
+              </div>
             </div>
 
             <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.8px", lineHeight: 1.15 }}>Review your design.<br />Get expert critique.</h2>
@@ -237,11 +279,66 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
           </div>
         </div>
 
-        {/* DIVIDER */}
-        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 1, height: 60, background: "linear-gradient(to bottom,transparent,rgba(255,255,255,0.12))" }} />
-          <div style={{ width: 34, height: 34, background: "#1A1A1C", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)" }}>OR</div>
-          <div style={{ width: 1, height: 60, background: "linear-gradient(to bottom,rgba(255,255,255,0.12),transparent)" }} />
+        {/* CENTER MASCOT */}
+        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, zIndex: 10 }}>
+          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom,transparent,rgba(255,255,255,0.1))" }} />
+          {/* Main Bestie mascot */}
+          <svg width="90" height="110" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 8px 24px rgba(124,58,237,0.5))", cursor: "default" }}>
+            <defs>
+              <radialGradient id="bodyGrad" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stopColor="#9B6FE8"/>
+                <stop offset="100%" stopColor="#2D0A4E"/>
+              </radialGradient>
+              <radialGradient id="faceGrad" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stopColor="#C4A8F5"/>
+                <stop offset="100%" stopColor="#7C3AED"/>
+              </radialGradient>
+              <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#fff" stopOpacity="1"/>
+                <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.6"/>
+              </radialGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            {/* Body */}
+            <ellipse cx="45" cy="82" rx="26" ry="18" fill="url(#bodyGrad)" opacity="0.6"/>
+            {/* Robe/body */}
+            <path d="M22 68 Q20 95 28 102 Q45 108 62 102 Q70 95 68 68 Q60 74 45 74 Q30 74 22 68Z" fill="url(#bodyGrad)"/>
+            {/* Body shine */}
+            <path d="M30 72 Q35 78 45 77 Q55 78 60 72 Q55 70 45 70 Q35 70 30 72Z" fill="rgba(255,255,255,0.12)"/>
+            {/* Neck */}
+            <rect x="39" y="56" width="12" height="14" rx="6" fill="url(#faceGrad)"/>
+            {/* Head */}
+            <ellipse cx="45" cy="44" rx="22" ry="22" fill="url(#faceGrad)"/>
+            {/* Head shine */}
+            <ellipse cx="38" cy="36" rx="8" ry="6" fill="rgba(255,255,255,0.2)" transform="rotate(-20 38 36)"/>
+            {/* Left eye */}
+            <circle cx="37" cy="42" r="5" fill="#1A0A2E"/>
+            <circle cx="37" cy="42" r="3.5" fill="url(#eyeGlow)" filter="url(#glow)"/>
+            <circle cx="38.5" cy="40.5" r="1" fill="#fff"/>
+            {/* Right eye */}
+            <circle cx="53" cy="42" r="5" fill="#1A0A2E"/>
+            <circle cx="53" cy="42" r="3.5" fill="url(#eyeGlow)" filter="url(#glow)"/>
+            <circle cx="54.5" cy="40.5" r="1" fill="#fff"/>
+            {/* Smile */}
+            <path d="M38 51 Q45 57 52 51" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" fill="none"/>
+            {/* Star on forehead */}
+            <text x="42" y="33" fontSize="10" fill="rgba(255,255,255,0.9)" fontWeight="bold">✦</text>
+            {/* Left arm */}
+            <path d="M23 72 Q14 66 12 58 Q11 52 16 50" stroke="url(#bodyGrad)" strokeWidth="8" strokeLinecap="round" fill="none"/>
+            {/* Right arm */}
+            <path d="M67 72 Q76 66 78 58 Q79 52 74 50" stroke="url(#bodyGrad)" strokeWidth="8" strokeLinecap="round" fill="none"/>
+            {/* Left hand sparkle */}
+            <circle cx="14" cy="49" r="4" fill="#A78BFA" filter="url(#glow)"/>
+            <text x="10" y="53" fontSize="8" fill="#fff">✦</text>
+            {/* Right hand sparkle */}
+            <circle cx="76" cy="49" r="4" fill="#60A5FA" filter="url(#glow)"/>
+            <text x="72" y="53" fontSize="8" fill="#fff">✦</text>
+          </svg>
+          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", letterSpacing: 2, textTransform: "uppercase" }}>or</div>
+          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom,rgba(255,255,255,0.1),transparent)" }} />
         </div>
 
         {/* RIGHT CARD — Before Design — Navy */}
@@ -250,9 +347,51 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
           <div style={{ position: "absolute", top: -60, left: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(96,165,250,0.25),transparent 70%)", pointerEvents: "none" }} />
 
           <div style={{ position: "relative", zIndex: 1 }}>
-            {/* Badge */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(96,165,250,0.15)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 20, padding: "4px 12px", marginBottom: 16 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD", letterSpacing: 1.5, textTransform: "uppercase" }}>Before Design</span>
+            {/* Right mascot — analyst with clipboard */}
+            <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-end", gap: 12 }}>
+              <svg width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 4px 16px rgba(96,165,250,0.5))", flexShrink: 0 }}>
+                <defs>
+                  <radialGradient id="rbodyG" cx="40%" cy="35%" r="60%">
+                    <stop offset="0%" stopColor="#3B82F6"/>
+                    <stop offset="100%" stopColor="#071428"/>
+                  </radialGradient>
+                  <radialGradient id="rfaceG" cx="40%" cy="30%" r="60%">
+                    <stop offset="0%" stopColor="#93C5FD"/>
+                    <stop offset="100%" stopColor="#1D4ED8"/>
+                  </radialGradient>
+                  <filter id="rglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                {/* Body */}
+                <path d="M14 52 Q12 70 20 75 Q36 80 52 75 Q60 70 58 52 Q50 57 36 57 Q22 57 14 52Z" fill="url(#rbodyG)"/>
+                {/* Neck */}
+                <rect x="31" y="41" width="10" height="12" rx="5" fill="url(#rfaceG)"/>
+                {/* Head */}
+                <ellipse cx="36" cy="30" rx="18" ry="18" fill="url(#rfaceG)"/>
+                {/* Head shine */}
+                <ellipse cx="30" cy="23" rx="6" ry="5" fill="rgba(255,255,255,0.2)" transform="rotate(-20 30 23)"/>
+                {/* Eyes — slightly different shape, more focused look */}
+                <circle cx="29" cy="29" r="4" fill="#071428"/>
+                <circle cx="29" cy="29" r="2.5" fill="white" filter="url(#rglow)" opacity="0.9"/>
+                <circle cx="30.2" cy="27.8" r="0.8" fill="#fff"/>
+                <circle cx="43" cy="29" r="4" fill="#071428"/>
+                <circle cx="43" cy="29" r="2.5" fill="white" filter="url(#rglow)" opacity="0.9"/>
+                <circle cx="44.2" cy="27.8" r="0.8" fill="#fff"/>
+                {/* Slight smile */}
+                <path d="M30 36 Q36 40 42 36" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                {/* Right arm holding clipboard */}
+                <path d="M56 56 Q64 50 66 42" stroke="url(#rbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
+                {/* Clipboard */}
+                <rect x="60" y="24" width="20" height="26" rx="3" fill="#0D2444" stroke="#60A5FA" strokeWidth="1.5"/>
+                <rect x="66" y="21" width="8" height="5" rx="2" fill="#60A5FA"/>
+                <line x1="63" y1="31" x2="77" y2="31" stroke="#60A5FA" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
+                <line x1="63" y1="35" x2="77" y2="35" stroke="#60A5FA" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+                <line x1="63" y1="39" x2="72" y2="39" stroke="#60A5FA" strokeWidth="1.2" strokeLinecap="round" opacity="0.3"/>
+                {/* Left arm up */}
+                <path d="M16 56 Q8 50 6 42" stroke="url(#rbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
+              </svg>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(96,165,250,0.15)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 20, padding: "4px 12px", marginBottom: 4 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD", letterSpacing: 1.5, textTransform: "uppercase" }}>Before Design</span>
+              </div>
             </div>
 
             <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.8px", lineHeight: 1.15 }}>Understand your<br />requirements first.</h2>
@@ -833,21 +972,32 @@ export default function DesignBestie() {
           <div style={{ display: "flex", gap: 80, alignItems: "center", maxWidth: 900, width: "100%" }}>
             {/* Phone mockup */}
             <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-              <div style={{ position: "relative", width: 220, height: 440 }}>
-                {/* Purple glow behind phone */}
-                <div style={{ position: "absolute", inset: -30, background: "radial-gradient(ellipse,rgba(124,58,237,0.2),transparent 70%)", pointerEvents: "none" }} />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg,#2A2A2A,#0A0A0A)", borderRadius: 44, boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)" }}>
-                  <div style={{ position: "absolute", left: -3, top: 80, width: 3, height: 26, background: "#1A1A1A", borderRadius: "2px 0 0 2px" }} />
-                  <div style={{ position: "absolute", left: -3, top: 114, width: 3, height: 40, background: "#1A1A1A", borderRadius: "2px 0 0 2px" }} />
-                  <div style={{ position: "absolute", left: -3, top: 162, width: 3, height: 40, background: "#1A1A1A", borderRadius: "2px 0 0 2px" }} />
-                  <div style={{ position: "absolute", right: -3, top: 128, width: 3, height: 58, background: "#1A1A1A", borderRadius: "0 2px 2px 0" }} />
-                  <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, borderRadius: 36, overflow: "hidden", background: "#000" }}>
+              <div style={{ position: "relative", width: 260, height: 520 }}>
+                {/* Large purple glow behind phone */}
+                <div style={{ position: "absolute", inset: -60, background: "radial-gradient(ellipse,rgba(124,58,237,0.35),transparent 65%)", pointerEvents: "none" }} />
+                {/* Secondary blue glow */}
+                <div style={{ position: "absolute", inset: -40, background: "radial-gradient(ellipse at 70% 30%,rgba(79,70,229,0.2),transparent 60%)", pointerEvents: "none" }} />
+                {/* Phone body — visible grey not black */}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg,#3D3D4A,#1E1E28)", borderRadius: 52, boxShadow: "0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.12), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 40px rgba(124,58,237,0.3)" }}>
+                  {/* Side buttons */}
+                  <div style={{ position: "absolute", left: -4, top: 95, width: 4, height: 30, background: "linear-gradient(180deg,#4A4A5A,#2A2A3A)", borderRadius: "3px 0 0 3px" }} />
+                  <div style={{ position: "absolute", left: -4, top: 135, width: 4, height: 48, background: "linear-gradient(180deg,#4A4A5A,#2A2A3A)", borderRadius: "3px 0 0 3px" }} />
+                  <div style={{ position: "absolute", left: -4, top: 193, width: 4, height: 48, background: "linear-gradient(180deg,#4A4A5A,#2A2A3A)", borderRadius: "3px 0 0 3px" }} />
+                  <div style={{ position: "absolute", right: -4, top: 152, width: 4, height: 68, background: "linear-gradient(180deg,#4A4A5A,#2A2A3A)", borderRadius: "0 3px 3px 0" }} />
+                  {/* Screen */}
+                  <div style={{ position: "absolute", top: 10, left: 10, right: 10, bottom: 10, borderRadius: 42, overflow: "hidden", background: "#0A0A0F", boxShadow: "inset 0 0 20px rgba(0,0,0,0.5)" }}>
                     {imagePreview
                       ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#444", fontSize: 13 }}>Your design</span></div>}
-                    {/* Scanning overlay */}
-                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 0%,rgba(124,58,237,0.08) 50%,transparent 100%)", animation: "pulse 2s ease-in-out infinite" }} />
-                    <div style={{ position: "absolute", bottom: 5, left: "50%", transform: "translateX(-50%)", width: 72, height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 2 }} />
+                      : <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg,#0F0F1A,#1A0A2E)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                          <div style={{ width: 40, height: 40, background: "linear-gradient(135deg,#7C3AED,#4F46E5)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <span style={{ color: "#fff", fontSize: 20 }}>✦</span>
+                          </div>
+                          <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, fontWeight: 500 }}>Your design</span>
+                        </div>}
+                    {/* Scanning line animation */}
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 0%,rgba(124,58,237,0.12) 48%,rgba(124,58,237,0.12) 52%,transparent 100%)", animation: "pulse 2s ease-in-out infinite" }} />
+                    {/* Bottom home indicator */}
+                    <div style={{ position: "absolute", bottom: 8, left: "50%", transform: "translateX(-50%)", width: 80, height: 4, background: "rgba(255,255,255,0.25)", borderRadius: 2 }} />
                   </div>
                 </div>
               </div>
