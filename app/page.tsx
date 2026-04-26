@@ -123,7 +123,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
         ctx.save();
         ctx.translate(icon.x, icon.y);
         ctx.rotate(icon.rotation);
-        ctx.strokeStyle = `rgba(255,255,255,${icon.opacity})`;
+        ctx.strokeStyle = `rgba(96,165,250,${icon.opacity})`;
         ctx.lineWidth = 1.2;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
@@ -145,99 +145,72 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
   }, []);
 
   return (
-    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#0F0F10", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#020B18", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
       <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.35 }} />
 
       {/* NAV */}
-      <nav style={{ position: "relative", zIndex: 10, padding: "0 40px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#7C3AED,#4F46E5)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(124,58,237,0.4)" }}>
-            <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
+      <nav style={{ position: "relative", zIndex: 10, padding: "0 48px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 32, height: 32, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(37,99,235,0.4)" }}>
+            <span style={{ color: "#fff", fontSize: 16 }}>✦</span>
           </div>
-          <span style={{ fontWeight: 700, color: "#fff", fontSize: 17, letterSpacing: "-0.5px" }}>Design Bestie</span>
+          <span style={{ fontWeight: 800, color: "#fff", fontSize: 18, letterSpacing: "-0.5px" }}>Design Bestie</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", fontWeight: 500 }}>The design partner designers actually need</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ width: 6, height: 6, background: "#3B82F6", borderRadius: "50%", display: "inline-block" }} />
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 500, letterSpacing: 2, textTransform: "uppercase" }}>AI Design Partner</span>
         </div>
       </nav>
 
-      {/* HERO TEXT */}
-      <div style={{ position: "relative", zIndex: 5, textAlign: "center", padding: "28px 24px 20px", flexShrink: 0 }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: 20, padding: "5px 14px", marginBottom: 14 }}>
-          <span style={{ width: 6, height: 6, background: "#7C3AED", borderRadius: "50%", display: "inline-block" }} />
-          <span style={{ fontSize: 12, color: "#A78BFA", fontWeight: 600, letterSpacing: 0.5 }}>AI-Powered Design Partner</span>
+      {/* HERO — big typography inspired */}
+      <div style={{ position: "relative", zIndex: 5, textAlign: "center", padding: "20px 24px 0", flexShrink: 0 }}>
+        {/* Massive background word — depth layer */}
+        <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", fontSize: 140, fontWeight: 900, color: "rgba(37,99,235,0.04)", letterSpacing: 20, whiteSpace: "nowrap", pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>DESIGN</div>
+
+        {/* Small label */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16, position: "relative" }}>
+          <span style={{ width: 6, height: 6, background: "#3B82F6", borderRadius: "50%", display: "inline-block", boxShadow: "0 0 8px rgba(59,130,246,0.8)" }} />
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, letterSpacing: 4, textTransform: "uppercase" }}>Your AI Design Partner</span>
+          <span style={{ width: 6, height: 6, background: "#3B82F6", borderRadius: "50%", display: "inline-block", boxShadow: "0 0 8px rgba(59,130,246,0.8)" }} />
         </div>
-        <h1 style={{ fontSize: 48, fontWeight: 900, color: "#fff", margin: "0 0 10px", letterSpacing: "-2px", lineHeight: 1.05 }}>
-          Your design partner,<br /><span style={{ background: "linear-gradient(90deg,#A78BFA,#60A5FA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>from brief to launch</span>
+
+        {/* Main headline — large, bold, layered */}
+        <h1 style={{ fontSize: 58, fontWeight: 900, color: "#fff", margin: "0 0 6px", letterSpacing: "-2.5px", lineHeight: 1, position: "relative" }}>
+          From Brief
         </h1>
-        <p style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", margin: 0, letterSpacing: "-0.2px" }}>
-          Two powerful modes — choose where you are in your design process
+        <h1 style={{ fontSize: 58, fontWeight: 900, margin: "0 0 16px", letterSpacing: "-2.5px", lineHeight: 1, position: "relative", background: "linear-gradient(90deg,#60A5FA,#93C5FD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          to Launch.
+        </h1>
+
+        {/* Subtext — spaced caps */}
+        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", margin: 0, letterSpacing: 4, textTransform: "uppercase", fontWeight: 500 }}>
+          Two modes &nbsp;·&nbsp; Full workflow &nbsp;·&nbsp; Zero guesswork
         </p>
       </div>
 
       {/* CARDS */}
-      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 20, padding: "0 40px 16px", overflow: "hidden" }}>
+      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: "16px 40px 12px", overflow: "hidden" }}>
 
-        {/* LEFT CARD — After Design — Purple */}
-        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 520, display: "flex", flexDirection: "column", padding: "28px 28px 24px", background: "linear-gradient(145deg,#1A0A2E,#2D1054)", borderRadius: 24, border: "1px solid rgba(124,58,237,0.25)", boxShadow: "0 24px 60px rgba(45,10,78,0.5)", position: "relative", overflow: "hidden" }}>
-          {/* Glow */}
-          <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(124,58,237,0.3),transparent 70%)", pointerEvents: "none" }} />
+        {/* LEFT CARD */}
+        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 500, display: "flex", flexDirection: "column", padding: "28px 32px 24px", background: "linear-gradient(145deg,#040D1E,#071628)", borderRadius: 28, border: "1px solid rgba(37,99,235,0.18)", boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: -80, right: -80, width: 240, height: 240, background: "radial-gradient(circle,rgba(37,99,235,0.15),transparent 70%)", pointerEvents: "none" }} />
 
-          <div style={{ position: "relative", zIndex: 1 }}>
-            {/* Left mascot — reviewer with magnifying glass */}
-            <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-end", gap: 12 }}>
-              <svg width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 4px 16px rgba(124,58,237,0.5))", flexShrink: 0 }}>
-                <defs>
-                  <radialGradient id="lbodyG" cx="40%" cy="35%" r="60%">
-                    <stop offset="0%" stopColor="#8B5CF6"/>
-                    <stop offset="100%" stopColor="#1A0A2E"/>
-                  </radialGradient>
-                  <radialGradient id="lfaceG" cx="40%" cy="30%" r="60%">
-                    <stop offset="0%" stopColor="#C4B5FD"/>
-                    <stop offset="100%" stopColor="#7C3AED"/>
-                  </radialGradient>
-                  <filter id="lglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                </defs>
-                {/* Body */}
-                <path d="M14 52 Q12 70 20 75 Q36 80 52 75 Q60 70 58 52 Q50 57 36 57 Q22 57 14 52Z" fill="url(#lbodyG)"/>
-                {/* Neck */}
-                <rect x="31" y="41" width="10" height="12" rx="5" fill="url(#lfaceG)"/>
-                {/* Head */}
-                <ellipse cx="36" cy="30" rx="18" ry="18" fill="url(#lfaceG)"/>
-                {/* Head shine */}
-                <ellipse cx="30" cy="23" rx="6" ry="5" fill="rgba(255,255,255,0.2)" transform="rotate(-20 30 23)"/>
-                {/* Eyes */}
-                <circle cx="29" cy="29" r="4" fill="#1A0A2E"/>
-                <circle cx="29" cy="29" r="2.5" fill="white" filter="url(#lglow)" opacity="0.9"/>
-                <circle cx="30.2" cy="27.8" r="0.8" fill="#fff"/>
-                <circle cx="43" cy="29" r="4" fill="#1A0A2E"/>
-                <circle cx="43" cy="29" r="2.5" fill="white" filter="url(#lglow)" opacity="0.9"/>
-                <circle cx="44.2" cy="27.8" r="0.8" fill="#fff"/>
-                {/* Smile */}
-                <path d="M30 36 Q36 41 42 36" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                {/* Right arm holding magnifying glass */}
-                <path d="M56 56 Q65 50 68 42" stroke="url(#lbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-                {/* Magnifying glass */}
-                <circle cx="68" cy="36" r="9" stroke="#A78BFA" strokeWidth="2.5" fill="rgba(167,139,250,0.15)"/>
-                <circle cx="68" cy="36" r="6" fill="rgba(124,58,237,0.2)"/>
-                <line x1="74" y1="42" x2="80" y2="49" stroke="#A78BFA" strokeWidth="2.5" strokeLinecap="round"/>
-                {/* Lens shine */}
-                <circle cx="65" cy="33" r="2" fill="rgba(255,255,255,0.4)"/>
-                {/* Left arm */}
-                <path d="M16 56 Q8 50 6 42" stroke="url(#lbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-              </svg>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.35)", borderRadius: 20, padding: "4px 12px", marginBottom: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", letterSpacing: 1.5, textTransform: "uppercase" }}>After Design</span>
-              </div>
+          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+            {/* Label */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+              <span style={{ width: 5, height: 5, background: "#3B82F6", borderRadius: "50%", boxShadow: "0 0 6px rgba(59,130,246,0.8)" }} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#60A5FA", letterSpacing: 3, textTransform: "uppercase" }}>After Design</span>
             </div>
 
-            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.8px", lineHeight: 1.15 }}>Review your design.<br />Get expert critique.</h2>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>Upload any screen. Get research-backed issues, wins, stress test results and a stakeholder report in seconds.</p>
+            {/* Heading */}
+            <h2 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 6px", letterSpacing: "-1px", lineHeight: 1.1 }}>Review your</h2>
+            <h2 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 12px", letterSpacing: "-1px", lineHeight: 1.1, opacity: 0.5 }}>design.</h2>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", margin: "0 0 16px", lineHeight: 1.65, letterSpacing: 0.2 }}>Upload any screen. Get research-backed critique, stress test, roast and stakeholder report.</p>
 
             {/* Feature pills */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
-              {[["🔍", "Issues & Wins"], ["🧪", "Stress Test"], ["🔥", "Roast Mode"], ["📊", "Stakeholder Report"]].map(([emoji, label]) => (
-                <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#C4B5FD", background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.25)", borderRadius: 20, padding: "4px 10px" }}><span>{emoji}</span>{label}</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 16 }}>
+              {[["🔍", "Issues & Wins"], ["🧪", "Stress Test"], ["🔥", "Roast Mode"], ["📊", "Stakeholder"]].map(([emoji, label]) => (
+                <span key={label} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: "rgba(147,197,253,0.7)", background: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)", borderRadius: 20, padding: "3px 9px" }}><span>{emoji}</span>{label}</span>
               ))}
             </div>
 
@@ -247,160 +220,62 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
               onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
-              style={{ border: `2px dashed ${isDragging ? "#A78BFA" : uploaded ? "#A78BFA" : "rgba(255,255,255,0.15)"}`, borderRadius: 14, padding: "16px", marginBottom: 12, cursor: "pointer", background: isDragging ? "rgba(124,58,237,0.1)" : "rgba(255,255,255,0.03)", transition: "all 0.2s" }}
+              style={{ border: `1.5px dashed ${isDragging ? "#60A5FA" : uploaded ? "#3B82F6" : "rgba(255,255,255,0.1)"}`, borderRadius: 14, padding: "14px 16px", marginBottom: 12, cursor: "pointer", background: isDragging ? "rgba(37,99,235,0.08)" : "rgba(255,255,255,0.02)", transition: "all 0.2s", flex: 1 }}
             >
               <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={handleInputChange} />
               {uploaded && imagePreview ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 52, height: 38, borderRadius: 8, overflow: "hidden", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, height: "100%" }}>
+                  <div style={{ width: 52, height: 38, borderRadius: 8, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
                     <img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                   <div>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "#fff", margin: 0 }}>{fileName}</p>
-                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", margin: 0 }}>Click to change</p>
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0 }}>Click to change</p>
                   </div>
                 </div>
               ) : (
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 38, height: 38, background: "rgba(255,255,255,0.08)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)", margin: 0 }}>Drop your screenshot here</p>
-                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0 }}>PNG · JPG · PDF up to 10MB</p>
-                  </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "8px 0" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="rgba(96,165,250,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.5)", margin: 0, letterSpacing: 0.5 }}>Drop screenshot here</p>
+                  <p style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", margin: 0, letterSpacing: 1, textTransform: "uppercase" }}>PNG · JPG · PDF</p>
                 </div>
               )}
             </div>
 
-            <button onClick={onStart} style={{ width: "100%", background: uploaded ? "linear-gradient(135deg,#7C3AED,#4F46E5)" : "rgba(255,255,255,0.07)", color: uploaded ? "#fff" : "rgba(255,255,255,0.3)", border: uploaded ? "none" : "1px solid rgba(255,255,255,0.1)", padding: "13px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 4px 24px rgba(124,58,237,0.5)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-              {uploaded ? <>Analyse My Design <span style={{ fontSize: 17 }}>→</span></> : "Select a Screenshot to Begin"}
+            {/* CTA — glass button */}
+            <button onClick={onStart} style={{ width: "100%", background: uploaded ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.03)", color: uploaded ? "#fff" : "rgba(255,255,255,0.2)", border: uploaded ? "1px solid rgba(96,165,250,0.5)" : "1px solid rgba(255,255,255,0.06)", padding: "14px", borderRadius: 14, fontSize: 14, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 0 20px rgba(59,130,246,0.25), inset 0 1px 0 rgba(255,255,255,0.12)" : "none", backdropFilter: "blur(16px)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, letterSpacing: uploaded ? "-0.3px" : 0 }}>
+              {uploaded ? <>Analyse My Design <span style={{ fontSize: 16 }}>→</span></> : "Select a Screenshot to Begin"}
             </button>
           </div>
         </div>
 
-        {/* CENTER MASCOT */}
-        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, zIndex: 10 }}>
-          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom,transparent,rgba(255,255,255,0.1))" }} />
-          {/* Main Bestie mascot */}
-          <svg width="90" height="110" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 8px 24px rgba(124,58,237,0.5))", cursor: "default" }}>
-            <defs>
-              <radialGradient id="bodyGrad" cx="40%" cy="35%" r="60%">
-                <stop offset="0%" stopColor="#9B6FE8"/>
-                <stop offset="100%" stopColor="#2D0A4E"/>
-              </radialGradient>
-              <radialGradient id="faceGrad" cx="40%" cy="35%" r="60%">
-                <stop offset="0%" stopColor="#C4A8F5"/>
-                <stop offset="100%" stopColor="#7C3AED"/>
-              </radialGradient>
-              <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#fff" stopOpacity="1"/>
-                <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.6"/>
-              </radialGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="blur"/>
-                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-            </defs>
-            {/* Body */}
-            <ellipse cx="45" cy="82" rx="26" ry="18" fill="url(#bodyGrad)" opacity="0.6"/>
-            {/* Robe/body */}
-            <path d="M22 68 Q20 95 28 102 Q45 108 62 102 Q70 95 68 68 Q60 74 45 74 Q30 74 22 68Z" fill="url(#bodyGrad)"/>
-            {/* Body shine */}
-            <path d="M30 72 Q35 78 45 77 Q55 78 60 72 Q55 70 45 70 Q35 70 30 72Z" fill="rgba(255,255,255,0.12)"/>
-            {/* Neck */}
-            <rect x="39" y="56" width="12" height="14" rx="6" fill="url(#faceGrad)"/>
-            {/* Head */}
-            <ellipse cx="45" cy="44" rx="22" ry="22" fill="url(#faceGrad)"/>
-            {/* Head shine */}
-            <ellipse cx="38" cy="36" rx="8" ry="6" fill="rgba(255,255,255,0.2)" transform="rotate(-20 38 36)"/>
-            {/* Left eye */}
-            <circle cx="37" cy="42" r="5" fill="#1A0A2E"/>
-            <circle cx="37" cy="42" r="3.5" fill="url(#eyeGlow)" filter="url(#glow)"/>
-            <circle cx="38.5" cy="40.5" r="1" fill="#fff"/>
-            {/* Right eye */}
-            <circle cx="53" cy="42" r="5" fill="#1A0A2E"/>
-            <circle cx="53" cy="42" r="3.5" fill="url(#eyeGlow)" filter="url(#glow)"/>
-            <circle cx="54.5" cy="40.5" r="1" fill="#fff"/>
-            {/* Smile */}
-            <path d="M38 51 Q45 57 52 51" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" fill="none"/>
-            {/* Star on forehead */}
-            <text x="42" y="33" fontSize="10" fill="rgba(255,255,255,0.9)" fontWeight="bold">✦</text>
-            {/* Left arm */}
-            <path d="M23 72 Q14 66 12 58 Q11 52 16 50" stroke="url(#bodyGrad)" strokeWidth="8" strokeLinecap="round" fill="none"/>
-            {/* Right arm */}
-            <path d="M67 72 Q76 66 78 58 Q79 52 74 50" stroke="url(#bodyGrad)" strokeWidth="8" strokeLinecap="round" fill="none"/>
-            {/* Left hand sparkle */}
-            <circle cx="14" cy="49" r="4" fill="#A78BFA" filter="url(#glow)"/>
-            <text x="10" y="53" fontSize="8" fill="#fff">✦</text>
-            {/* Right hand sparkle */}
-            <circle cx="76" cy="49" r="4" fill="#60A5FA" filter="url(#glow)"/>
-            <text x="72" y="53" fontSize="8" fill="#fff">✦</text>
-          </svg>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", letterSpacing: 2, textTransform: "uppercase" }}>or</div>
-          <div style={{ width: 1, height: 40, background: "linear-gradient(to bottom,rgba(255,255,255,0.1),transparent)" }} />
+        {/* OR DIVIDER */}
+        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 0, height: 200 }}>
+          <div style={{ width: 1, flex: 1, background: "linear-gradient(to bottom,transparent,rgba(59,130,246,0.15))" }} />
+          <div style={{ width: 32, height: 32, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.2)", letterSpacing: 1.5, flexShrink: 0 }}>OR</div>
+          <div style={{ width: 1, flex: 1, background: "linear-gradient(to bottom,rgba(59,130,246,0.15),transparent)" }} />
         </div>
 
-        {/* RIGHT CARD — Before Design — Navy */}
-        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 520, display: "flex", flexDirection: "column", padding: "28px 28px 24px", background: "linear-gradient(145deg,#071428,#0D2444)", borderRadius: 24, border: "1px solid rgba(96,165,250,0.2)", boxShadow: "0 24px 60px rgba(10,37,64,0.5)", position: "relative", overflow: "hidden" }}>
-          {/* Glow */}
-          <div style={{ position: "absolute", top: -60, left: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(96,165,250,0.25),transparent 70%)", pointerEvents: "none" }} />
+        {/* RIGHT CARD */}
+        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 500, display: "flex", flexDirection: "column", padding: "28px 32px 24px", background: "linear-gradient(145deg,#061220,#0B1E35)", borderRadius: 28, border: "1px solid rgba(96,165,250,0.12)", boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: -80, left: -80, width: 240, height: 240, background: "radial-gradient(circle,rgba(14,165,233,0.1),transparent 70%)", pointerEvents: "none" }} />
 
-          <div style={{ position: "relative", zIndex: 1 }}>
-            {/* Right mascot — analyst with clipboard */}
-            <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-end", gap: 12 }}>
-              <svg width="72" height="80" viewBox="0 0 72 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0 4px 16px rgba(96,165,250,0.5))", flexShrink: 0 }}>
-                <defs>
-                  <radialGradient id="rbodyG" cx="40%" cy="35%" r="60%">
-                    <stop offset="0%" stopColor="#3B82F6"/>
-                    <stop offset="100%" stopColor="#071428"/>
-                  </radialGradient>
-                  <radialGradient id="rfaceG" cx="40%" cy="30%" r="60%">
-                    <stop offset="0%" stopColor="#93C5FD"/>
-                    <stop offset="100%" stopColor="#1D4ED8"/>
-                  </radialGradient>
-                  <filter id="rglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                </defs>
-                {/* Body */}
-                <path d="M14 52 Q12 70 20 75 Q36 80 52 75 Q60 70 58 52 Q50 57 36 57 Q22 57 14 52Z" fill="url(#rbodyG)"/>
-                {/* Neck */}
-                <rect x="31" y="41" width="10" height="12" rx="5" fill="url(#rfaceG)"/>
-                {/* Head */}
-                <ellipse cx="36" cy="30" rx="18" ry="18" fill="url(#rfaceG)"/>
-                {/* Head shine */}
-                <ellipse cx="30" cy="23" rx="6" ry="5" fill="rgba(255,255,255,0.2)" transform="rotate(-20 30 23)"/>
-                {/* Eyes — slightly different shape, more focused look */}
-                <circle cx="29" cy="29" r="4" fill="#071428"/>
-                <circle cx="29" cy="29" r="2.5" fill="white" filter="url(#rglow)" opacity="0.9"/>
-                <circle cx="30.2" cy="27.8" r="0.8" fill="#fff"/>
-                <circle cx="43" cy="29" r="4" fill="#071428"/>
-                <circle cx="43" cy="29" r="2.5" fill="white" filter="url(#rglow)" opacity="0.9"/>
-                <circle cx="44.2" cy="27.8" r="0.8" fill="#fff"/>
-                {/* Slight smile */}
-                <path d="M30 36 Q36 40 42 36" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                {/* Right arm holding clipboard */}
-                <path d="M56 56 Q64 50 66 42" stroke="url(#rbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-                {/* Clipboard */}
-                <rect x="60" y="24" width="20" height="26" rx="3" fill="#0D2444" stroke="#60A5FA" strokeWidth="1.5"/>
-                <rect x="66" y="21" width="8" height="5" rx="2" fill="#60A5FA"/>
-                <line x1="63" y1="31" x2="77" y2="31" stroke="#60A5FA" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
-                <line x1="63" y1="35" x2="77" y2="35" stroke="#60A5FA" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
-                <line x1="63" y1="39" x2="72" y2="39" stroke="#60A5FA" strokeWidth="1.2" strokeLinecap="round" opacity="0.3"/>
-                {/* Left arm up */}
-                <path d="M16 56 Q8 50 6 42" stroke="url(#rbodyG)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-              </svg>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(96,165,250,0.15)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 20, padding: "4px 12px", marginBottom: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD", letterSpacing: 1.5, textTransform: "uppercase" }}>Before Design</span>
-              </div>
+          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+            {/* Label */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+              <span style={{ width: 5, height: 5, background: "#0EA5E9", borderRadius: "50%", boxShadow: "0 0 6px rgba(14,165,233,0.8)" }} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#93C5FD", letterSpacing: 3, textTransform: "uppercase" }}>Before Design</span>
             </div>
 
-            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-0.8px", lineHeight: 1.15 }}>Understand your<br />requirements first.</h2>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: "0 0 16px", lineHeight: 1.6 }}>Paste what your PM or BA gave you — messy Slack message, doc, anything. Get every screen, state and edge case before Figma.</p>
+            {/* Heading */}
+            <h2 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 6px", letterSpacing: "-1px", lineHeight: 1.1 }}>Understand your</h2>
+            <h2 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 12px", letterSpacing: "-1px", lineHeight: 1.1, opacity: 0.5 }}>requirements.</h2>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", margin: "0 0 16px", lineHeight: 1.65, letterSpacing: 0.2 }}>Paste PM or BA requirements. Get every screen, state, edge case and question before you open Figma.</p>
 
             {/* Feature pills */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
-              {[["📱", "Screens Needed"], ["🔲", "Missing States"], ["⚠️", "Edge Cases"], ["❓", "Questions to Ask"]].map(([emoji, label]) => (
-                <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: "#93C5FD", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 20, padding: "4px 10px" }}><span>{emoji}</span>{label}</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 16 }}>
+              {[["📱", "Screens"], ["🔲", "States"], ["⚠️", "Edge Cases"], ["❓", "Questions"]].map(([emoji, label]) => (
+                <span key={label} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: "rgba(147,197,253,0.7)", background: "rgba(14,165,233,0.08)", border: "1px solid rgba(14,165,233,0.12)", borderRadius: 20, padding: "3px 9px" }}><span>{emoji}</span>{label}</span>
               ))}
             </div>
 
@@ -409,11 +284,12 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
               value={briefText}
               onChange={(e) => setBriefText(e.target.value)}
               placeholder="Paste requirements here — Slack message, BA doc, user story, anything..."
-              style={{ width: "100%", height: 100, borderRadius: 12, border: "1.5px solid rgba(255,255,255,0.1)", padding: "12px 14px", fontSize: 13, color: "#fff", resize: "none", fontFamily: "inherit", lineHeight: 1.6, boxSizing: "border-box", outline: "none", background: "rgba(255,255,255,0.05)", marginBottom: 12, caretColor: "#60A5FA" }}
+              style={{ width: "100%", flex: 1, minHeight: 80, borderRadius: 14, border: "1.5px solid rgba(255,255,255,0.07)", padding: "12px 14px", fontSize: 12, color: "rgba(255,255,255,0.8)", resize: "none", fontFamily: "inherit", lineHeight: 1.65, boxSizing: "border-box", outline: "none", background: "rgba(255,255,255,0.03)", marginBottom: 12, caretColor: "#60A5FA" }}
             />
 
-            <button onClick={onBrief} style={{ width: "100%", background: briefText.trim().length > 10 ? "linear-gradient(135deg,#1D4ED8,#0EA5E9)" : "rgba(255,255,255,0.07)", color: briefText.trim().length > 10 ? "#fff" : "rgba(255,255,255,0.3)", border: briefText.trim().length > 10 ? "none" : "1px solid rgba(255,255,255,0.1)", padding: "13px", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: briefText.trim().length > 10 ? "pointer" : "default", transition: "all 0.25s", boxShadow: briefText.trim().length > 10 ? "0 4px 24px rgba(14,165,233,0.4)" : "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-              {briefText.trim().length > 10 ? <>Generate Design Brief <span style={{ fontSize: 17 }}>→</span></> : "Paste your requirements above"}
+            {/* CTA — glass button */}
+            <button onClick={onBrief} style={{ width: "100%", background: briefText.trim().length > 10 ? "rgba(14,165,233,0.15)" : "rgba(255,255,255,0.03)", color: briefText.trim().length > 10 ? "#fff" : "rgba(255,255,255,0.2)", border: briefText.trim().length > 10 ? "1px solid rgba(14,165,233,0.4)" : "1px solid rgba(255,255,255,0.06)", padding: "14px", borderRadius: 14, fontSize: 14, fontWeight: 700, cursor: briefText.trim().length > 10 ? "pointer" : "default", transition: "all 0.25s", boxShadow: briefText.trim().length > 10 ? "0 0 20px rgba(14,165,233,0.2), inset 0 1px 0 rgba(255,255,255,0.1)" : "none", backdropFilter: "blur(16px)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, letterSpacing: briefText.trim().length > 10 ? "-0.3px" : 0 }}>
+              {briefText.trim().length > 10 ? <>Generate Design Brief <span style={{ fontSize: 16 }}>→</span></> : "Paste your requirements above"}
             </button>
           </div>
         </div>
@@ -423,7 +299,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
       <div style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "8px 24px 14px", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ display: "flex" }}>
-            {["#7C3AED","#4F46E5","#0EA5E9","#10B981","#F59E0B"].map((c, i) => (
+            {["#1D4ED8","#2563EB","#0EA5E9","#0284C7","#38BDF8"].map((c, i) => (
               <div key={i} style={{ width: 24, height: 24, borderRadius: "50%", background: c, border: "2px solid #0F0F10", marginLeft: i === 0 ? 0 : -8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 700 }}>{["A","B","C","D","E"][i]}</div>
             ))}
           </div>
@@ -957,11 +833,11 @@ export default function DesignBestie() {
 
   if (screen === "analysing") {
     return (
-      <div style={{ minHeight: "100vh", background: "#0F0F10", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+      <div style={{ minHeight: "100vh", background: "#020B18", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
         <style>{`@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}`}</style>
         <nav style={{ padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#7C3AED,#4F46E5)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
             </div>
             <span style={{ fontWeight: 700, color: "#fff", fontSize: 16 }}>Design Bestie</span>
@@ -974,11 +850,11 @@ export default function DesignBestie() {
             <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
               <div style={{ position: "relative", width: 260, height: 520 }}>
                 {/* Large purple glow behind phone */}
-                <div style={{ position: "absolute", inset: -60, background: "radial-gradient(ellipse,rgba(124,58,237,0.35),transparent 65%)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", inset: -60, background: "radial-gradient(ellipse,rgba(37,99,235,0.35),transparent 65%)", pointerEvents: "none" }} />
                 {/* Secondary blue glow */}
-                <div style={{ position: "absolute", inset: -40, background: "radial-gradient(ellipse at 70% 30%,rgba(79,70,229,0.2),transparent 60%)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", inset: -40, background: "radial-gradient(ellipse at 70% 30%,rgba(14,165,233,0.2),transparent 60%)", pointerEvents: "none" }} />
                 {/* Phone body — visible grey not black */}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg,#3D3D4A,#1E1E28)", borderRadius: 52, boxShadow: "0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.12), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 40px rgba(124,58,237,0.3)" }}>
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg,#3D3D4A,#1E1E28)", borderRadius: 52, boxShadow: "0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.12), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 40px rgba(37,99,235,0.3)" }}>
                   {/* Side buttons */}
                   <div style={{ position: "absolute", left: -4, top: 95, width: 4, height: 30, background: "linear-gradient(180deg,#4A4A5A,#2A2A3A)", borderRadius: "3px 0 0 3px" }} />
                   <div style={{ position: "absolute", left: -4, top: 135, width: 4, height: 48, background: "linear-gradient(180deg,#4A4A5A,#2A2A3A)", borderRadius: "3px 0 0 3px" }} />
@@ -989,13 +865,13 @@ export default function DesignBestie() {
                     {imagePreview
                       ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       : <div style={{ width: "100%", height: "100%", background: "linear-gradient(145deg,#0F0F1A,#1A0A2E)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-                          <div style={{ width: 40, height: 40, background: "linear-gradient(135deg,#7C3AED,#4F46E5)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <div style={{ width: 40, height: 40, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <span style={{ color: "#fff", fontSize: 20 }}>✦</span>
                           </div>
                           <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, fontWeight: 500 }}>Your design</span>
                         </div>}
                     {/* Scanning line animation */}
-                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 0%,rgba(124,58,237,0.12) 48%,rgba(124,58,237,0.12) 52%,transparent 100%)", animation: "pulse 2s ease-in-out infinite" }} />
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 0%,rgba(37,99,235,0.12) 48%,rgba(37,99,235,0.12) 52%,transparent 100%)", animation: "pulse 2s ease-in-out infinite" }} />
                     {/* Bottom home indicator */}
                     <div style={{ position: "absolute", bottom: 8, left: "50%", transform: "translateX(-50%)", width: 80, height: 4, background: "rgba(255,255,255,0.25)", borderRadius: 2 }} />
                   </div>
@@ -1005,14 +881,14 @@ export default function DesignBestie() {
 
             {/* Steps */}
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, letterSpacing: 3, color: "rgba(124,58,237,0.8)", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>Processing</div>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: "rgba(59,130,246,0.9)", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>Processing</div>
               <h2 style={{ fontSize: 36, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-1.2px" }}>Analysing your design</h2>
               <p style={{ fontSize: 15, color: "rgba(255,255,255,0.4)", margin: "0 0 32px" }}>Running against 50+ expert frameworks</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {analysingSteps.map((s, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < step ? "linear-gradient(135deg,#7C3AED,#4F46E5)" : "transparent", border: i < step ? "none" : i === step ? "2px solid #7C3AED" : "2px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s", boxShadow: i < step ? "0 2px 8px rgba(124,58,237,0.4)" : "none" }}>
-                      {i < step ? <span style={{ color: "#fff", fontSize: 11 }}>✓</span> : i === step ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#7C3AED" }} /> : null}
+                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < step ? "linear-gradient(135deg,#2563EB,#0EA5E9)" : "transparent", border: i < step ? "none" : i === step ? "2px solid #3B82F6" : "2px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s", boxShadow: i < step ? "0 2px 8px rgba(37,99,235,0.4)" : "none" }}>
+                      {i < step ? <span style={{ color: "#fff", fontSize: 11 }}>✓</span> : i === step ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#3B82F6" }} /> : null}
                     </div>
                     <span style={{ fontSize: 15, color: i < step ? "rgba(255,255,255,0.9)" : i === step ? "#fff" : "rgba(255,255,255,0.2)", fontWeight: i === step ? 600 : 400, transition: "all 0.3s" }}>{s}</span>
                     {i < step && <span style={{ marginLeft: "auto", fontSize: 11, color: "#A78BFA", fontWeight: 600 }}>Done</span>}
@@ -1022,10 +898,10 @@ export default function DesignBestie() {
               <div style={{ marginTop: 28 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                   <span style={{ fontSize: 13, color: "rgba(255,255,255,0.25)" }}>Usually takes 15 seconds</span>
-                  <span style={{ fontSize: 13, color: "#A78BFA", fontWeight: 700 }}>{Math.round((step / analysingSteps.length) * 100)}%</span>
+                  <span style={{ fontSize: 13, color: "#60A5FA", fontWeight: 700 }}>{Math.round((step / analysingSteps.length) * 100)}%</span>
                 </div>
                 <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2 }}>
-                  <div style={{ height: "100%", background: "linear-gradient(90deg,#7C3AED,#4F46E5)", borderRadius: 2, width: `${(step / analysingSteps.length) * 100}%`, transition: "width 0.6s ease", boxShadow: "0 0 12px rgba(124,58,237,0.6)" }} />
+                  <div style={{ height: "100%", background: "linear-gradient(90deg,#2563EB,#0EA5E9)", borderRadius: 2, width: `${(step / analysingSteps.length) * 100}%`, transition: "width 0.6s ease", boxShadow: "0 0 12px rgba(37,99,235,0.6)" }} />
                 </div>
               </div>
             </div>
@@ -1213,7 +1089,7 @@ export default function DesignBestie() {
                     {stressSteps.map((s, i) => (
                       <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < stressStep ? "#2D0A4E" : "transparent", border: i < stressStep ? "none" : i === stressStep ? "2px solid #2D0A4E" : "2px solid #D2D2D7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
-                          {i < stressStep ? <span style={{ color: "#fff", fontSize: 12 }}>✓</span> : i === stressStep ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2D0A4E" }} /> : null}
+                          {i < stressStep ? <span style={{ color: "#fff", fontSize: 12 }}>✓</span> : i === stressStep ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2563EB" }} /> : null}
                         </div>
                         <span style={{ fontSize: 15, color: i <= stressStep ? "#1D1D1F" : "#C7C7CC", transition: "all 0.3s" }}>{s}</span>
                         {i < stressStep && <span style={{ marginLeft: "auto", fontSize: 12, color: "#34C759", fontWeight: 600 }}>Done</span>}
@@ -1221,7 +1097,7 @@ export default function DesignBestie() {
                     ))}
                   </div>
                   <div style={{ marginTop: 28, height: 4, background: "#E5E5EA", borderRadius: 2 }}>
-                    <div style={{ height: "100%", background: "#2D0A4E", borderRadius: 2, width: `${(stressStep / stressSteps.length) * 100}%`, transition: "width 0.6s ease" }} />
+                    <div style={{ height: "100%", background: "#2563EB", borderRadius: 2, width: `${(stressStep / stressSteps.length) * 100}%`, transition: "width 0.6s ease" }} />
                   </div>
                 </div>
               </div>
@@ -1318,12 +1194,12 @@ export default function DesignBestie() {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {["Reading requirements", "Identifying screens needed", "Flagging edge cases", "Spotting missing states", "Generating questions to ask"].map((s, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, opacity: 0.6 + i * 0.08 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2D0A4E", flexShrink: 0 }} />
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2563EB", flexShrink: 0 }} />
                 <span style={{ fontSize: 14, color: "#3A3A3C" }}>{s}</span>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 32, width: 40, height: 40, borderRadius: "50%", border: "3px solid #2D0A4E", borderTopColor: "transparent", animation: "spin 0.8s linear infinite", margin: "32px auto 0" }} />
+          <div style={{ marginTop: 32, width: 40, height: 40, borderRadius: "50%", border: "3px solid #2563EB", borderTopColor: "transparent", animation: "spin 0.8s linear infinite", margin: "32px auto 0" }} />
         </div>
       </div>
     );
@@ -1331,90 +1207,100 @@ export default function DesignBestie() {
 
   // ── BRIEF RESULTS ─────────────────────────────────────────────────────────
   if (screen === "brief" && briefResult) {
+    // TODO: Add AI chatbot here in future release for quick follow-up questions on the brief
     return (
-      <div style={{ minHeight: "100vh", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+      <div style={{ minHeight: "100vh", background: "#020B18", fontFamily: "'SF Pro Display',-apple-system,sans-serif", color: "#fff" }}>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-        <nav style={{ background: "rgba(245,245,247,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
+
+        {/* NAV */}
+        <nav style={{ padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)", position: "sticky", top: 0, zIndex: 10, background: "rgba(2,11,24,0.9)", backdropFilter: "blur(20px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 28, height: 28, background: "#1D1D1F", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 14 }}>✦</span></div>
-            <span style={{ fontWeight: 700, color: "#1D1D1F", fontSize: 16 }}>Design Bestie</span>
+            <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
+            </div>
+            <span style={{ fontWeight: 700, color: "#fff", fontSize: 16 }}>Design Bestie</span>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => { setBriefResult(null); setBriefText(""); setScreen("home"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73" }}>← New Brief</button>
-            <button onClick={() => setScreen("home")} style={{ background: "#2D0A4E", color: "#fff", border: "none", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Review a Design →</button>
+            <button onClick={() => { setBriefResult(null); setBriefText(""); setScreen("home"); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>← New Brief</button>
+            <button onClick={() => setScreen("home")} style={{ background: "linear-gradient(135deg,#2563EB,#0EA5E9)", color: "#fff", border: "none", borderRadius: 20, padding: "8px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, boxShadow: "0 4px 16px rgba(124,58,237,0.4)" }}>Review a Design →</button>
           </div>
         </nav>
 
-        <div style={{ maxWidth: "100%", padding: "32px 48px" }}>
+        {/* CONTENT */}
+        <div style={{ padding: "40px 56px 60px" }}>
+
           {/* Header */}
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 12, color: "#AEAEB2", fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Design Brief</div>
-            <h1 style={{ fontSize: 40, fontWeight: 800, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1.5px" }}>{briefResult.feature_name || "Your Feature"}</h1>
-            <p style={{ fontSize: 18, color: "#6E6E73", margin: 0, lineHeight: 1.6 }}>{briefResult.summary}</p>
+          <div style={{ marginBottom: 40 }}>
+            <div style={{ fontSize: 11, color: "rgba(124,58,237,0.8)", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Design Brief</div>
+            <h1 style={{ fontSize: 44, fontWeight: 900, color: "#fff", margin: "0 0 12px", letterSpacing: "-2px", lineHeight: 1 }}>{briefResult.feature_name || "Your Feature"}</h1>
+            <p style={{ fontSize: 20, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.7, maxWidth: 680 }}>{briefResult.summary}</p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
-
-            {/* Screens needed */}
-            <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA", gridColumn: "1 / -1" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#2D0A4E", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>📱 Screens to Design</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-                {(briefResult.screens_needed || []).map((s: any, i: number) => (
-                  <div key={i} style={{ background: "#F5F5F7", borderRadius: 10, padding: "12px 14px" }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>{s.screen}</div>
-                    <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{s.purpose}</div>
-                  </div>
-                ))}
-              </div>
+          {/* SCREENS — full width */}
+          <div style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 20, padding: "24px 28px", marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>📱 Screens to Design</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 12 }}>
+              {(briefResult.screens_needed || []).map((s: any, i: number) => (
+                <div key={i} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 5 }}>{s.screen}</div>
+                  <div style={{ fontSize: 15, color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>{s.purpose}</div>
+                </div>
+              ))}
             </div>
+          </div>
 
-            {/* Missing states */}
-            <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🔲 States to Design</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {/* 3 column grid below */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
+
+            {/* States */}
+            <div style={{ background: "rgba(255,59,48,0.06)", border: "1px solid rgba(255,59,48,0.2)", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#FF6B6B", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>🔲 States to Design</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(briefResult.states_needed || []).map((s: any, i: number) => (
-                  <div key={i} style={{ display: "flex", gap: 10, padding: "10px 12px", background: "#FFF5F4", borderRadius: 8, borderLeft: "3px solid #FF3B30" }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", marginBottom: 2 }}>{s.state}</div>
-                      <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{s.description}</div>
-                    </div>
+                  <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #FF6B6B" }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#FF8A80", marginBottom: 4 }}>{s.state}</div>
+                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>{s.description}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Edge cases */}
-            <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#FF9500", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>⚠️ Edge Cases</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ background: "rgba(255,149,0,0.06)", border: "1px solid rgba(255,149,0,0.2)", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#FFB347", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>⚠️ Edge Cases</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(briefResult.edge_cases || []).map((e: any, i: number) => (
-                  <div key={i} style={{ padding: "10px 12px", background: "#FFFBF0", borderRadius: 8, borderLeft: "3px solid #FF9500" }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#FF9500", marginBottom: 2 }}>{e.case}</div>
-                    <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{e.what_to_design}</div>
+                  <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #FFB347" }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#FFB347", marginBottom: 4 }}>{e.case}</div>
+                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>{e.what_to_design}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Questions to ask */}
-            <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#5856D6", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>❓ Ask Before You Start</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {/* Questions */}
+            <div style={{ background: "rgba(88,86,214,0.08)", border: "1px solid rgba(88,86,214,0.25)", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#9B8FF5", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>❓ Ask Before You Start</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(briefResult.questions_to_ask || []).map((q: string, i: number) => (
-                  <div key={i} style={{ padding: "10px 12px", background: "#F0F0FF", borderRadius: 8, fontSize: 13, color: "#3A3A3C", borderLeft: "3px solid #5856D6" }}>
+                  <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #9B8FF5", fontSize: 15, color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
                     {q}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Conflicts */}
+          </div>
+
+          {/* Conflicts + Checklist row */}
+          <div style={{ display: "grid", gridTemplateColumns: briefResult.conflicts?.length > 0 ? "1fr 1fr" : "1fr", gap: 16, marginBottom: 28 }}>
+
             {briefResult.conflicts?.length > 0 && (
-              <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>🚨 Conflicts in Requirements</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ background: "rgba(255,59,48,0.06)", border: "1px solid rgba(255,59,48,0.2)", borderRadius: 20, padding: "22px 24px" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#FF6B6B", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>🚨 Conflicts in Requirements</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {briefResult.conflicts.map((c: string, i: number) => (
-                    <div key={i} style={{ padding: "10px 12px", background: "#FFF5F4", borderRadius: 8, fontSize: 13, color: "#3A3A3C", borderLeft: "3px solid #FF3B30" }}>
+                    <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #FF6B6B", fontSize: 15, color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
                       {c}
                     </div>
                   ))}
@@ -1423,12 +1309,12 @@ export default function DesignBestie() {
             )}
 
             {/* Checklist */}
-            <div style={{ background: "#fff", borderRadius: 16, padding: "20px 24px", border: "1px solid #E5E5EA", gridColumn: briefResult.conflicts?.length > 0 ? "auto" : "1 / -1" }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#34C759", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>✅ Design Checklist</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+            <div style={{ background: "rgba(52,199,89,0.06)", border: "1px solid rgba(52,199,89,0.2)", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#5DBD72", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>✅ Design Checklist</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {(briefResult.checklist || []).map((item: string, i: number) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", background: "#F0FFF4", borderRadius: 8, fontSize: 12, color: "#1C4A26" }}>
-                    <span style={{ color: "#34C759", fontWeight: 700, flexShrink: 0 }}>□</span>{item}
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 12px", background: "rgba(255,255,255,0.04)", borderRadius: 10, fontSize: 14, color: "rgba(255,255,255,0.75)", lineHeight: 1.55 }}>
+                    <span style={{ color: "#5DBD72", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>{item}
                   </div>
                 ))}
               </div>
@@ -1436,8 +1322,10 @@ export default function DesignBestie() {
 
           </div>
 
-          {/* Copy brief */}
-          <div style={{ marginTop: 20 }}>
+          {/* Action buttons */}
+          <div style={{ display: "flex", gap: 12 }}>
+
+            {/* Copy to clipboard */}
             <button
               onClick={() => {
                 const lines = [
@@ -1459,10 +1347,84 @@ export default function DesignBestie() {
                   "",
                   "Generated by Design Bestie — design-bestie.vercel.app",
                 ];
-                navigator.clipboard.writeText(lines.join("\n")).then(() => alert("Brief copied! Paste into Notion or Slack 📋"));
+                navigator.clipboard.writeText(lines.join("\n")).then(() => alert("Copied! Paste into Notion or Slack 📋"));
               }}
-              style={{ width: "100%", background: "#1D1D1F", color: "#fff", border: "none", borderRadius: 14, padding: "16px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}
-            >Copy Brief to Clipboard 📋</button>
+              style={{ flex: 1, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, padding: "16px", fontSize: 15, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+            >
+              <span>📋</span> Copy to Clipboard
+            </button>
+
+            {/* Download as checklist for team */}
+            <button
+              onClick={() => {
+                const featureName = briefResult.feature_name || "Feature";
+                const date = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                const divider = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+                const lines = [
+                  "DESIGN REVIEW CHECKLIST",
+                  featureName.toUpperCase(),
+                  "Generated by Design Bestie  |  " + date,
+                  divider,
+                  "",
+                  "Send this to your PM / BA / Dev team before starting design.",
+                  "",
+                  divider,
+                  "SECTION 1 — QUESTIONS TO CLARIFY WITH YOUR TEAM",
+                  divider,
+                  "Please review and answer these before design begins:",
+                  "",
+                  ...(briefResult.questions_to_ask || []).map((q: string, i: number) => "  " + (i + 1) + ". " + q + "\n     Answer: _______________________________________________\n"),
+                  "",
+                  divider,
+                  "SECTION 2 — SCREENS TO CONFIRM",
+                  divider,
+                  "Confirm these screens are in scope:",
+                  "",
+                  ...(briefResult.screens_needed || []).map((s: any) => "  ☐  " + s.screen + "\n     " + s.purpose + "\n"),
+                  "",
+                  divider,
+                  "SECTION 3 — EDGE CASES TO DISCUSS",
+                  divider,
+                  "These scenarios need a decision before design starts:",
+                  "",
+                  ...(briefResult.edge_cases || []).map((e: any) => "  ☐  " + e.case + "\n     " + e.what_to_design + "\n"),
+                  "",
+                  divider,
+                  "SECTION 4 — STATES TO DESIGN",
+                  divider,
+                  "Confirm all these states need to be designed:",
+                  "",
+                  ...(briefResult.states_needed || []).map((s: any) => "  ☐  " + s.state + "\n     " + s.description + "\n"),
+                  "",
+                  divider,
+                  "NOTES / DECISIONS",
+                  divider,
+                  "",
+                  "  _______________________________________________",
+                  "  _______________________________________________",
+                  "  _______________________________________________",
+                  "  _______________________________________________",
+                  "",
+                  divider,
+                  "Powered by Design Bestie — design-bestie.vercel.app",
+                  divider,
+                ];
+                const text = lines.join("\n");
+                const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = featureName.replace(/\s+/g, "-").toLowerCase() + "-design-checklist.txt";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }}
+              style={{ flex: 1, background: "linear-gradient(135deg,#1D4ED8,#0EA5E9)", color: "#fff", border: "none", borderRadius: 14, padding: "16px", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 20px rgba(14,165,233,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+            >
+              <span>⬇️</span> Download Team Checklist
+            </button>
+
           </div>
         </div>
       </div>
