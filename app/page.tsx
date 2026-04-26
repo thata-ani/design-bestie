@@ -127,7 +127,7 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
         ctx.save();
         ctx.translate(icon.x, icon.y);
         ctx.rotate(icon.rotation);
-        ctx.strokeStyle = `rgba(191,192,198,1,${icon.opacity})`;
+        ctx.strokeStyle = `rgba(29,29,31,${icon.opacity})`;
         ctx.lineWidth = 1.2;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
