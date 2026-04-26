@@ -373,44 +373,35 @@ function AnnotatedImage({ imagePreview, issues, activeIssueId }: { imagePreview:
           }} />
         )}
 
-        {/* Number badge at zone center */}
-        {badge && style && (
-          <div style={{
-            position: "absolute",
-            top: badge.top, left: badge.left,
-            transform: badge.transform,
-            width: 28, height: 28,
-            background: style.color,
-            borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 13, color: "#fff", fontWeight: 800,
-            boxShadow: `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)`,
-            pointerEvents: "none",
-            transition: "all 0.25s",
-            zIndex: 10,
-          }}>
-            {activeIssue.id}
-          </div>
-        )}
+        {/* Active badge handled in the unified badges loop above */}
 
-        {/* No active issue — show all zone badges faintly */}
-        {!activeIssue && issues.filter(i => i.severity !== "win").map((issue) => {
+        {/* Always show all badges — dim non-active ones when one is selected */}
+        {issues.filter(i => i.severity !== "win").map((issue) => {
           const pos = issue.zone ? ZONE_POSITIONS[issue.zone] : null;
           if (!pos) return null;
           const s = getSeverityStyle(issue.severity);
+          const isActive = activeIssueId === issue.id;
+          const isDimmed = activeIssueId !== null && !isActive;
           return (
             <div key={issue.id} style={{
               position: "absolute",
               top: pos.top, left: pos.left,
               transform: pos.transform,
-              width: 22, height: 22,
+              width: isActive ? 28 : 22,
+              height: isActive ? 28 : 22,
               background: s.color,
               borderRadius: "50%",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 11, color: "#fff", fontWeight: 700,
-              boxShadow: "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)",
+              fontSize: isActive ? 13 : 11,
+              color: "#fff",
+              fontWeight: 700,
+              boxShadow: isActive
+                ? `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)`
+                : "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)",
               pointerEvents: "none",
-              opacity: 0.85,
+              opacity: isDimmed ? 0.3 : 1,
+              transition: "all 0.25s",
+              zIndex: isActive ? 10 : 5,
             }}>
               {issue.id}
             </div>
