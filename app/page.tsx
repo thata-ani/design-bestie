@@ -348,6 +348,10 @@ function AnnotatedImage({ imagePreview, issues, activeIssueId }: { imagePreview:
   const highlight = zone ? ZONE_HIGHLIGHT[zone] : null;
   const badge = zone ? ZONE_POSITIONS[zone] : null;
   const style = activeIssue ? getSeverityStyle(activeIssue.severity) : null;
+  // Debug — remove after confirming zones work
+  if (typeof window !== "undefined") {
+    console.log("[AnnotatedImage] activeIssueId:", activeIssueId, "zone:", zone, "issues zones:", issues.map(i => ({id:i.id, zone:i.zone})));
+  }
 
   return (
     <div style={{ flex: 1, overflow: "auto", padding: 16, display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
