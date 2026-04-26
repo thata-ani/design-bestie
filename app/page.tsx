@@ -66,27 +66,36 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
     const ctx = canvas.getContext("2d")!;
 
     const initIcons = (w: number, h: number) => {
-      const spacing = 18;
-      const cols = Math.ceil(w / spacing);
-      const rows = Math.ceil(h / spacing);
-      iconsRef.current = [];
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const bx = (c + 0.5) * spacing;
-          const by = (r + 0.5) * spacing;
-          iconsRef.current.push({
-            icon: DESIGN_ICONS[(r * cols + c) % DESIGN_ICONS.length],
-            x: bx + (Math.random() - 0.5) * 20,
-            y: by + (Math.random() - 0.5) * 20,
-            baseX: bx, baseY: by,
-            size: 13,
-            opacity: 0.40 + Math.random() * 0.14,
-            vx: 0, vy: 0,
-            rotation: (Math.random() - 0.5) * 2.5,
-          });
-        }
-      }
-    };
+  const spacing = 22;
+  const cols = Math.ceil(w / spacing);
+  const rows = Math.ceil(h / spacing);
+  iconsRef.current = [];
+  
+  // Shuffle icons so no two adjacent cells get the same one
+  const total = cols * rows;
+  const pool: any[] = [];
+  while (pool.length < total) {
+    const shuffled = [...DESIGN_ICONS].sort(() => Math.random() - 0.5);
+    pool.push(...shuffled);
+  }
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const bx = (c + 0.5) * spacing;
+      const by = (r + 0.5) * spacing;
+      iconsRef.current.push({
+        icon: pool[r * cols + c],
+        x: bx + (Math.random() - 0.5) * 20,
+        y: by + (Math.random() - 0.5) * 20,
+        baseX: bx, baseY: by,
+        size: 13,
+        opacity: 0.18 + Math.random() * 0.10,
+        vx: 0, vy: 0,
+        rotation: (Math.random() - 0.5) * 0.5,
+      });
+    }
+  }
+};
 
     const resize = () => {
       canvas.width = window.innerWidth;
