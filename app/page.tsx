@@ -30,7 +30,7 @@ const ALL_PERSONAS = [
   { name: "Non-native Speaker", emoji: "🌍", desc: "Struggles with jargon, idioms, dense text" },
 ];
 
-const patternMeta = {
+const patternMeta: Record<string, { icon: string; color: string }> = {
   "F-Pattern": { icon: "F", color: "#6366F1" },
   "Z-Pattern": { icon: "Z", color: "#8B5CF6" },
   "Gutenberg Pattern": { icon: "G", color: "#0EA5E9" },
@@ -53,7 +53,6 @@ function getSeverityStyle(severity: string) {
   return { color: "#34C759", bg: "#F0FFF4", label: "Win" };
 }
 
-// ── Home Screen ─────────────────────────────────────────────────────────────
 function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, isDragging, setIsDragging, handleInputChange, handleDrop }: any) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -9999, y: -9999 });
@@ -70,17 +69,23 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
       const cols = Math.ceil(w / spacing);
       const rows = Math.ceil(h / spacing);
       iconsRef.current = [];
+      const total = cols * rows;
+      const pool: any[] = [];
+      while (pool.length < total) {
+        const shuffled = [...DESIGN_ICONS].sort(() => Math.random() - 0.5);
+        pool.push(...shuffled);
+      }
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const bx = (c + 0.5) * spacing;
           const by = (r + 0.5) * spacing;
           iconsRef.current.push({
-            icon: DESIGN_ICONS[(r * cols + c) % DESIGN_ICONS.length],
+            icon: pool[r * cols + c],
             x: bx + (Math.random() - 0.5) * 6,
             y: by + (Math.random() - 0.5) * 6,
             baseX: bx, baseY: by,
-            size: 13,
-            opacity: 0.18 + Math.random() * 0.10,
+            size: 10 + Math.random() * 16,
+            opacity: 0.06 + Math.random() * 0.06,
             vx: 0, vy: 0,
             rotation: (Math.random() - 0.5) * 0.5,
           });
@@ -214,7 +219,6 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
   );
 }
 
-// ── Persona Modal ────────────────────────────────────────────────────────────
 function PersonaModal({ onClose, onRun }: { onClose: () => void; onRun: (p: string[]) => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const toggle = (name: string) => {
@@ -268,12 +272,11 @@ function PersonaModal({ onClose, onRun }: { onClose: () => void; onRun: (p: stri
   );
 }
 
-// ── Issue Card ───────────────────────────────────────────────────────────────
-function IssueCard({ issue, expanded, onToggle }: { issue: any; expanded: boolean; onToggle: () => void }) {
+function IssueCard({ issue, expanded, onToggle, highlighted }: { issue: any; expanded: boolean; onToggle: () => void; highlighted?: boolean }) {
   const style = getSeverityStyle(issue.severity);
   const bullets = parseBullets(issue.learn_why || issue.learnWhy);
   return (
-    <div style={{ background: "#fff", border: "1px solid #E5E5EA", borderLeft: `3px solid ${style.color}`, borderRadius: 10, overflow: "hidden" }}>
+    <div style={{ background: highlighted ? `${style.bg}` : "#fff", border: highlighted ? `2px solid ${style.color}` : "1px solid #E5E5EA", borderLeft: `3px solid ${style.color}`, borderRadius: 10, overflow: "hidden", transition: "all 0.2s" }}>
       <button onClick={onToggle} style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "flex-start", gap: 12 }}>
         <div style={{ width: 22, height: 22, background: style.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{issue.id}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -314,19 +317,102 @@ function IssueCard({ issue, expanded, onToggle }: { issue: any; expanded: boolea
   );
 }
 
-// ── Annotated Image ──────────────────────────────────────────────────────────
-function AnnotatedImage({ imagePreview, issues }: { imagePreview: string; issues: any[] }) {
+// Zone to CSS position mapping
+const ZONE_POSITIONS: Record<string, { top: string; left: string; transform: string }> = {
+  "top-left":      { top: "10%",  left: "15%",  transform: "translate(-50%,-50%)" },
+  "top-center":    { top: "10%",  left: "50%",  transform: "translate(-50%,-50%)" },
+  "top-right":     { top: "10%",  left: "85%",  transform: "translate(-50%,-50%)" },
+  "mid-left":      { top: "50%",  left: "15%",  transform: "translate(-50%,-50%)" },
+  "mid-center":    { top: "50%",  left: "50%",  transform: "translate(-50%,-50%)" },
+  "mid-right":     { top: "50%",  left: "85%",  transform: "translate(-50%,-50%)" },
+  "bottom-left":   { top: "85%",  left: "15%",  transform: "translate(-50%,-50%)" },
+  "bottom-center": { top: "85%",  left: "50%",  transform: "translate(-50%,-50%)" },
+  "bottom-right":  { top: "85%",  left: "85%",  transform: "translate(-50%,-50%)" },
+};
+
+const ZONE_HIGHLIGHT: Record<string, { top: string; left: string; width: string; height: string }> = {
+  "top-left":      { top: "0%",    left: "0%",    width: "34%", height: "33%" },
+  "top-center":    { top: "0%",    left: "33%",   width: "34%", height: "33%" },
+  "top-right":     { top: "0%",    left: "66%",   width: "34%", height: "33%" },
+  "mid-left":      { top: "33%",   left: "0%",    width: "34%", height: "34%" },
+  "mid-center":    { top: "33%",   left: "33%",   width: "34%", height: "34%" },
+  "mid-right":     { top: "33%",   left: "66%",   width: "34%", height: "34%" },
+  "bottom-left":   { top: "67%",   left: "0%",    width: "34%", height: "33%" },
+  "bottom-center": { top: "67%",   left: "33%",   width: "34%", height: "33%" },
+  "bottom-right":  { top: "67%",   left: "66%",   width: "34%", height: "33%" },
+};
+
+function AnnotatedImage({ imagePreview, issues, activeIssueId }: { imagePreview: string; issues: any[]; activeIssueId: number | null }) {
+  const activeIssue = activeIssueId !== null ? issues.find(i => i.id === activeIssueId) : null;
+  const zone = activeIssue?.zone;
+  const highlight = zone ? ZONE_HIGHLIGHT[zone] : null;
+  const badge = zone ? ZONE_POSITIONS[zone] : null;
+  const style = activeIssue ? getSeverityStyle(activeIssue.severity) : null;
+
   return (
     <div style={{ flex: 1, overflow: "auto", padding: 16, display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
-      <div style={{ position: "relative", display: "inline-block", maxWidth: "100%" }}>
-        <img src={imagePreview} alt="Design" style={{ display: "block", maxWidth: "100%", height: "auto", borderRadius: 8, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }} />
-        {issues.filter((i) => i.severity !== "win").map((issue) => {
-          const loc = issue.location;
-          if (!loc || typeof loc.x !== "number") return null;
-          const style = getSeverityStyle(issue.severity);
+      <div style={{ position: "relative", display: "inline-block", maxWidth: "100%", width: "100%" }}>
+        <img src={imagePreview} alt="Design" style={{ display: "block", maxWidth: "100%", width: "100%", height: "auto", borderRadius: 8, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }} />
+
+        {/* Dark overlay on whole image when a zone is active */}
+        {highlight && (
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", borderRadius: 8, pointerEvents: "none", transition: "opacity 0.2s" }} />
+        )}
+
+        {/* Highlighted zone — punches through the dark overlay */}
+        {highlight && style && (
+          <div style={{
+            position: "absolute",
+            top: highlight.top, left: highlight.left,
+            width: highlight.width, height: highlight.height,
+            boxShadow: `0 0 0 3px ${style.color}, inset 0 0 0 9999px transparent`,
+            borderRadius: 6,
+            pointerEvents: "none",
+            transition: "all 0.25s",
+            background: `${style.color}22`,
+          }} />
+        )}
+
+        {/* Number badge at zone center */}
+        {badge && style && (
+          <div style={{
+            position: "absolute",
+            top: badge.top, left: badge.left,
+            transform: badge.transform,
+            width: 28, height: 28,
+            background: style.color,
+            borderRadius: "50%",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 13, color: "#fff", fontWeight: 800,
+            boxShadow: `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)`,
+            pointerEvents: "none",
+            transition: "all 0.25s",
+            zIndex: 10,
+          }}>
+            {activeIssue.id}
+          </div>
+        )}
+
+        {/* No active issue — show all zone badges faintly */}
+        {!activeIssue && issues.filter(i => i.severity !== "win").map((issue) => {
+          const pos = issue.zone ? ZONE_POSITIONS[issue.zone] : null;
+          if (!pos) return null;
+          const s = getSeverityStyle(issue.severity);
           return (
-            <div key={issue.id} style={{ position: "absolute", top: `${loc.y}%`, left: `${loc.x}%`, width: `${loc.width}%`, height: `${loc.height}%`, border: `2px solid ${style.color}`, borderRadius: 4, pointerEvents: "none", boxShadow: "0 0 0 2px rgba(255,255,255,0.9)" }}>
-              <div style={{ position: "absolute", top: -11, left: -11, width: 22, height: 22, background: style.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, boxShadow: "0 2px 6px rgba(0,0,0,0.25)" }}>{issue.id}</div>
+            <div key={issue.id} style={{
+              position: "absolute",
+              top: pos.top, left: pos.left,
+              transform: pos.transform,
+              width: 22, height: 22,
+              background: s.color,
+              borderRadius: "50%",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, color: "#fff", fontWeight: 700,
+              boxShadow: "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)",
+              pointerEvents: "none",
+              opacity: 0.85,
+            }}>
+              {issue.id}
             </div>
           );
         })}
@@ -335,7 +421,68 @@ function AnnotatedImage({ imagePreview, issues }: { imagePreview: string; issues
   );
 }
 
-// ── Main App ─────────────────────────────────────────────────────────────────
+function RoastModal({ roastResult, onClose }: { roastResult: any; onClose: () => void }) {
+  const score: number = roastResult.roast_score || 0;
+  const scoreColor = score >= 70 ? "#34C759" : score >= 50 ? "#FF9500" : "#FF3B30";
+  const severityColor = (s: string) => s === "critical" ? "#FF3B30" : s === "high" ? "#FF9500" : "#FF6B00";
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div style={{ background: "#fff", borderRadius: 24, maxWidth: 600, width: "100%", maxHeight: "90vh", overflow: "auto", boxShadow: "0 32px 100px rgba(0,0,0,0.3)" }}>
+        <div style={{ background: "linear-gradient(135deg,#1D1D1F,#3A1F1F)", borderRadius: "24px 24px 0 0", padding: "32px 32px 24px", position: "relative" }}>
+          <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", color: "#fff", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🔥</div>
+          <p style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", lineHeight: 1.6, margin: "0 0 20px", fontStyle: "italic" }}>"{roastResult.opening}"</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 42, fontWeight: 800, color: scoreColor, lineHeight: 1 }}>{score}</div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 4, textTransform: "uppercase", letterSpacing: 1 }}>Roast Score</div>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 20, padding: "6px 16px", display: "inline-block" }}>
+                <span style={{ fontSize: 15, fontWeight: 700, color: scoreColor }}>"{roastResult.roast_label}"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: "24px 32px 32px" }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Roast 🔥</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+            {(roastResult.roasts || []).map((r: any, idx: number) => (
+              <div key={idx} style={{ background: "#FFF5F4", border: "1px solid #FFD5D2", borderLeft: `4px solid ${severityColor(r.severity)}`, borderRadius: 12, padding: "16px 18px" }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 6, lineHeight: 1.4 }}>"{r.roast}"</div>
+                <div style={{ fontSize: 12, color: "#6E6E73", marginBottom: 8, fontStyle: "italic" }}>{r.element} — {r.real_talk}</div>
+                <div style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#1C4A26" }}>→ {r.fix}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#34C759", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Hype ✨</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+            {(roastResult.hypes || []).map((h: any, idx: number) => (
+              <div key={idx} style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderLeft: "4px solid #34C759", borderRadius: 12, padding: "14px 18px" }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>"{h.hype}"</div>
+                <div style={{ fontSize: 12, color: "#6E6E73", fontStyle: "italic" }}>{h.element} — {h.real_talk}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: "#F5F5F7", borderRadius: 12, padding: "16px 20px", marginBottom: 20, textAlign: "center" }}>
+            <span style={{ fontSize: 14, color: "#3A3A3C", fontStyle: "italic" }}>"{roastResult.redemption}"</span>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={() => {
+                const text = `🔥 My design just got roasted on Design Bestie\n\nVerdict: "${roastResult.roast_label}" (${score}/100)\n\n"${roastResult.opening}"\n\ndesign-bestie.vercel.app`;
+                navigator.clipboard.writeText(text).then(() => alert("Copied! Ready to post 🔥"));
+              }}
+              style={{ flex: 1, background: "#1D1D1F", color: "#fff", border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+            >Share the Roast 🔥</button>
+            <button onClick={onClose} style={{ flex: 1, background: "none", border: "1px solid #D2D2D7", borderRadius: 12, padding: "13px", fontSize: 14, color: "#6E6E73", cursor: "pointer", fontWeight: 500 }}>Back to Results</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DesignBestie() {
   const [uploaded, setUploaded] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -354,6 +501,8 @@ export default function DesignBestie() {
   const [stressStep, setStressStep] = useState(0);
   const [activePersona, setActivePersona] = useState(0);
   const [stressExpandedCards, setStressExpandedCards] = useState<number[]>([]);
+  const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
+  const [activeStressIssueId, setActiveStressIssueId] = useState<number | null>(null);
   const [roastResult, setRoastResult] = useState<any>(null);
   const [isRoasting, setIsRoasting] = useState(false);
   const [showRoastModal, setShowRoastModal] = useState(false);
@@ -362,137 +511,65 @@ export default function DesignBestie() {
   const analysingSteps = ["UX Laws and Principles", "UI Rules and Standards", "Accessibility WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Cognitive Load Analysis"];
   const stressSteps = ["Loading personas", "Analysing persona lenses", "Checking accessibility", "Cognitive friction scan", "Cross-persona comparison", "Synthesising insights"];
 
-  // ── Standard analysis ────────────────────────────────────────────────────
   useEffect(() => {
     if (screen !== "analysing") return;
     setStep(0);
     setAnalysisResult(null);
-
     let apiDone = false;
     let stepsDone = false;
-
-    const checkDone = () => {
-      if (apiDone && stepsDone) {
-        setTimeout(() => setScreen("results"), 400);
-      }
-    };
-
+    const checkDone = () => { if (apiDone && stepsDone) setTimeout(() => setScreen("results"), 400); };
     const callAPI = async () => {
       try {
         const base64 = imagePreview!.split(",")[1];
         const mimeType = imagePreview!.split(";")[0].split(":")[1];
-        const res = await fetch("/api/analyse", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageBase64: base64, mimeType }),
-        });
+        const res = await fetch("/api/analyse", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageBase64: base64, mimeType }) });
         const json = await res.json();
-        if (res.ok && json) {
-          setAnalysisResult(json);
-        } else {
-          console.error("Analyse API error:", json);
-          // Still go to results so we don't get stuck
-          setAnalysisResult({ overall_score: 0, scores: { usability: 0, accessibility: 0, visual_design: 0, hierarchy: 0, cognitive_load: 0 }, summary: "Analysis failed — please try again.", issues: [], wins: [], priority_fixes: [] });
-        }
+        if (res.ok && json) { setAnalysisResult(json); }
+        else { setAnalysisResult({ overall_score: 0, scores: { usability: 0, accessibility: 0, visual_design: 0, hierarchy: 0, cognitive_load: 0 }, summary: "Analysis failed — please try again.", issues: [], wins: [], priority_fixes: [] }); }
       } catch (e) {
-        console.error("Analyse fetch error:", e);
         setAnalysisResult({ overall_score: 0, scores: { usability: 0, accessibility: 0, visual_design: 0, hierarchy: 0, cognitive_load: 0 }, summary: "Network error — please try again.", issues: [], wins: [], priority_fixes: [] });
-      } finally {
-        apiDone = true;
-        checkDone();
-      }
+      } finally { apiDone = true; checkDone(); }
     };
-
     callAPI();
-
     let current = 0;
     const interval = setInterval(() => {
-      current++;
-      setStep(current);
-      if (current >= analysingSteps.length) {
-        clearInterval(interval);
-        stepsDone = true;
-        checkDone();
-      }
+      current++; setStep(current);
+      if (current >= analysingSteps.length) { clearInterval(interval); stepsDone = true; checkDone(); }
     }, 1500);
-
     return () => clearInterval(interval);
   }, [screen]);
 
-  // ── Stress test ──────────────────────────────────────────────────────────
   const runStressTest = async (personas: string[]) => {
-    setShowPersonaModal(false);
-    setStressPersonas(personas);
-    setIsStressTesting(true);
-    setStressStep(0);
-    setStressResult(null);
-    setActivePersona(0);
-    setStressExpandedCards([]);
-
+    setShowPersonaModal(false); setStressPersonas(personas); setIsStressTesting(true); setStressStep(0); setStressResult(null); setActivePersona(0); setStressExpandedCards([]);
     let current = 0;
-    const interval = setInterval(() => {
-      current++;
-      setStressStep(current);
-      if (current >= stressSteps.length) clearInterval(interval);
-    }, 1400);
-
+    const interval = setInterval(() => { current++; setStressStep(current); if (current >= stressSteps.length) clearInterval(interval); }, 1400);
     try {
       const base64 = imagePreview!.split(",")[1];
       const mimeType = imagePreview!.split(";")[0].split(":")[1];
-      const res = await fetch("/api/stress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64, mimeType, personas }),
-      });
+      const res = await fetch("/api/stress", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageBase64: base64, mimeType, personas }) });
       const json = await res.json();
-      if (res.ok && json && json.personas) {
-        setStressResult(json);
-        setActiveTab("stress");
-      } else {
-        console.error("Stress API error:", json);
-        alert("Stress test failed: " + (json?.error || "Unknown error. Check console."));
-      }
-    } catch (e) {
-      console.error("Stress fetch error:", e);
-      alert("Stress test network error. Check console.");
-    } finally {
-      clearInterval(interval);
-      setIsStressTesting(false);
-    }
+      if (res.ok && json && json.personas) { setStressResult(json); setActiveTab("stress"); }
+      else { console.error("Stress API error:", json); alert("Stress test failed: " + (json?.error || "Unknown error")); }
+    } catch (e) { console.error("Stress fetch error:", e); alert("Stress test network error."); }
+    finally { clearInterval(interval); setIsStressTesting(false); }
   };
 
-  // ── Roast mode ───────────────────────────────────────────────────────────
   const runRoast = async () => {
-    setIsRoasting(true);
-    setRoastResult(null);
+    setIsRoasting(true); setRoastResult(null);
     try {
       const base64 = imagePreview!.split(",")[1];
       const mimeType = imagePreview!.split(";")[0].split(":")[1];
-      const res = await fetch("/api/roast", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64, mimeType }),
-      });
+      const res = await fetch("/api/roast", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageBase64: base64, mimeType }) });
       const json = await res.json();
-      if (res.ok && json && json.roasts) {
-        setRoastResult(json);
-        setShowRoastModal(true);
-      } else {
-        console.error("Roast API error:", json);
-        alert("Roast failed: " + (json?.error || "Unknown error"));
-      }
-    } catch (e) {
-      console.error("Roast fetch error:", e);
-      alert("Roast network error. Check console.");
-    } finally {
-      setIsRoasting(false);
-    }
+      if (res.ok && json && json.roasts) { setRoastResult(json); setShowRoastModal(true); }
+      else { console.error("Roast API error:", json); alert("Roast failed: " + (json?.error || "Unknown error")); }
+    } catch (e) { console.error("Roast fetch error:", e); alert("Roast network error. Check console."); }
+    finally { setIsRoasting(false); }
   };
 
   const handleFile = (file: File | undefined) => {
     if (!file) return;
-    setUploaded(true);
-    setFileName(file.name);
+    setUploaded(true); setFileName(file.name);
     const reader = new FileReader();
     reader.onload = (e) => setImagePreview(e.target?.result as string);
     reader.readAsDataURL(file);
@@ -500,19 +577,10 @@ export default function DesignBestie() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => handleFile(e.target.files?.[0]);
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); handleFile(e.dataTransfer.files?.[0]); };
 
-  // ── HOME ─────────────────────────────────────────────────────────────────
   if (screen === "home") {
-    return (
-      <HomeScreen
-        onStart={() => { if (uploaded && imagePreview) { setActiveTab("analysis"); setAnalysisResult(null); setStressResult(null); setScreen("analysing"); } else fileInputRef.current?.click(); }}
-        uploaded={uploaded} fileName={fileName} imagePreview={imagePreview}
-        fileInputRef={fileInputRef} isDragging={isDragging} setIsDragging={setIsDragging}
-        handleInputChange={handleInputChange} handleDrop={handleDrop}
-      />
-    );
+    return <HomeScreen onStart={() => { if (uploaded && imagePreview) { setActiveTab("analysis"); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setScreen("analysing"); } else fileInputRef.current?.click(); }} uploaded={uploaded} fileName={fileName} imagePreview={imagePreview} fileInputRef={fileInputRef} isDragging={isDragging} setIsDragging={setIsDragging} handleInputChange={handleInputChange} handleDrop={handleDrop} />;
   }
 
-  // ── ANALYSING ────────────────────────────────────────────────────────────
   if (screen === "analysing") {
     return (
       <div style={{ minHeight: "100vh", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
@@ -533,9 +601,7 @@ export default function DesignBestie() {
                   <div style={{ position: "absolute", left: -3, top: 162, width: 3, height: 40, background: "#2A2A2A", borderRadius: "2px 0 0 2px" }} />
                   <div style={{ position: "absolute", right: -3, top: 128, width: 3, height: 58, background: "#2A2A2A", borderRadius: "0 2px 2px 0" }} />
                   <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, borderRadius: 36, overflow: "hidden", background: "#000" }}>
-                    {imagePreview
-                      ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#444", fontSize: 13 }}>Your design</span></div>}
+                    {imagePreview ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#444", fontSize: 13 }}>Your design</span></div>}
                     <div style={{ position: "absolute", bottom: 5, left: "50%", transform: "translateX(-50%)", width: 72, height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 2 }} />
                   </div>
                 </div>
@@ -572,44 +638,45 @@ export default function DesignBestie() {
     );
   }
 
-  // ── RESULTS ──────────────────────────────────────────────────────────────
+  if (screen === "results" && !analysisResult) {
+    return (
+      <div style={{ minHeight: "100vh", background: "#F5F5F7", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: 40, height: 40, borderRadius: "50%", border: "3px solid #1D1D1F", borderTopColor: "transparent", animation: "spin 0.8s linear infinite", margin: "0 auto 16px" }} />
+          <div style={{ fontSize: 16, color: "#6E6E73" }}>Loading results…</div>
+        </div>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      </div>
+    );
+  }
+
   if (screen === "results" && analysisResult) {
     const issues = [
       ...(analysisResult.issues || []).map((i: any) => ({ ...i, law: i.rule_violated, learnWhy: i.learn_why })),
       ...(analysisResult.wins || []).map((i: any) => ({ ...i, law: i.rule_violated, learnWhy: i.learn_why })),
     ];
-
     const overallScore: number = analysisResult.overall_score || 0;
     const summary: string = analysisResult.summary || "";
     const scores = analysisResult.scores || { usability: 0, accessibility: 0, visual_design: 0, hierarchy: 0, cognitive_load: 0 };
     const priorityFixes: string[] = analysisResult.priority_fixes || [];
     const readingPattern = analysisResult.reading_pattern || null;
     const pm = readingPattern ? (patternMeta[readingPattern.type] || patternMeta["No Clear Pattern"]) : null;
-
     const toggleCard = (id: number) => setExpandedCards((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-
-    const filtered = activeFilter === "all" ? issues
-      : activeFilter === "wins" ? issues.filter((i: any) => i.severity === "win")
-      : activeFilter === "critical" ? issues.filter((i: any) => i.severity === "critical")
-      : activeFilter === "high" ? issues.filter((i: any) => i.severity === "high" || i.severity === "moderate")
-      : issues.filter((i: any) => i.severity === "medium" || i.severity === "minor");
-
+    const filtered = activeFilter === "all" ? issues : activeFilter === "wins" ? issues.filter((i: any) => i.severity === "win") : activeFilter === "critical" ? issues.filter((i: any) => i.severity === "critical") : activeFilter === "high" ? issues.filter((i: any) => i.severity === "high" || i.severity === "moderate") : issues.filter((i: any) => i.severity === "medium" || i.severity === "minor");
     const hasTabs = stressResult || isStressTesting;
     const topBarH = 82;
     const tabBarH = hasTabs ? 48 : 0;
     const mainH = `calc(100vh - ${topBarH + tabBarH}px)`;
-
-    // Stress tab data
     const persona = stressResult?.personas?.[activePersona];
-    const stressIssues = persona ? [
-      ...(persona.issues || []),
-      ...(persona.wins || []),
-    ] : [];
+    const stressIssues = persona ? [...(persona.issues || []), ...(persona.wins || [])] : [];
     const toggleStressCard = (id: number) => setStressExpandedCards((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
     return (
       <div style={{ minHeight: "100vh", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+
+        {/* ROAST MODAL — rendered as overlay inside results */}
+        {showRoastModal && roastResult && <RoastModal roastResult={roastResult} onClose={() => setShowRoastModal(false)} />}
 
         {showPersonaModal && <PersonaModal onClose={() => setShowPersonaModal(false)} onRun={runStressTest} />}
 
@@ -627,9 +694,7 @@ export default function DesignBestie() {
             </div>
             <div>
               <div style={{ fontSize: 10, color: "#AEAEB2", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Design Score</div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>
-                {overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}
-              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
             </div>
           </div>
           <div style={{ display: "flex", gap: 6, flex: 1, flexWrap: "wrap" }}>
@@ -641,51 +706,29 @@ export default function DesignBestie() {
             ))}
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
-            <button
-              onClick={() => setShowPersonaModal(true)}
-              style={{ background: stressResult ? "#2D0A4E" : "none", color: stressResult ? "#fff" : "#2D0A4E", border: `1px solid ${stressResult ? "#2D0A4E" : "#C4B0D8"}`, borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}
-            >
-              {isStressTesting
-                ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Running…</>
-                : <><span>🧪</span>{stressResult ? "Stress Test ✓" : "Stress Test"}</>}
+            <button onClick={() => setShowPersonaModal(true)} style={{ background: stressResult ? "#2D0A4E" : "none", color: stressResult ? "#fff" : "#2D0A4E", border: `1px solid ${stressResult ? "#2D0A4E" : "#C4B0D8"}`, borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+              {isStressTesting ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Running…</> : <><span>🧪</span>{stressResult ? "Stress Test ✓" : "Stress Test"}</>}
             </button>
-            <button
-              onClick={() => { if (isRoasting) return; if (roastResult) setShowRoastModal(true); else runRoast(); }}
-              style={{ background: roastResult ? "#FF3B30" : "none", color: roastResult ? "#fff" : "#FF3B30", border: `1px solid ${roastResult ? "#FF3B30" : "#FFBAB6"}`, borderRadius: 20, padding: "8px 16px", cursor: isRoasting ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}
-            >
-              {isRoasting
-                ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Roasting…</>
-                : <><span>🔥</span>{roastResult ? "View Roast" : "Roast It"}</>}
+            <button onClick={() => { if (isRoasting) return; if (roastResult) setShowRoastModal(true); else runRoast(); }} style={{ background: roastResult ? "#FF3B30" : "none", color: roastResult ? "#fff" : "#FF3B30", border: `1px solid ${roastResult ? "#FF3B30" : "#FFBAB6"}`, borderRadius: 20, padding: "8px 16px", cursor: isRoasting ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+              {isRoasting ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Roasting…</> : <><span>🔥</span>{roastResult ? "View Roast" : "Roast It"}</>}
             </button>
-            <button
-              onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setExpandedCards([]); setActiveTab("analysis"); }}
-              style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}
-            >← New Analysis</button>
+            <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setExpandedCards([]); setActiveTab("analysis"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}>← New Analysis</button>
           </div>
         </div>
 
-        {/* TAB BAR */}
         {hasTabs && (
           <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "0 24px", display: "flex", height: tabBarH, boxSizing: "border-box" }}>
             {(["analysis", "stress"] as const).map((key) => (
-              <button
-                key={key}
-                onClick={() => { if (!isStressTesting || key === "analysis") setActiveTab(key); }}
-                style={{ background: "none", border: "none", padding: "0 20px", fontSize: 14, fontWeight: 600, cursor: "pointer", color: activeTab === key ? "#1D1D1F" : "#AEAEB2", borderBottom: activeTab === key ? "2px solid #1D1D1F" : "2px solid transparent" }}
-              >
+              <button key={key} onClick={() => { if (!isStressTesting || key === "analysis") setActiveTab(key); }} style={{ background: "none", border: "none", padding: "0 20px", fontSize: 14, fontWeight: 600, cursor: "pointer", color: activeTab === key ? "#1D1D1F" : "#AEAEB2", borderBottom: activeTab === key ? "2px solid #1D1D1F" : "2px solid transparent" }}>
                 {key === "analysis" ? "Analysis" : isStressTesting ? "Running Stress Test…" : `Stress Test · ${stressPersonas.length} persona${stressPersonas.length > 1 ? "s" : ""}`}
               </button>
             ))}
           </div>
         )}
 
-        {/* MAIN */}
         <div style={{ display: "flex", height: mainH }}>
-
-          {/* ── ANALYSIS TAB ── */}
           {activeTab === "analysis" && (
             <>
-              {/* LEFT */}
               <div style={{ width: "38%", borderRight: "1px solid #E5E5EA", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                 <div style={{ padding: "14px 18px", borderBottom: "1px solid #E5E5EA", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <span style={{ fontWeight: 600, fontSize: 14, color: "#1D1D1F" }}>Annotated Design</span>
@@ -698,16 +741,13 @@ export default function DesignBestie() {
                     ))}
                   </div>
                 </div>
-                {imagePreview && <AnnotatedImage imagePreview={imagePreview} issues={issues} />}
+                {imagePreview && <AnnotatedImage imagePreview={imagePreview} issues={issues} activeIssueId={activeIssueId} />}
               </div>
-
-              {/* RIGHT */}
               <div style={{ flex: 1, overflow: "auto", background: "#F5F5F7" }}>
                 <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "18px 24px" }}>
                   <div style={{ fontSize: 10, letterSpacing: "2px", color: "#AEAEB2", fontWeight: 600, marginBottom: 7, textTransform: "uppercase" }}>The Bottom Line</div>
                   <p style={{ fontSize: 15, color: "#1D1D1F", lineHeight: 1.55, margin: 0, fontWeight: 500 }}>{summary}</p>
                 </div>
-
                 {readingPattern && pm && (
                   <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "14px 24px", display: "flex", alignItems: "flex-start", gap: 14 }}>
                     <div style={{ width: 38, height: 38, borderRadius: 10, background: pm.color, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -716,16 +756,13 @@ export default function DesignBestie() {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                         <span style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F" }}>{readingPattern.type}</span>
-                        <span style={{ background: readingPattern.is_following ? "#F0FFF4" : "#FFF5F4", color: readingPattern.is_following ? "#34C759" : "#FF3B30", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 10 }}>
-                          {readingPattern.is_following ? "✓ Following" : "✗ Not following"}
-                        </span>
+                        <span style={{ background: readingPattern.is_following ? "#F0FFF4" : "#FFF5F4", color: readingPattern.is_following ? "#34C759" : "#FF3B30", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 10 }}>{readingPattern.is_following ? "✓ Following" : "✗ Not following"}</span>
                       </div>
                       <p style={{ fontSize: 13, color: "#6E6E73", margin: "0 0 3px", lineHeight: 1.55 }}>{readingPattern.explanation}</p>
                       <p style={{ fontSize: 12, color: "#AEAEB2", margin: 0, lineHeight: 1.4 }}>{readingPattern.impact}</p>
                     </div>
                   </div>
                 )}
-
                 {priorityFixes.length > 0 && (
                   <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "18px 24px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
@@ -745,7 +782,6 @@ export default function DesignBestie() {
                     </div>
                   </div>
                 )}
-
                 <div style={{ padding: "18px 24px" }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <span style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F" }}>Detailed critique</span>
@@ -758,7 +794,7 @@ export default function DesignBestie() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {filtered.map((issue: any) => (
-                      <IssueCard key={issue.id} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => toggleCard(issue.id)} />
+                      <IssueCard key={issue.id} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
                     ))}
                   </div>
                 </div>
@@ -766,7 +802,6 @@ export default function DesignBestie() {
             </>
           )}
 
-          {/* ── STRESS TAB ── */}
           {activeTab === "stress" && (
             isStressTesting ? (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#F5F5F7" }}>
@@ -791,7 +826,6 @@ export default function DesignBestie() {
               </div>
             ) : stressResult ? (
               <div style={{ display: "flex", width: "100%", overflow: "hidden" }}>
-                {/* LEFT — persona list */}
                 <div style={{ width: "38%", borderRight: "1px solid #E5E5EA", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   <div style={{ padding: "14px 18px", borderBottom: "1px solid #E5E5EA", background: "#FAFAFA" }}>
                     <div style={{ fontSize: 10, letterSpacing: "1.5px", color: "#AEAEB2", fontWeight: 600, textTransform: "uppercase", marginBottom: 6 }}>Cross-Persona Insight</div>
@@ -818,10 +852,8 @@ export default function DesignBestie() {
                       );
                     })}
                   </div>
-                  {imagePreview && persona && <AnnotatedImage imagePreview={imagePreview} issues={stressIssues} />}
+                  {imagePreview && persona && <AnnotatedImage imagePreview={imagePreview} issues={stressIssues} activeIssueId={activeStressIssueId} />}
                 </div>
-
-                {/* RIGHT — persona detail */}
                 <div style={{ flex: 1, overflow: "auto", background: "#F5F5F7" }}>
                   {persona && (
                     <>
@@ -842,7 +874,7 @@ export default function DesignBestie() {
                         <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 12 }}>Issues & wins for this persona</div>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                           {stressIssues.map((issue: any) => (
-                            <IssueCard key={issue.id} issue={issue} expanded={stressExpandedCards.includes(issue.id)} onToggle={() => toggleStressCard(issue.id)} />
+                            <IssueCard key={issue.id} issue={issue} expanded={stressExpandedCards.includes(issue.id)} onToggle={() => { toggleStressCard(issue.id); setActiveStressIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeStressIssueId === issue.id} />
                           ))}
                         </div>
                       </div>
@@ -853,91 +885,6 @@ export default function DesignBestie() {
             ) : null
           )}
         </div>
-      </div>
-    );
-  }
-
-  // ── Roast Modal ──────────────────────────────────────────────────────────
-  if (showRoastModal && roastResult) {
-    const score: number = roastResult.roast_score || 0;
-    const scoreColor = score >= 70 ? "#34C759" : score >= 50 ? "#FF9500" : "#FF3B30";
-    const severityColor = (s: string) => s === "critical" ? "#FF3B30" : s === "high" ? "#FF9500" : "#FF6B00";
-    return (
-      <div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
-        <div style={{ background: "#fff", borderRadius: 24, maxWidth: 600, width: "100%", maxHeight: "90vh", overflow: "auto", boxShadow: "0 32px 100px rgba(0,0,0,0.3)" }}>
-          {/* Header */}
-          <div style={{ background: "linear-gradient(135deg,#1D1D1F,#3A1F1F)", borderRadius: "24px 24px 0 0", padding: "32px 32px 24px", position: "relative" }}>
-            <button onClick={() => setShowRoastModal(false)} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", color: "#fff", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🔥</div>
-            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", lineHeight: 1.6, margin: "0 0 20px", fontStyle: "italic" }}>"{roastResult.opening}"</p>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 42, fontWeight: 800, color: scoreColor, lineHeight: 1 }}>{score}</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 4, textTransform: "uppercase", letterSpacing: 1 }}>Roast Score</div>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 20, padding: "6px 16px", display: "inline-block" }}>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: scoreColor }}>"{roastResult.roast_label}"</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ padding: "24px 32px 32px" }}>
-            {/* Roasts */}
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Roast 🔥</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
-              {(roastResult.roasts || []).map((r: any, idx: number) => (
-                <div key={idx} style={{ background: "#FFF5F4", border: "1px solid #FFD5D2", borderLeft: `4px solid ${severityColor(r.severity)}`, borderRadius: 12, padding: "16px 18px" }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 6, lineHeight: 1.4 }}>"{r.roast}"</div>
-                  <div style={{ fontSize: 12, color: "#6E6E73", marginBottom: 8, fontStyle: "italic" }}>{r.element} — {r.real_talk}</div>
-                  <div style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#1C4A26" }}>→ {r.fix}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Hypes */}
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#34C759", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Hype ✨</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
-              {(roastResult.hypes || []).map((h: any, idx: number) => (
-                <div key={idx} style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderLeft: "4px solid #34C759", borderRadius: 12, padding: "14px 18px" }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>"{h.hype}"</div>
-                  <div style={{ fontSize: 12, color: "#6E6E73", fontStyle: "italic" }}>{h.element} — {h.real_talk}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Redemption */}
-            <div style={{ background: "#F5F5F7", borderRadius: 12, padding: "16px 20px", marginBottom: 20, textAlign: "center" }}>
-              <span style={{ fontSize: 14, color: "#3A3A3C", fontStyle: "italic" }}>"{roastResult.redemption}"</span>
-            </div>
-
-            {/* Share + Close */}
-            <div style={{ display: "flex", gap: 10 }}>
-              <button
-                onClick={() => {
-                  const text = `🔥 My design just got roasted on Design Bestie\n\nVerdict: "${roastResult.roast_label}" (${score}/100)\n\n"${roastResult.opening}"\n\ndesign-bestie.vercel.app`;
-                  navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard! Ready to post 🔥"));
-                }}
-                style={{ flex: 1, background: "#1D1D1F", color: "#fff", border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
-              >Share the Roast 🔥</button>
-              <button onClick={() => setShowRoastModal(false)} style={{ flex: 1, background: "none", border: "1px solid #D2D2D7", borderRadius: 12, padding: "13px", fontSize: 14, color: "#6E6E73", cursor: "pointer", fontWeight: 500 }}>Back to Results</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Fallback — analysis in progress but result not yet set
-  if (screen === "results" && !analysisResult) {
-    return (
-      <div style={{ minHeight: "100vh", background: "#F5F5F7", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{ width: 40, height: 40, borderRadius: "50%", border: "3px solid #1D1D1F", borderTopColor: "transparent", animation: "spin 0.8s linear infinite", margin: "0 auto 16px" }} />
-          <div style={{ fontSize: 16, color: "#6E6E73" }}>Loading results…</div>
-        </div>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     );
   }
