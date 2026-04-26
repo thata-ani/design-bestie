@@ -14,6 +14,8 @@ const PERSONA_DESCRIPTIONS: Record<string, string> = {
   "Non-native Speaker": "a user for whom English is a second language. Jargon, idioms, and dense text create barriers.",
 };
 
+const ZONES = `Choose the zone that best describes where this element appears. Exactly one of: "top-left", "top-center", "top-right", "mid-left", "mid-center", "mid-right", "bottom-left", "bottom-center", "bottom-right"`;
+
 export async function POST(req: NextRequest) {
   try {
     const { imageBase64, mimeType, personas } = await req.json();
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const personaBlocks = personas.map((name: string) => {
       const desc = PERSONA_DESCRIPTIONS[name] || name;
-      return `PERSONA: ${name}\nDescription: ${desc}\nFind exactly 2 issues and 1 win for THIS persona only. All feedback must be specific to this persona's needs and struggles, not generic UX.`;
+      return `PERSONA: ${name}\nDescription: ${desc}\nFind exactly 2 issues and 1 win for THIS persona only.`;
     }).join("\n\n");
 
     const prompt = `You are a senior UX researcher stress-testing this screen through ${personas.length} user persona lens${personas.length > 1 ? "es" : ""}.
@@ -37,14 +39,14 @@ ${personaBlocks}
 
 Rules:
 - Each persona gets exactly 2 issues and 1 win
-- "problem" must be written in THAT persona's voice — what they specifically feel or do
-- "location": x=left%, y=top%, width=%, height=% of the screen
+- "problem" must be written in THAT persona's voice
+- "zone": ${ZONES}
 - "severity": exactly one of "critical", "high", "medium" for issues; "win" for wins
 - "persona_score": 0-100 how well this screen serves this persona
 
 Return ONLY this exact JSON shape, no markdown, no backticks:
 
-{"overall_stress_score":0,"weakest_persona":"name","strongest_persona":"name","cross_persona_insight":"one sentence about the biggest systemic issue","personas":[{"name":"persona name","persona_score":0,"issues":[{"id":1,"element":"element name","severity":"critical","rule_violated":"UX law or principle","problem":"one sentence in persona voice","learn_why":"• point 1\\n• point 2","fix":"Consider...","location":{"x":5,"y":10,"width":90,"height":8}}],"wins":[{"id":1,"element":"element name","severity":"win","rule_violated":"principle","problem":"","learn_why":"• point 1\\n• point 2","fix":"Keep this pattern","location":{"x":5,"y":80,"width":90,"height":10}}]}]}`;
+{"overall_stress_score":0,"weakest_persona":"name","strongest_persona":"name","cross_persona_insight":"one sentence","personas":[{"name":"persona name","persona_score":0,"issues":[{"id":1,"element":"element name","severity":"critical","rule_violated":"UX law","problem":"one sentence in persona voice","learn_why":"• point 1\n• point 2","fix":"Consider...","zone":"top-center"}],"wins":[{"id":1,"element":"element name","severity":"win","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","zone":"bottom-center"}]}]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -69,14 +71,10 @@ Return ONLY this exact JSON shape, no markdown, no backticks:
     });
 
     const data = await response.json();
-    if (!response.ok) {
-      return NextResponse.json({ error: data?.error?.message || "Claude error" }, { status: 500 });
-    }
+    if (!response.ok) return NextResponse.json({ error: data?.error?.message || "Claude error" }, { status: 500 });
 
     const text = data.content?.[0]?.text;
-    if (!text) {
-      return NextResponse.json({ error: "No response from Claude" }, { status: 500 });
-    }
+    if (!text) return NextResponse.json({ error: "No response from Claude" }, { status: 500 });
 
     const cleaned = text.replace(/```json|```/g, "").trim();
 
