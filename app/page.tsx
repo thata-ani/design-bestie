@@ -66,7 +66,7 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
     const ctx = canvas.getContext("2d")!;
 
     const initIcons = (w: number, h: number) => {
-      const spacing = 10;
+      const spacing = 18;
       const cols = Math.ceil(w / spacing);
       const rows = Math.ceil(h / spacing);
       iconsRef.current = [];
@@ -80,7 +80,7 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
             y: by + (Math.random() - 0.5) * 6,
             baseX: bx, baseY: by,
             size: 13,
-            opacity: 0.18 + Math.random() * 0.10,
+            opacity: 0.40 + Math.random() * 0.20,
             vx: 0, vy: 0,
             rotation: (Math.random() - 0.5) * 0.5,
           });
@@ -118,7 +118,7 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
         ctx.save();
         ctx.translate(icon.x, icon.y);
         ctx.rotate(icon.rotation);
-        ctx.strokeStyle = `rgba(29,29,31,${icon.opacity})`;
+        ctx.strokeStyle = `rgba(29,29,29,${icon.opacity})`;
         ctx.lineWidth = 1.2;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
