@@ -29,7 +29,7 @@ function parseBullets(learnWhy) {
 
 function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, isDragging, setIsDragging, handleInputChange, handleDrop }) {
   const canvasRef = useRef(null);
-  const mouseRef = useRef({ x: -1000, y: -1000 });
+  const mouseRef = useRef({ x: -9999, y: -9999 });
   const iconsRef = useRef([]);
   const animRef = useRef(null);
 
@@ -39,17 +39,26 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
     const ctx = canvas.getContext("2d");
 
     const initIcons = (w, h) => {
-      iconsRef.current = Array.from({ length: 32 }, (_, i) => ({
-        icon: DESIGN_ICONS[i % DESIGN_ICONS.length],
-        x: Math.random() * w,
-        y: Math.random() * h,
-        size: 18 + Math.random() * 22,
-        opacity: 0.05 + Math.random() * 0.09,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.004,
-      }));
+      // Fill screen densely — one icon roughly every 80x80px grid
+      const cols = Math.ceil(w / 80);
+      const rows = Math.ceil(h / 80);
+      iconsRef.current = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          iconsRef.current.push({
+            icon: DESIGN_ICONS[(r * cols + c) % DESIGN_ICONS.length],
+            x: (c + 0.5) * (w / cols) + (Math.random() - 0.5) * 30,
+            y: (r + 0.5) * (h / rows) + (Math.random() - 0.5) * 30,
+            baseX: (c + 0.5) * (w / cols),
+            baseY: (r + 0.5) * (h / rows),
+            size: 16,
+            opacity: 0.13 + Math.random() * 0.1,
+            vx: 0,
+            vy: 0,
+            rotation: (Math.random() - 0.5) * 0.6,
+          });
+        }
+      }
     };
 
     const resize = () => {
@@ -74,35 +83,40 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
         const dx = icon.x - mx;
         const dy = icon.y - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const repelRadius = 140;
+        const repelRadius = 100;
+
         if (dist < repelRadius && dist > 0) {
           const force = (repelRadius - dist) / repelRadius;
-          icon.vx += (dx / dist) * force * 1.2;
-          icon.vy += (dy / dist) * force * 1.2;
+          icon.vx += (dx / dist) * force * 3;
+          icon.vy += (dy / dist) * force * 3;
         }
-        icon.vx *= 0.95;
-        icon.vy *= 0.95;
+
+        // Spring back to base position
+        const returnDx = icon.baseX - icon.x;
+        const returnDy = icon.baseY - icon.y;
+        icon.vx += returnDx * 0.04;
+        icon.vy += returnDy * 0.04;
+
+        // Damping
+        icon.vx *= 0.85;
+        icon.vy *= 0.85;
+
         icon.x += icon.vx;
         icon.y += icon.vy;
-        icon.rotation += icon.rotationSpeed;
-        if (icon.x < -60) icon.x = canvas.width + 60;
-        if (icon.x > canvas.width + 60) icon.x = -60;
-        if (icon.y < -60) icon.y = canvas.height + 60;
-        if (icon.y > canvas.height + 60) icon.y = -60;
 
+        // Draw
         ctx.save();
         ctx.translate(icon.x, icon.y);
         ctx.rotate(icon.rotation);
         ctx.strokeStyle = `rgba(45, 10, 78, ${icon.opacity})`;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.4;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         const scale = icon.size / 24;
         ctx.scale(scale, scale);
         ctx.translate(-12, -12);
         try {
-          const p = new Path2D(icon.icon.path);
-          ctx.stroke(p);
+          ctx.stroke(new Path2D(icon.icon.path));
         } catch (e) {}
         ctx.restore();
       });
@@ -119,51 +133,116 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
   }, []);
 
   return (
-    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#FAFAFA", fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" }}>
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#F8F7FF", fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" }}>
       <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />
-      <nav style={{ position: "relative", zIndex: 10, background: "rgba(250,250,250,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.06)", padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+
+      {/* Nav */}
+      <nav style={{ position: "relative", zIndex: 10, background: "rgba(248,247,255,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(45,10,78,0.08)", padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 26, height: 26, background: "#2D0A4E", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 13 }}>✦</span></div>
-          <span style={{ fontWeight: 600, color: "#1A1A1A", fontSize: 15, letterSpacing: "-0.3px" }}>Design Bestie</span>
+          <div style={{ width: 28, height: 28, background: "#2D0A4E", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontSize: 14 }}>✦</span>
+          </div>
+          <span style={{ fontWeight: 700, color: "#1A1A1A", fontSize: 16, letterSpacing: "-0.4px" }}>Design Bestie</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          {["Features", "Examples", "How it works"].map((l) => <span key={l} style={{ fontSize: 14, color: "#666", cursor: "pointer", letterSpacing: "-0.2px" }}>{l}</span>)}
-          <button style={{ background: "#1A1A1A", color: "#fff", border: "none", padding: "8px 18px", borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: "pointer" }}>Try Free</button>
+          {["Features", "Examples", "How it works"].map((l) => (
+            <span key={l} style={{ fontSize: 15, color: "#555", cursor: "pointer", letterSpacing: "-0.2px" }}>{l}</span>
+          ))}
+          <button style={{ background: "#2D0A4E", color: "#fff", border: "none", padding: "10px 22px", borderRadius: 22, fontSize: 14, fontWeight: 600, cursor: "pointer", letterSpacing: "-0.2px" }}>Try Free →</button>
         </div>
       </nav>
+
+      {/* Hero */}
       <div style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "calc(100vh - 60px)", padding: "24px" }}>
-        <div style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 24, padding: "44px 52px", maxWidth: 520, width: "100%", boxShadow: "0 2px 40px rgba(0,0,0,0.06)", textAlign: "center" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#F5F0FF", border: "1px solid rgba(45,10,78,0.12)", borderRadius: 20, padding: "5px 14px", marginBottom: 24 }}>
-            <div style={{ width: 5, height: 5, background: "#2D0A4E", borderRadius: "50%" }} />
-            <span style={{ fontSize: 12, color: "#2D0A4E", fontWeight: 500 }}>AI-Powered UX Critique</span>
+        <div style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", border: "1px solid rgba(45,10,78,0.1)", borderRadius: 28, padding: "48px 56px", maxWidth: 540, width: "100%", boxShadow: "0 4px 60px rgba(45,10,78,0.08), 0 1px 0 rgba(255,255,255,1) inset", textAlign: "center" }}>
+
+          {/* Badge */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(45,10,78,0.06)", border: "1px solid rgba(45,10,78,0.12)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
+            <span style={{ fontSize: 13, color: "#2D0A4E", fontWeight: 600, letterSpacing: "-0.1px" }}>✦ AI-Powered UX Critique</span>
           </div>
-          <h1 style={{ fontSize: 42, fontWeight: 700, lineHeight: 1.1, margin: "0 0 14px", letterSpacing: "-1.5px", color: "#1A1A1A" }}>
+
+          {/* Headline */}
+          <h1 style={{ fontSize: 48, fontWeight: 800, lineHeight: 1.08, margin: "0 0 16px", letterSpacing: "-2px", color: "#1A1A1A" }}>
             Your Designs Deserve<br />
-            <span style={{ background: "linear-gradient(135deg, #2D0A4E, #7C3AED)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Better Feedback.</span>
+            <span style={{ color: "#2D0A4E" }}>Better Feedback.</span>
           </h1>
-          <p style={{ fontSize: 15, color: "#888", lineHeight: 1.6, margin: "0 0 32px", letterSpacing: "-0.2px" }}>Upload any screen. Get research-backed critique from a senior design perspective — not bullet points.</p>
-          <div onClick={() => fileInputRef.current?.click()} onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }} onDragLeave={() => setIsDragging(false)} onDrop={handleDrop} style={{ border: `1.5px dashed ${isDragging ? "#2D0A4E" : uploaded ? "rgba(45,10,78,0.4)" : "rgba(0,0,0,0.1)"}`, borderRadius: 14, padding: "24px 16px", marginBottom: 12, cursor: "pointer", background: isDragging ? "rgba(45,10,78,0.03)" : "rgba(0,0,0,0.01)", transition: "all 0.2s" }}>
+
+          {/* Subtext */}
+          <p style={{ fontSize: 17, color: "#666", lineHeight: 1.6, margin: "0 0 32px", letterSpacing: "-0.3px" }}>
+            Upload any screen. Get senior designer critique backed by real research — not bullet points.
+          </p>
+
+          {/* Upload zone */}
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={handleDrop}
+            style={{
+              border: `2px dashed ${isDragging ? "#2D0A4E" : uploaded ? "#2D0A4E" : "rgba(45,10,78,0.2)"}`,
+              borderRadius: 16,
+              padding: "28px 20px",
+              marginBottom: 14,
+              cursor: "pointer",
+              background: isDragging ? "rgba(45,10,78,0.04)" : uploaded ? "rgba(45,10,78,0.02)" : "rgba(45,10,78,0.01)",
+              transition: "all 0.2s"
+            }}
+          >
             <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={handleInputChange} />
             {uploaded && imagePreview ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 64, height: 48, borderRadius: 8, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)" }}><img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} /></div>
-                <p style={{ fontSize: 13, fontWeight: 500, color: "#1A1A1A", margin: 0 }}>{fileName}</p>
-                <p style={{ fontSize: 11, color: "#999", margin: 0 }}>Click to change</p>
+                <div style={{ width: 72, height: 52, borderRadius: 10, overflow: "hidden", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+                  <img src={imagePreview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "#2D0A4E", margin: 0, letterSpacing: "-0.2px" }}>{fileName}</p>
+                <p style={{ fontSize: 12, color: "#999", margin: 0 }}>Click to change file</p>
               </div>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 44, height: 44, background: "#F5F5F5", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M11 3v12M11 3L7 7M11 3l4 4M3 17h16" stroke="#666" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 52, height: 52, background: "rgba(45,10,78,0.06)", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v13M12 3L8 7M12 3l4 4M3 18h18" stroke="#2D0A4E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
-                <div><p style={{ fontSize: 14, fontWeight: 500, color: "#1A1A1A", margin: "0 0 3px" }}>Drop your screenshot here</p><p style={{ fontSize: 12, color: "#999", margin: 0 }}>PNG · JPG · PDF up to 10MB</p></div>
+                <div>
+                  <p style={{ fontSize: 16, fontWeight: 600, color: "#1A1A1A", margin: "0 0 4px", letterSpacing: "-0.3px" }}>Drop your screenshot here</p>
+                  <p style={{ fontSize: 13, color: "#999", margin: 0 }}>PNG · JPG · PDF up to 10MB</p>
+                </div>
               </div>
             )}
           </div>
-          <button onClick={onStart} style={{ width: "100%", background: uploaded ? "#1A1A1A" : "rgba(0,0,0,0.07)", color: uploaded ? "#fff" : "#999", border: "none", padding: "14px", borderRadius: 12, fontSize: 14, fontWeight: 500, cursor: uploaded ? "pointer" : "default", marginBottom: 20, transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-            {uploaded ? <>Analyse My Design <span>→</span></> : "Select a Screenshot to Begin"}
+
+          {/* CTA */}
+          <button
+            onClick={onStart}
+            style={{
+              width: "100%",
+              background: uploaded ? "#2D0A4E" : "rgba(45,10,78,0.12)",
+              color: uploaded ? "#fff" : "#999",
+              border: "none",
+              padding: "16px",
+              borderRadius: 14,
+              fontSize: 16,
+              fontWeight: 700,
+              cursor: uploaded ? "pointer" : "default",
+              marginBottom: 20,
+              letterSpacing: "-0.3px",
+              transition: "all 0.25s",
+              boxShadow: uploaded ? "0 4px 24px rgba(45,10,78,0.3)" : "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+            }}
+          >
+            {uploaded ? <>Analyse My Design <span style={{ fontSize: 18 }}>→</span></> : "Select a Screenshot to Begin"}
           </button>
-          <div style={{ display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
-            {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt", "Reading Patterns"].map((b) => <span key={b} style={{ fontSize: 11, color: "#999", background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 20, padding: "4px 11px" }}>{b}</span>)}
+
+          {/* Tags */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 7, flexWrap: "wrap" }}>
+            {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt", "Reading Patterns"].map((b) => (
+              <span key={b} style={{ fontSize: 12, color: "#888", background: "rgba(45,10,78,0.05)", border: "1px solid rgba(45,10,78,0.1)", borderRadius: 20, padding: "5px 13px", letterSpacing: "-0.1px" }}>{b}</span>
+            ))}
           </div>
         </div>
       </div>
@@ -233,10 +312,10 @@ export default function DesignBestie() {
       <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" }}>
         <nav style={{ background: "rgba(250,250,250,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.06)", padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 26, height: 26, background: "#2D0A4E", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 13 }}>✦</span></div>
-            <span style={{ fontWeight: 600, color: "#1A1A1A", fontSize: 15, letterSpacing: "-0.3px" }}>Design Bestie</span>
+            <div style={{ width: 28, height: 28, background: "#2D0A4E", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 14 }}>✦</span></div>
+            <span style={{ fontWeight: 700, color: "#1A1A1A", fontSize: 16, letterSpacing: "-0.4px" }}>Design Bestie</span>
           </div>
-          <button onClick={() => setScreen("home")} style={{ background: "none", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 20, padding: "7px 16px", cursor: "pointer", fontSize: 13, color: "#666" }}>← Back</button>
+          <button onClick={() => setScreen("home")} style={{ background: "none", border: "1px solid rgba(0,0,0,0.12)", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 14, color: "#666" }}>← Back</button>
         </nav>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 60px)", padding: 48 }}>
           <div style={{ display: "flex", gap: 80, alignItems: "center", maxWidth: 900, width: "100%" }}>
@@ -249,7 +328,7 @@ export default function DesignBestie() {
                   <div style={{ position: "absolute", right: -3, top: 128, width: 3, height: 58, background: "#2A2A2A", borderRadius: "0 2px 2px 0" }} />
                   <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, borderRadius: 36, overflow: "hidden", background: "#000" }}>
                     <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-                      {imagePreview ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#333", fontSize: 12 }}>Your design</span></div>}
+                      {imagePreview ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#444", fontSize: 13 }}>Your design</span></div>}
                     </div>
                     <div style={{ position: "absolute", bottom: 5, left: "50%", transform: "translateX(-50%)", width: 72, height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 2 }} />
                   </div>
@@ -257,27 +336,27 @@ export default function DesignBestie() {
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 10, letterSpacing: 3, color: "#2D0A4E", fontWeight: 600, marginBottom: 14, textTransform: "uppercase" }}>Processing</div>
-              <h2 style={{ fontSize: 32, fontWeight: 700, color: "#1A1A1A", margin: "0 0 8px", letterSpacing: "-0.8px" }}>Analysing your design</h2>
-              <p style={{ fontSize: 14, color: "#888", margin: "0 0 32px" }}>Running against 50+ expert frameworks</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: "#2D0A4E", fontWeight: 700, marginBottom: 14, textTransform: "uppercase" }}>Processing</div>
+              <h2 style={{ fontSize: 34, fontWeight: 700, color: "#1A1A1A", margin: "0 0 8px", letterSpacing: "-1px" }}>Analysing your design</h2>
+              <p style={{ fontSize: 15, color: "#888", margin: "0 0 32px", letterSpacing: "-0.2px" }}>Running against 50+ expert frameworks</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {steps.map((s, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 24, height: 24, borderRadius: "50%", background: i < step ? "#1A1A1A" : "transparent", border: i < step ? "none" : i === step ? "1.5px solid #1A1A1A" : "1.5px solid #DDD", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
-                      {i < step ? <span style={{ color: "#fff", fontSize: 11 }}>✓</span> : i === step ? <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#1A1A1A" }} /> : null}
+                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < step ? "#2D0A4E" : "transparent", border: i < step ? "none" : i === step ? "2px solid #2D0A4E" : "2px solid #DDD", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
+                      {i < step ? <span style={{ color: "#fff", fontSize: 12 }}>✓</span> : i === step ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2D0A4E" }} /> : null}
                     </div>
-                    <span style={{ fontSize: 14, color: i <= step ? "#1A1A1A" : "#BBB", transition: "all 0.3s" }}>{s}</span>
-                    {i < step && <span style={{ marginLeft: "auto", fontSize: 11, color: "#059669", fontWeight: 500 }}>Done</span>}
+                    <span style={{ fontSize: 15, color: i <= step ? "#1A1A1A" : "#BBB", transition: "all 0.3s", letterSpacing: "-0.2px" }}>{s}</span>
+                    {i < step && <span style={{ marginLeft: "auto", fontSize: 12, color: "#059669", fontWeight: 600 }}>Done</span>}
                   </div>
                 ))}
               </div>
               <div style={{ marginTop: 28 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                  <span style={{ fontSize: 12, color: "#BBB" }}>Usually takes 15 seconds</span>
-                  <span style={{ fontSize: 12, color: "#1A1A1A", fontWeight: 600 }}>{Math.round((step / steps.length) * 100)}%</span>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ fontSize: 13, color: "#BBB" }}>Usually takes 15 seconds</span>
+                  <span style={{ fontSize: 13, color: "#2D0A4E", fontWeight: 700 }}>{Math.round((step / steps.length) * 100)}%</span>
                 </div>
-                <div style={{ height: 3, background: "#EFEFEF", borderRadius: 2 }}>
-                  <div style={{ height: "100%", background: "#1A1A1A", borderRadius: 2, width: `${(step / steps.length) * 100}%`, transition: "width 0.6s ease" }} />
+                <div style={{ height: 4, background: "#EEE", borderRadius: 2 }}>
+                  <div style={{ height: "100%", background: "#2D0A4E", borderRadius: 2, width: `${(step / steps.length) * 100}%`, transition: "width 0.6s ease" }} />
                 </div>
               </div>
             </div>
@@ -316,61 +395,63 @@ export default function DesignBestie() {
       : issues.filter(i => i.severity === "medium" || i.severity === "minor");
 
     return (
-      <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" }}>
+      <div style={{ minHeight: "100vh", background: "#F8F8F8", fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" }}>
         {/* TOP BAR */}
-        <div style={{ background: "#fff", borderBottom: "1px solid #F0F0F0", padding: "10px 24px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        <div style={{ background: "#fff", borderBottom: "1px solid #ECECEC", padding: "10px 24px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-            <div style={{ position: "relative", width: 48, height: 48 }}>
-              <svg width="48" height="48" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="#F0F0F0" strokeWidth="3.5" />
-                <circle cx="24" cy="24" r="20" fill="none" stroke="#1A1A1A" strokeWidth="3.5" strokeDasharray="126" strokeDashoffset={126 - (126 * overallScore / 100)} strokeLinecap="round" transform="rotate(-90 24 24)" />
+            <div style={{ position: "relative", width: 52, height: 52 }}>
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="22" fill="none" stroke="#EEEEEE" strokeWidth="4" />
+                <circle cx="26" cy="26" r="22" fill="none" stroke="#2D0A4E" strokeWidth="4" strokeDasharray="138" strokeDashoffset={138 - (138 * overallScore / 100)} strokeLinecap="round" transform="rotate(-90 26 26)" />
               </svg>
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.5px" }}>{overallScore}</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.5px" }}>{overallScore}</span>
               </div>
             </div>
             <div>
-              <div style={{ fontSize: 9, color: "#999", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Score</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: overallScore >= 80 ? "#059669" : overallScore >= 60 ? "#D97706" : "#DC2626" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
+              <div style={{ fontSize: 10, color: "#AAA", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Design Score</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#059669" : overallScore >= 60 ? "#D97706" : "#DC2626", letterSpacing: "-0.3px" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
             </div>
           </div>
+
           <div style={{ display: "flex", gap: 6, flex: 1, flexWrap: "wrap" }}>
             {[["Usability", scores.usability, "#D97706"], ["Accessibility", scores.accessibility, "#DC2626"], ["Visual", scores.visual_design, "#059669"], ["Hierarchy", scores.hierarchy, "#2D0A4E"], ["Cognitive", scores.cognitive_load, "#D97706"]].map(([label, score, color]) => (
-              <div key={label} style={{ background: "#FAFAFA", border: "1px solid #F0F0F0", borderRadius: 8, padding: "5px 10px", textAlign: "center", minWidth: 68 }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color, lineHeight: 1, letterSpacing: "-0.5px" }}>{score}</div>
-                <div style={{ fontSize: 9, color: "#999", marginTop: 2 }}>{label}</div>
+              <div key={label} style={{ background: "#F8F8F8", border: "1px solid #ECECEC", borderRadius: 10, padding: "6px 12px", textAlign: "center", minWidth: 72 }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color, lineHeight: 1, letterSpacing: "-0.5px" }}>{score}</div>
+                <div style={{ fontSize: 10, color: "#AAA", marginTop: 3, letterSpacing: "0.2px" }}>{label}</div>
               </div>
             ))}
           </div>
-          <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setExpandedCards([]); }} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 20, padding: "7px 14px", cursor: "pointer", fontSize: 12, color: "#666" }}>← New Analysis</button>
+
+          <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setExpandedCards([]); }} style={{ background: "none", border: "1px solid #E0E0E0", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#666", fontWeight: 500, letterSpacing: "-0.2px" }}>← New Analysis</button>
         </div>
 
         {/* MAIN */}
-        <div style={{ display: "flex", height: "calc(100vh - 77px)" }}>
-          {/* LEFT */}
-          <div style={{ width: "38%", borderRight: "1px solid #F0F0F0", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ padding: "12px 16px", borderBottom: "1px solid #F0F0F0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontWeight: 500, fontSize: 13, color: "#1A1A1A" }}>Annotated Design</span>
-              <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ display: "flex", height: "calc(100vh - 82px)" }}>
+          {/* LEFT — Annotated design */}
+          <div style={{ width: "38%", borderRight: "1px solid #ECECEC", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            <div style={{ padding: "14px 18px", borderBottom: "1px solid #ECECEC", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontWeight: 600, fontSize: 14, color: "#1A1A1A", letterSpacing: "-0.2px" }}>Annotated Design</span>
+              <div style={{ display: "flex", gap: 12 }}>
                 {[["#DC2626", "Critical"], ["#D97706", "High"], ["#B45309", "Medium"]].map(([c, l]) => (
                   <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: c }} />
-                    <span style={{ fontSize: 10, color: "#999" }}>{l}</span>
+                    <div style={{ width: 7, height: 7, borderRadius: "50%", background: c }} />
+                    <span style={{ fontSize: 11, color: "#999" }}>{l}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <div style={{ flex: 1, overflow: "auto", padding: 16, display: "flex", justifyContent: "center" }}>
-              <div style={{ position: "relative", display: "inline-block", maxWidth: "100%", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+            <div style={{ flex: 1, overflow: "auto", padding: 16, display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
+              <div style={{ position: "relative", display: "inline-block", maxWidth: "100%" }}>
                 {imagePreview
-                  ? <img src={imagePreview} alt="Uploaded design" style={{ display: "block", maxWidth: "100%", height: "auto" }} />
-                  : <div style={{ height: 400, width: 280, background: "#F5F5F5", display: "flex", alignItems: "center", justifyContent: "center", color: "#CCC", fontSize: 13 }}>No design uploaded</div>}
+                  ? <img src={imagePreview} alt="Uploaded design" style={{ display: "block", maxWidth: "100%", height: "auto", borderRadius: 8, boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }} />
+                  : <div style={{ height: 400, width: 280, background: "#F5F5F5", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", color: "#CCC", fontSize: 14 }}>No design uploaded</div>}
                 {issues.filter(i => i.severity !== "win").map((issue) => {
                   const loc = issue.location;
                   if (!loc || typeof loc.x !== "number") return null;
                   return (
-                    <div key={issue.id} style={{ position: "absolute", top: `${loc.y}%`, left: `${loc.x}%`, width: `${loc.width}%`, height: `${loc.height}%`, border: `1.5px solid ${issue.color}`, borderRadius: 4, pointerEvents: "none", boxShadow: "0 0 0 2px rgba(255,255,255,0.9)" }}>
-                      <div style={{ position: "absolute", top: -10, left: -10, width: 20, height: 20, background: issue.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 600, boxShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>{issue.id}</div>
+                    <div key={issue.id} style={{ position: "absolute", top: `${loc.y}%`, left: `${loc.x}%`, width: `${loc.width}%`, height: `${loc.height}%`, border: `2px solid ${issue.color}`, borderRadius: 4, pointerEvents: "none", boxShadow: "0 0 0 2px rgba(255,255,255,0.9)" }}>
+                      <div style={{ position: "absolute", top: -11, left: -11, width: 22, height: 22, background: issue.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, boxShadow: "0 2px 6px rgba(0,0,0,0.25)" }}>{issue.id}</div>
                     </div>
                   );
                 })}
@@ -378,47 +459,48 @@ export default function DesignBestie() {
             </div>
           </div>
 
-          {/* RIGHT */}
-          <div style={{ flex: 1, overflow: "auto", background: "#FAFAFA" }}>
+          {/* RIGHT — Critique */}
+          <div style={{ flex: 1, overflow: "auto", background: "#F8F8F8" }}>
+
             {/* TL;DR */}
-            <div style={{ background: "#fff", borderBottom: "1px solid #F0F0F0", padding: "18px 24px" }}>
-              <div style={{ fontSize: 9, letterSpacing: "1.5px", color: "#999", fontWeight: 500, marginBottom: 6, textTransform: "uppercase" }}>The Bottom Line</div>
-              <p style={{ fontSize: 14, color: "#1A1A1A", lineHeight: 1.55, margin: 0, fontWeight: 500, letterSpacing: "-0.2px" }}>{summary}</p>
+            <div style={{ background: "#fff", borderBottom: "1px solid #ECECEC", padding: "18px 24px" }}>
+              <div style={{ fontSize: 10, letterSpacing: "2px", color: "#AAA", fontWeight: 600, marginBottom: 7, textTransform: "uppercase" }}>The Bottom Line</div>
+              <p style={{ fontSize: 15, color: "#1A1A1A", lineHeight: 1.55, margin: 0, fontWeight: 500, letterSpacing: "-0.2px" }}>{summary}</p>
             </div>
 
             {/* READING PATTERN */}
             {readingPattern && pm && (
-              <div style={{ background: "#fff", borderBottom: "1px solid #F0F0F0", padding: "14px 24px", display: "flex", alignItems: "flex-start", gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 9, background: pm.color, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{pm.icon}</span>
+              <div style={{ background: "#fff", borderBottom: "1px solid #ECECEC", padding: "14px 24px", display: "flex", alignItems: "flex-start", gap: 14 }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: pm.color, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ color: "#fff", fontSize: 15, fontWeight: 800 }}>{pm.icon}</span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1A1A" }}>{readingPattern.type}</span>
-                    <span style={{ background: readingPattern.is_following ? "#ECFDF5" : "#FEF2F2", color: readingPattern.is_following ? "#059669" : "#DC2626", fontSize: 10, fontWeight: 500, padding: "2px 7px", borderRadius: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.3px" }}>{readingPattern.type}</span>
+                    <span style={{ background: readingPattern.is_following ? "#ECFDF5" : "#FEF2F2", color: readingPattern.is_following ? "#059669" : "#DC2626", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 10 }}>
                       {readingPattern.is_following ? "✓ Following" : "✗ Not following"}
                     </span>
                   </div>
-                  <p style={{ fontSize: 12, color: "#555", margin: "0 0 2px", lineHeight: 1.5 }}>{readingPattern.explanation}</p>
-                  <p style={{ fontSize: 11, color: "#999", margin: 0, lineHeight: 1.4 }}>{readingPattern.impact}</p>
+                  <p style={{ fontSize: 13, color: "#555", margin: "0 0 3px", lineHeight: 1.55, letterSpacing: "-0.1px" }}>{readingPattern.explanation}</p>
+                  <p style={{ fontSize: 12, color: "#999", margin: 0, lineHeight: 1.4 }}>{readingPattern.impact}</p>
                 </div>
               </div>
             )}
 
             {/* PRIORITY FIXES */}
             {priorityFixes.length > 0 && (
-              <div style={{ background: "#fff", borderBottom: "1px solid #F0F0F0", padding: "16px 24px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                  <span style={{ fontSize: 14 }}>🎯</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1A1A" }}>If you only fix three things</span>
+              <div style={{ background: "#fff", borderBottom: "1px solid #ECECEC", padding: "18px 24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                  <span style={{ fontSize: 16 }}>🎯</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.3px" }}>If you only fix three things</span>
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {priorityFixes.slice(0, 3).map((text, idx) => {
                     const colors = ["#DC2626", "#D97706", "#B45309"];
                     return (
-                      <div key={idx} style={{ display: "flex", gap: 10, padding: "10px 12px", background: "#FAFAFA", borderRadius: 8, borderLeft: `2px solid ${colors[idx]}` }}>
-                        <div style={{ width: 18, height: 18, background: colors[idx], borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 600, flexShrink: 0 }}>{idx + 1}</div>
-                        <p style={{ fontSize: 12, color: "#333", lineHeight: 1.5, margin: 0 }}>{text}</p>
+                      <div key={idx} style={{ display: "flex", gap: 12, padding: "12px 14px", background: "#F8F8F8", borderRadius: 10, borderLeft: `3px solid ${colors[idx]}` }}>
+                        <div style={{ width: 20, height: 20, background: colors[idx], borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{idx + 1}</div>
+                        <p style={{ fontSize: 13, color: "#333", lineHeight: 1.55, margin: 0, letterSpacing: "-0.1px" }}>{text}</p>
                       </div>
                     );
                   })}
@@ -427,12 +509,12 @@ export default function DesignBestie() {
             )}
 
             {/* DETAILED CRITIQUE */}
-            <div style={{ padding: "16px 24px" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: "#1A1A1A" }}>Detailed critique</span>
-                <span style={{ fontSize: 11, color: "#BBB" }}>Click any card to expand</span>
+            <div style={{ padding: "18px 24px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#1A1A1A", letterSpacing: "-0.3px" }}>Detailed critique</span>
+                <span style={{ fontSize: 12, color: "#BBB" }}>Click any card to expand</span>
               </div>
-              <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 10 }}>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
                 {[
                   ["all", `All (${issues.length})`],
                   ["critical", `Critical (${issues.filter(i => i.severity === "critical").length})`],
@@ -440,45 +522,45 @@ export default function DesignBestie() {
                   ["medium", `Medium (${issues.filter(i => i.severity === "medium" || i.severity === "minor").length})`],
                   ["wins", `Wins (${issues.filter(i => i.severity === "win").length})`],
                 ].map(([val, label]) => (
-                  <button key={val} onClick={() => setActiveFilter(val)} style={{ padding: "5px 11px", borderRadius: 14, border: activeFilter === val ? "none" : "1px solid #E8E8E8", background: activeFilter === val ? "#1A1A1A" : "#fff", color: activeFilter === val ? "#fff" : "#888", fontSize: 11, fontWeight: 500, cursor: "pointer" }}>{label}</button>
+                  <button key={val} onClick={() => setActiveFilter(val)} style={{ padding: "6px 14px", borderRadius: 16, border: activeFilter === val ? "none" : "1px solid #E0E0E0", background: activeFilter === val ? "#2D0A4E" : "#fff", color: activeFilter === val ? "#fff" : "#777", fontSize: 12, fontWeight: 500, cursor: "pointer", letterSpacing: "-0.1px" }}>{label}</button>
                 ))}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {filtered.map((issue) => {
                   const isExpanded = expandedCards.includes(issue.id);
                   const bullets = parseBullets(issue.learnWhy);
                   return (
-                    <div key={issue.id} style={{ background: "#fff", border: "1px solid #F0F0F0", borderLeft: `2px solid ${issue.color}`, borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}>
-                      <button onClick={() => toggleCard(issue.id)} style={{ width: "100%", background: "none", border: "none", padding: "12px 14px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "flex-start", gap: 10 }}>
-                        <div style={{ width: 20, height: 20, background: issue.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 600, flexShrink: 0, marginTop: 1 }}>{issue.id}</div>
+                    <div key={issue.id} style={{ background: "#fff", border: "1px solid #ECECEC", borderLeft: `3px solid ${issue.color}`, borderRadius: 10, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.03)" }}>
+                      <button onClick={() => toggleCard(issue.id)} style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "flex-start", gap: 12 }}>
+                        <div style={{ width: 22, height: 22, background: issue.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{issue.id}</div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3, flexWrap: "wrap" }}>
-                            <span style={{ fontSize: 13, fontWeight: 500, color: "#1A1A1A" }}>{issue.element}</span>
-                            {issue.law && <span style={{ background: "#F5F0FF", color: "#6D28D9", fontSize: 9, fontWeight: 500, padding: "2px 7px", borderRadius: 8 }}>{issue.law}</span>}
+                          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4, flexWrap: "wrap" }}>
+                            <span style={{ fontSize: 14, fontWeight: 600, color: "#1A1A1A", letterSpacing: "-0.2px" }}>{issue.element}</span>
+                            {issue.law && <span style={{ background: "#F0EBFF", color: "#5B21B6", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 8, letterSpacing: "0.1px" }}>{issue.law}</span>}
                           </div>
-                          {issue.problem && <div style={{ fontSize: 12, color: "#666", lineHeight: 1.45 }}>{issue.problem}</div>}
+                          {issue.problem && <div style={{ fontSize: 13, color: "#555", lineHeight: 1.5, letterSpacing: "-0.1px" }}>{issue.problem}</div>}
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
-                          <span style={{ background: issue.bg, color: issue.color, fontSize: 9, fontWeight: 500, padding: "2px 7px", borderRadius: 8 }}>{issue.label}</span>
-                          <span style={{ color: "#CCC", fontSize: 10 }}>{isExpanded ? "▴" : "▾"}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                          <span style={{ background: issue.bg, color: issue.color, fontSize: 10, fontWeight: 600, padding: "3px 8px", borderRadius: 10 }}>{issue.label}</span>
+                          <span style={{ color: "#CCC", fontSize: 11 }}>{isExpanded ? "▴" : "▾"}</span>
                         </div>
                       </button>
                       {isExpanded && (
-                        <div style={{ padding: "0 14px 14px 44px", borderTop: "1px solid #F5F5F5" }}>
+                        <div style={{ padding: "0 16px 16px 50px", borderTop: "1px solid #F5F5F5" }}>
                           {bullets.length > 0 && (
-                            <div style={{ marginTop: 10, marginBottom: 10 }}>
+                            <div style={{ marginTop: 12, marginBottom: 12 }}>
                               {bullets.map((b, idx) => (
-                                <div key={idx} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
-                                  <span style={{ color: "#2D0A4E", fontWeight: 600, fontSize: 11, flexShrink: 0, marginTop: 1 }}>•</span>
-                                  <span style={{ fontSize: 12, color: "#444", lineHeight: 1.5 }}>{b}</span>
+                                <div key={idx} style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+                                  <span style={{ color: "#2D0A4E", fontWeight: 700, fontSize: 13, flexShrink: 0, marginTop: 1 }}>•</span>
+                                  <span style={{ fontSize: 13, color: "#444", lineHeight: 1.55, letterSpacing: "-0.1px" }}>{b}</span>
                                 </div>
                               ))}
                             </div>
                           )}
                           {issue.fix && (
-                            <div style={{ background: "#F0FDF4", border: "1px solid #D1FAE5", borderRadius: 6, padding: "8px 11px", display: "flex", gap: 7 }}>
-                              <span style={{ color: "#059669", fontSize: 12, flexShrink: 0, fontWeight: 600 }}>→</span>
-                              <span style={{ fontSize: 12, color: "#065F46", lineHeight: 1.5 }}>{issue.fix}</span>
+                            <div style={{ background: "#F0FDF4", border: "1px solid #D1FAE5", borderRadius: 8, padding: "10px 14px", display: "flex", gap: 10 }}>
+                              <span style={{ color: "#059669", fontSize: 14, flexShrink: 0, fontWeight: 700 }}>→</span>
+                              <span style={{ fontSize: 13, color: "#065F46", lineHeight: 1.55, letterSpacing: "-0.1px" }}>{issue.fix}</span>
                             </div>
                           )}
                         </div>
