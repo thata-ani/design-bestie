@@ -280,11 +280,21 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
         </div>
       </div>
 
-      {/* BOTTOM TRUST BAR */}
-      <div style={{ position: "relative", zIndex: 5, display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap", padding: "10px 24px 14px", flexShrink: 0 }}>
-        {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Reading Patterns", "Business Impact"].map((b) => (
-          <span key={b} style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: "4px 12px" }}>{b}</span>
-        ))}
+      {/* SOCIAL PROOF + TRUST BAR */}
+      <div style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "8px 24px 14px", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex" }}>
+            {["#7C3AED","#4F46E5","#0EA5E9","#10B981","#F59E0B"].map((c, i) => (
+              <div key={i} style={{ width: 24, height: 24, borderRadius: "50%", background: c, border: "2px solid #0F0F10", marginLeft: i === 0 ? 0 : -8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 700 }}>{["A","B","C","D","E"][i]}</div>
+            ))}
+          </div>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 500 }}>Trusted by designers worldwide</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
+          {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Reading Patterns", "Business Impact"].map((b) => (
+            <span key={b} style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20, padding: "4px 12px" }}>{b}</span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -808,52 +818,64 @@ export default function DesignBestie() {
 
   if (screen === "analysing") {
     return (
-      <div style={{ minHeight: "100vh", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
-        <nav style={{ background: "rgba(245,245,247,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ minHeight: "100vh", background: "#0F0F10", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+        <style>{`@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}`}</style>
+        <nav style={{ padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 28, height: 28, background: "#1D1D1F", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 14 }}>✦</span></div>
-            <span style={{ fontWeight: 700, color: "#1D1D1F", fontSize: 16 }}>Design Bestie</span>
+            <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#7C3AED,#4F46E5)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
+            </div>
+            <span style={{ fontWeight: 700, color: "#fff", fontSize: 16 }}>Design Bestie</span>
           </div>
-          <button onClick={() => setScreen("home")} style={{ background: "none", border: "1px solid rgba(0,0,0,0.12)", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 14, color: "#6E6E73" }}>← Back</button>
+          <button onClick={() => setScreen("home")} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 14, color: "rgba(255,255,255,0.5)" }}>← Back</button>
         </nav>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 60px)", padding: 48 }}>
           <div style={{ display: "flex", gap: 80, alignItems: "center", maxWidth: 900, width: "100%" }}>
+            {/* Phone mockup */}
             <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
               <div style={{ position: "relative", width: 220, height: 440 }}>
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg,#3A3A3A,#1A1A1A)", borderRadius: 44, boxShadow: "0 24px 60px rgba(0,0,0,0.3)" }}>
-                  <div style={{ position: "absolute", left: -3, top: 80, width: 3, height: 26, background: "#2A2A2A", borderRadius: "2px 0 0 2px" }} />
-                  <div style={{ position: "absolute", left: -3, top: 114, width: 3, height: 40, background: "#2A2A2A", borderRadius: "2px 0 0 2px" }} />
-                  <div style={{ position: "absolute", left: -3, top: 162, width: 3, height: 40, background: "#2A2A2A", borderRadius: "2px 0 0 2px" }} />
-                  <div style={{ position: "absolute", right: -3, top: 128, width: 3, height: 58, background: "#2A2A2A", borderRadius: "0 2px 2px 0" }} />
+                {/* Purple glow behind phone */}
+                <div style={{ position: "absolute", inset: -30, background: "radial-gradient(ellipse,rgba(124,58,237,0.2),transparent 70%)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(145deg,#2A2A2A,#0A0A0A)", borderRadius: 44, boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)" }}>
+                  <div style={{ position: "absolute", left: -3, top: 80, width: 3, height: 26, background: "#1A1A1A", borderRadius: "2px 0 0 2px" }} />
+                  <div style={{ position: "absolute", left: -3, top: 114, width: 3, height: 40, background: "#1A1A1A", borderRadius: "2px 0 0 2px" }} />
+                  <div style={{ position: "absolute", left: -3, top: 162, width: 3, height: 40, background: "#1A1A1A", borderRadius: "2px 0 0 2px" }} />
+                  <div style={{ position: "absolute", right: -3, top: 128, width: 3, height: 58, background: "#1A1A1A", borderRadius: "0 2px 2px 0" }} />
                   <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, borderRadius: 36, overflow: "hidden", background: "#000" }}>
-                    {imagePreview ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#444", fontSize: 13 }}>Your design</span></div>}
+                    {imagePreview
+                      ? <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : <div style={{ width: "100%", height: "100%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#444", fontSize: 13 }}>Your design</span></div>}
+                    {/* Scanning overlay */}
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 0%,rgba(124,58,237,0.08) 50%,transparent 100%)", animation: "pulse 2s ease-in-out infinite" }} />
                     <div style={{ position: "absolute", bottom: 5, left: "50%", transform: "translateX(-50%)", width: 72, height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 2 }} />
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Steps */}
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, letterSpacing: 3, color: "#6E6E73", fontWeight: 600, marginBottom: 14, textTransform: "uppercase" }}>Processing</div>
-              <h2 style={{ fontSize: 34, fontWeight: 700, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-1px" }}>Analysing your design</h2>
-              <p style={{ fontSize: 15, color: "#6E6E73", margin: "0 0 32px" }}>Running against 50+ expert frameworks</p>
+              <div style={{ fontSize: 11, letterSpacing: 3, color: "rgba(124,58,237,0.8)", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>Processing</div>
+              <h2 style={{ fontSize: 36, fontWeight: 800, color: "#fff", margin: "0 0 6px", letterSpacing: "-1.2px" }}>Analysing your design</h2>
+              <p style={{ fontSize: 15, color: "rgba(255,255,255,0.4)", margin: "0 0 32px" }}>Running against 50+ expert frameworks</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {analysingSteps.map((s, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < step ? "#1D1D1F" : "transparent", border: i < step ? "none" : i === step ? "2px solid #1D1D1F" : "2px solid #D2D2D7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
-                      {i < step ? <span style={{ color: "#fff", fontSize: 12 }}>✓</span> : i === step ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#1D1D1F" }} /> : null}
+                    <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < step ? "linear-gradient(135deg,#7C3AED,#4F46E5)" : "transparent", border: i < step ? "none" : i === step ? "2px solid #7C3AED" : "2px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s", boxShadow: i < step ? "0 2px 8px rgba(124,58,237,0.4)" : "none" }}>
+                      {i < step ? <span style={{ color: "#fff", fontSize: 11 }}>✓</span> : i === step ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#7C3AED" }} /> : null}
                     </div>
-                    <span style={{ fontSize: 15, color: i <= step ? "#1D1D1F" : "#C7C7CC", transition: "all 0.3s" }}>{s}</span>
-                    {i < step && <span style={{ marginLeft: "auto", fontSize: 12, color: "#34C759", fontWeight: 600 }}>Done</span>}
+                    <span style={{ fontSize: 15, color: i < step ? "rgba(255,255,255,0.9)" : i === step ? "#fff" : "rgba(255,255,255,0.2)", fontWeight: i === step ? 600 : 400, transition: "all 0.3s" }}>{s}</span>
+                    {i < step && <span style={{ marginLeft: "auto", fontSize: 11, color: "#A78BFA", fontWeight: 600 }}>Done</span>}
                   </div>
                 ))}
               </div>
               <div style={{ marginTop: 28 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ fontSize: 13, color: "#C7C7CC" }}>Usually takes 15 seconds</span>
-                  <span style={{ fontSize: 13, color: "#1D1D1F", fontWeight: 700 }}>{Math.round((step / analysingSteps.length) * 100)}%</span>
+                  <span style={{ fontSize: 13, color: "rgba(255,255,255,0.25)" }}>Usually takes 15 seconds</span>
+                  <span style={{ fontSize: 13, color: "#A78BFA", fontWeight: 700 }}>{Math.round((step / analysingSteps.length) * 100)}%</span>
                 </div>
-                <div style={{ height: 4, background: "#E5E5EA", borderRadius: 2 }}>
-                  <div style={{ height: "100%", background: "#1D1D1F", borderRadius: 2, width: `${(step / analysingSteps.length) * 100}%`, transition: "width 0.6s ease" }} />
+                <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2 }}>
+                  <div style={{ height: "100%", background: "linear-gradient(90deg,#7C3AED,#4F46E5)", borderRadius: 2, width: `${(step / analysingSteps.length) * 100}%`, transition: "width 0.6s ease", boxShadow: "0 0 12px rgba(124,58,237,0.6)" }} />
                 </div>
               </div>
             </div>
