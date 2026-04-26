@@ -840,7 +840,7 @@ export default function DesignBestie() {
             <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
             </div>
-            <span style={{ fontWeight: 700, color: "#fff", fontSize: 16 }}>Design Bestie</span>
+            <span style={{ fontWeight: 700, color: "#1D1D1F", fontSize: 16 }}>Design Bestie</span>
           </div>
           <button onClick={() => setScreen("home")} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 14, color: "rgba(255,255,255,0.5)" }}>← Back</button>
         </nav>
@@ -1185,21 +1185,22 @@ export default function DesignBestie() {
       }).catch(e => { console.error(e); setScreen("home"); });
     }
     return (
-      <div style={{ minHeight: "100vh", background: "#F5F5F7", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+      <div style={{ minHeight: "100vh", background: "#020B18", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         <div style={{ textAlign: "center", maxWidth: 400, padding: 40 }}>
-          <div style={{ fontSize: 40, marginBottom: 20 }}>📋</div>
-          <h2 style={{ fontSize: 28, fontWeight: 700, color: "#1D1D1F", margin: "0 0 8px", letterSpacing: "-0.8px" }}>Analysing your requirements</h2>
-          <p style={{ fontSize: 15, color: "#6E6E73", margin: "0 0 32px" }}>Finding gaps, edge cases and missing states...</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(59,130,246,0.8)", letterSpacing: 4, textTransform: "uppercase", marginBottom: 28 }}>● Processing</div>
+          <h2 style={{ fontSize: 36, fontWeight: 900, color: "#fff", margin: "0 0 8px", letterSpacing: "-1.2px" }}>Analysing your</h2>
+          <h2 style={{ fontSize: 36, fontWeight: 900, color: "#fff", margin: "0 0 16px", letterSpacing: "-1.2px", opacity: 0.4 }}>requirements.</h2>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", margin: "0 0 40px", letterSpacing: 1, textTransform: "uppercase", fontWeight: 500 }}>Finding gaps · edge cases · missing states</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, textAlign: "left" }}>
             {["Reading requirements", "Identifying screens needed", "Flagging edge cases", "Spotting missing states", "Generating questions to ask"].map((s, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, opacity: 0.6 + i * 0.08 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2563EB", flexShrink: 0 }} />
-                <span style={{ fontSize: 14, color: "#3A3A3C" }}>{s}</span>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6", flexShrink: 0, boxShadow: "0 0 6px rgba(59,130,246,0.6)", opacity: 0.4 + i * 0.15 }} />
+                <span style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", letterSpacing: 0.5, opacity: 0.4 + i * 0.15 }}>{s}</span>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 32, width: 40, height: 40, borderRadius: "50%", border: "3px solid #2563EB", borderTopColor: "transparent", animation: "spin 0.8s linear infinite", margin: "32px auto 0" }} />
+          <div style={{ marginTop: 40, width: 36, height: 36, borderRadius: "50%", border: "2px solid rgba(59,130,246,0.4)", borderTopColor: "#3B82F6", animation: "spin 0.8s linear infinite", margin: "40px auto 0" }} />
         </div>
       </div>
     );
@@ -1209,41 +1210,41 @@ export default function DesignBestie() {
   if (screen === "brief" && briefResult) {
     // TODO: Add AI chatbot here in future release for quick follow-up questions on the brief
     return (
-      <div style={{ minHeight: "100vh", background: "#020B18", fontFamily: "'SF Pro Display',-apple-system,sans-serif", color: "#fff" }}>
+      <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "'SF Pro Display',-apple-system,sans-serif", color: "#1D1D1F" }}>
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
 
         {/* NAV */}
-        <nav style={{ padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)", position: "sticky", top: 0, zIndex: 10, background: "rgba(2,11,24,0.9)", backdropFilter: "blur(20px)" }}>
+        <nav style={{ padding: "0 48px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #E5E5EA", position: "sticky", top: 0, zIndex: 10, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(20px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ color: "#fff", fontSize: 15 }}>✦</span>
             </div>
-            <span style={{ fontWeight: 700, color: "#fff", fontSize: 16 }}>Design Bestie</span>
+            <span style={{ fontWeight: 700, color: "#1D1D1F", fontSize: 16 }}>Design Bestie</span>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => { setBriefResult(null); setBriefText(""); setScreen("home"); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>← New Brief</button>
+            <button onClick={() => { setBriefResult(null); setBriefText(""); setScreen("home"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73" }}>← New Brief</button>
             <button onClick={() => setScreen("home")} style={{ background: "linear-gradient(135deg,#2563EB,#0EA5E9)", color: "#fff", border: "none", borderRadius: 20, padding: "8px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, boxShadow: "0 4px 16px rgba(124,58,237,0.4)" }}>Review a Design →</button>
           </div>
         </nav>
 
         {/* CONTENT */}
-        <div style={{ padding: "40px 56px 60px" }}>
+        <div style={{ padding: "32px 48px 48px" }}>
 
           {/* Header */}
           <div style={{ marginBottom: 40 }}>
-            <div style={{ fontSize: 11, color: "rgba(124,58,237,0.8)", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Design Brief</div>
-            <h1 style={{ fontSize: 44, fontWeight: 900, color: "#fff", margin: "0 0 12px", letterSpacing: "-2px", lineHeight: 1 }}>{briefResult.feature_name || "Your Feature"}</h1>
-            <p style={{ fontSize: 20, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.7, maxWidth: 680 }}>{briefResult.summary}</p>
+            <div style={{ fontSize: 11, color: "#6E6E73", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Design Brief</div>
+            <h1 style={{ fontSize: 44, fontWeight: 900, color: "#1D1D1F", margin: "0 0 12px", letterSpacing: "-2px", lineHeight: 1 }}>{briefResult.feature_name || "Your Feature"}</h1>
+            <p style={{ fontSize: 20, color: "#6E6E73", margin: 0, lineHeight: 1.7, maxWidth: 680 }}>{briefResult.summary}</p>
           </div>
 
           {/* SCREENS — full width */}
-          <div style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 20, padding: "24px 28px", marginBottom: 20 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>📱 Screens to Design</div>
+          <div style={{ background: "#F0F4FF", border: "1px solid #C7D7FD", borderRadius: 20, padding: "24px 28px", marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#2563EB", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>📱 Screens to Design</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 12 }}>
               {(briefResult.screens_needed || []).map((s: any, i: number) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 5 }}>{s.screen}</div>
-                  <div style={{ fontSize: 15, color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>{s.purpose}</div>
+                <div key={i} style={{ background: "#fff", borderRadius: 12, padding: "14px 16px", border: "1px solid #E5E5EA" }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", marginBottom: 5 }}>{s.screen}</div>
+                  <div style={{ fontSize: 15, color: "#6E6E73", lineHeight: 1.6 }}>{s.purpose}</div>
                 </div>
               ))}
             </div>
@@ -1253,37 +1254,37 @@ export default function DesignBestie() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
 
             {/* States */}
-            <div style={{ background: "rgba(255,59,48,0.06)", border: "1px solid rgba(255,59,48,0.2)", borderRadius: 20, padding: "22px 24px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#FF6B6B", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>🔲 States to Design</div>
+            <div style={{ background: "#FFF5F4", border: "1px solid #FFD5D2", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>🔲 States to Design</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(briefResult.states_needed || []).map((s: any, i: number) => (
-                  <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #FF6B6B" }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#FF8A80", marginBottom: 4 }}>{s.state}</div>
-                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>{s.description}</div>
+                  <div key={i} style={{ padding: "12px 14px", background: "#fff", borderRadius: 10, borderLeft: "3px solid #FF3B30" }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#FF3B30", marginBottom: 4 }}>{s.state}</div>
+                    <div style={{ fontSize: 14, color: "#6E6E73", lineHeight: 1.6 }}>{s.description}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Edge cases */}
-            <div style={{ background: "rgba(255,149,0,0.06)", border: "1px solid rgba(255,149,0,0.2)", borderRadius: 20, padding: "22px 24px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#FFB347", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>⚠️ Edge Cases</div>
+            <div style={{ background: "#FFFBF0", border: "1px solid #FFD9A0", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#FF9500", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>⚠️ Edge Cases</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(briefResult.edge_cases || []).map((e: any, i: number) => (
-                  <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #FFB347" }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#FFB347", marginBottom: 4 }}>{e.case}</div>
-                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>{e.what_to_design}</div>
+                  <div key={i} style={{ padding: "12px 14px", background: "#fff", borderRadius: 10, borderLeft: "3px solid #FF9500" }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#FF9500", marginBottom: 4 }}>{e.case}</div>
+                    <div style={{ fontSize: 14, color: "#6E6E73", lineHeight: 1.6 }}>{e.what_to_design}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Questions */}
-            <div style={{ background: "rgba(88,86,214,0.08)", border: "1px solid rgba(88,86,214,0.25)", borderRadius: 20, padding: "22px 24px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#9B8FF5", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>❓ Ask Before You Start</div>
+            <div style={{ background: "#F5F0FF", border: "1px solid #C4B5FD", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#5856D6", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>❓ Ask Before You Start</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(briefResult.questions_to_ask || []).map((q: string, i: number) => (
-                  <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #9B8FF5", fontSize: 15, color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
+                  <div key={i} style={{ padding: "12px 14px", background: "#fff", borderRadius: 10, borderLeft: "3px solid #5856D6", fontSize: 15, color: "#3A3A3C", lineHeight: 1.6 }}>
                     {q}
                   </div>
                 ))}
@@ -1296,11 +1297,11 @@ export default function DesignBestie() {
           <div style={{ display: "grid", gridTemplateColumns: briefResult.conflicts?.length > 0 ? "1fr 1fr" : "1fr", gap: 16, marginBottom: 28 }}>
 
             {briefResult.conflicts?.length > 0 && (
-              <div style={{ background: "rgba(255,59,48,0.06)", border: "1px solid rgba(255,59,48,0.2)", borderRadius: 20, padding: "22px 24px" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#FF6B6B", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>🚨 Conflicts in Requirements</div>
+              <div style={{ background: "#FFF5F4", border: "1px solid #FFD5D2", borderRadius: 20, padding: "22px 24px" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>🚨 Conflicts in Requirements</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {briefResult.conflicts.map((c: string, i: number) => (
-                    <div key={i} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.04)", borderRadius: 10, borderLeft: "3px solid #FF6B6B", fontSize: 15, color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
+                    <div key={i} style={{ padding: "12px 14px", background: "#fff", borderRadius: 10, borderLeft: "3px solid #FF3B30", fontSize: 15, color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
                       {c}
                     </div>
                   ))}
@@ -1309,12 +1310,12 @@ export default function DesignBestie() {
             )}
 
             {/* Checklist */}
-            <div style={{ background: "rgba(52,199,89,0.06)", border: "1px solid rgba(52,199,89,0.2)", borderRadius: 20, padding: "22px 24px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#5DBD72", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>✅ Design Checklist</div>
+            <div style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 20, padding: "22px 24px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#34C759", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 }}>✅ Design Checklist</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {(briefResult.checklist || []).map((item: string, i: number) => (
-                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 12px", background: "rgba(255,255,255,0.04)", borderRadius: 10, fontSize: 14, color: "rgba(255,255,255,0.75)", lineHeight: 1.55 }}>
-                    <span style={{ color: "#5DBD72", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>{item}
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 12px", background: "#fff", borderRadius: 10, fontSize: 14, color: "#3A3A3C", lineHeight: 1.55 }}>
+                    <span style={{ color: "#34C759", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>{item}
                   </div>
                 ))}
               </div>
