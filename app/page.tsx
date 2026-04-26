@@ -66,7 +66,7 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
     const ctx = canvas.getContext("2d")!;
 
     const initIcons = (w: number, h: number) => {
-      const spacing = 22;
+      const spacing = 10;
       const cols = Math.ceil(w / spacing);
       const rows = Math.ceil(h / spacing);
       iconsRef.current = [];
