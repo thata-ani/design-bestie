@@ -66,36 +66,27 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
     const ctx = canvas.getContext("2d")!;
 
     const initIcons = (w: number, h: number) => {
-  const spacing = 22;
-  const cols = Math.ceil(w / spacing);
-  const rows = Math.ceil(h / spacing);
-  iconsRef.current = [];
-  
-  // Shuffle icons so no two adjacent cells get the same one
-  const total = cols * rows;
-  const pool: any[] = [];
-  while (pool.length < total) {
-    const shuffled = [...DESIGN_ICONS].sort(() => Math.random() - 0.5);
-    pool.push(...shuffled);
-  }
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const bx = (c + 0.5) * spacing;
-      const by = (r + 0.5) * spacing;
-      iconsRef.current.push({
-        icon: pool[r * cols + c],
-        x: bx + (Math.random() - 0.5) * 20,
-        y: by + (Math.random() - 0.5) * 20,
-        baseX: bx, baseY: by,
-        size: 10 + Math.random() * 16,
-        opacity: 0.08 + Math.random() * 0.06,
-        vx: 0, vy: 0,
-        rotation: (Math.random() - 0.5) * 0.5,
-      });
-    }
-  }
-};
+      const spacing = 22;
+      const cols = Math.ceil(w / spacing);
+      const rows = Math.ceil(h / spacing);
+      iconsRef.current = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const bx = (c + 0.5) * spacing;
+          const by = (r + 0.5) * spacing;
+          iconsRef.current.push({
+            icon: DESIGN_ICONS[(r * cols + c) % DESIGN_ICONS.length],
+            x: bx + (Math.random() - 0.5) * 6,
+            y: by + (Math.random() - 0.5) * 6,
+            baseX: bx, baseY: by,
+            size: 13,
+            opacity: 0.18 + Math.random() * 0.10,
+            vx: 0, vy: 0,
+            rotation: (Math.random() - 0.5) * 0.5,
+          });
+        }
+      }
+    };
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -363,6 +354,9 @@ export default function DesignBestie() {
   const [stressStep, setStressStep] = useState(0);
   const [activePersona, setActivePersona] = useState(0);
   const [stressExpandedCards, setStressExpandedCards] = useState<number[]>([]);
+  const [roastResult, setRoastResult] = useState<any>(null);
+  const [isRoasting, setIsRoasting] = useState(false);
+  const [showRoastModal, setShowRoastModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const analysingSteps = ["UX Laws and Principles", "UI Rules and Standards", "Accessibility WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Cognitive Load Analysis"];
@@ -464,6 +458,34 @@ export default function DesignBestie() {
     } finally {
       clearInterval(interval);
       setIsStressTesting(false);
+    }
+  };
+
+  // ── Roast mode ───────────────────────────────────────────────────────────
+  const runRoast = async () => {
+    setIsRoasting(true);
+    setRoastResult(null);
+    try {
+      const base64 = imagePreview!.split(",")[1];
+      const mimeType = imagePreview!.split(";")[0].split(":")[1];
+      const res = await fetch("/api/roast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64, mimeType }),
+      });
+      const json = await res.json();
+      if (res.ok && json && json.roasts) {
+        setRoastResult(json);
+        setShowRoastModal(true);
+      } else {
+        console.error("Roast API error:", json);
+        alert("Roast failed: " + (json?.error || "Unknown error"));
+      }
+    } catch (e) {
+      console.error("Roast fetch error:", e);
+      alert("Roast network error. Check console.");
+    } finally {
+      setIsRoasting(false);
     }
   };
 
@@ -628,7 +650,15 @@ export default function DesignBestie() {
                 : <><span>🧪</span>{stressResult ? "Stress Test ✓" : "Stress Test"}</>}
             </button>
             <button
-              onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setExpandedCards([]); setActiveTab("analysis"); }}
+              onClick={() => { if (!isRoasting) runRoast(); }}
+              style={{ background: roastResult ? "#FF3B30" : "none", color: roastResult ? "#fff" : "#FF3B30", border: `1px solid ${roastResult ? "#FF3B30" : "#FFBAB6"}`, borderRadius: 20, padding: "8px 16px", cursor: isRoasting ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}
+            >
+              {isRoasting
+                ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Roasting…</>
+                : <><span>🔥</span>{roastResult ? "View Roast" : "Roast It"}</>}
+            </button>
+            <button
+              onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setExpandedCards([]); setActiveTab("analysis"); }}
               style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}
             >← New Analysis</button>
           </div>
@@ -827,7 +857,79 @@ export default function DesignBestie() {
     );
   }
 
-  // Fallback — analysis in progress but result not yet set
+  // ── Roast Modal ──────────────────────────────────────────────────────────
+  if (showRoastModal && roastResult) {
+    const score: number = roastResult.roast_score || 0;
+    const scoreColor = score >= 70 ? "#34C759" : score >= 50 ? "#FF9500" : "#FF3B30";
+    const severityColor = (s: string) => s === "critical" ? "#FF3B30" : s === "high" ? "#FF9500" : "#FF6B00";
+    return (
+      <div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
+        <div style={{ background: "#fff", borderRadius: 24, maxWidth: 600, width: "100%", maxHeight: "90vh", overflow: "auto", boxShadow: "0 32px 100px rgba(0,0,0,0.3)" }}>
+          {/* Header */}
+          <div style={{ background: "linear-gradient(135deg,#1D1D1F,#3A1F1F)", borderRadius: "24px 24px 0 0", padding: "32px 32px 24px", position: "relative" }}>
+            <button onClick={() => setShowRoastModal(false)} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 32, height: 32, cursor: "pointer", color: "#fff", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🔥</div>
+            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", lineHeight: 1.6, margin: "0 0 20px", fontStyle: "italic" }}>"{roastResult.opening}"</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 42, fontWeight: 800, color: scoreColor, lineHeight: 1 }}>{score}</div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 4, textTransform: "uppercase", letterSpacing: 1 }}>Roast Score</div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 20, padding: "6px 16px", display: "inline-block" }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: scoreColor }}>"{roastResult.roast_label}"</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ padding: "24px 32px 32px" }}>
+            {/* Roasts */}
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#FF3B30", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Roast 🔥</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+              {(roastResult.roasts || []).map((r: any, idx: number) => (
+                <div key={idx} style={{ background: "#FFF5F4", border: "1px solid #FFD5D2", borderLeft: `4px solid ${severityColor(r.severity)}`, borderRadius: 12, padding: "16px 18px" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 6, lineHeight: 1.4 }}>"{r.roast}"</div>
+                  <div style={{ fontSize: 12, color: "#6E6E73", marginBottom: 8, fontStyle: "italic" }}>{r.element} — {r.real_talk}</div>
+                  <div style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#1C4A26" }}>→ {r.fix}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Hypes */}
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#34C759", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>The Hype ✨</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+              {(roastResult.hypes || []).map((h: any, idx: number) => (
+                <div key={idx} style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderLeft: "4px solid #34C759", borderRadius: 12, padding: "14px 18px" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>"{h.hype}"</div>
+                  <div style={{ fontSize: 12, color: "#6E6E73", fontStyle: "italic" }}>{h.element} — {h.real_talk}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Redemption */}
+            <div style={{ background: "#F5F5F7", borderRadius: 12, padding: "16px 20px", marginBottom: 20, textAlign: "center" }}>
+              <span style={{ fontSize: 14, color: "#3A3A3C", fontStyle: "italic" }}>"{roastResult.redemption}"</span>
+            </div>
+
+            {/* Share + Close */}
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => {
+                  const text = `🔥 My design just got roasted on Design Bestie\n\nVerdict: "${roastResult.roast_label}" (${score}/100)\n\n"${roastResult.opening}"\n\ndesign-bestie.vercel.app`;
+                  navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard! Ready to post 🔥"));
+                }}
+                style={{ flex: 1, background: "#1D1D1F", color: "#fff", border: "none", borderRadius: 12, padding: "13px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+              >Share the Roast 🔥</button>
+              <button onClick={() => setShowRoastModal(false)} style={{ flex: 1, background: "none", border: "1px solid #D2D2D7", borderRadius: 12, padding: "13px", fontSize: 14, color: "#6E6E73", cursor: "pointer", fontWeight: 500 }}>Back to Results</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Fallback — analysis in progress but result not yet set
   if (screen === "results" && !analysisResult) {
     return (
       <div style={{ minHeight: "100vh", background: "#F5F5F7", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
