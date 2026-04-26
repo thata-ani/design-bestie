@@ -76,13 +76,13 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
           const by = (r + 0.5) * spacing;
           iconsRef.current.push({
             icon: DESIGN_ICONS[(r * cols + c) % DESIGN_ICONS.length],
-            x: bx + (Math.random() - 0.5) * 6,
-            y: by + (Math.random() - 0.5) * 6,
+            x: bx + (Math.random() - 0.5) * 20,
+            y: by + (Math.random() - 0.5) * 20,
             baseX: bx, baseY: by,
             size: 13,
-            opacity: 0.40 + Math.random() * 0.20,
+            opacity: 0.40 + Math.random() * 0.14,
             vx: 0, vy: 0,
-            rotation: (Math.random() - 0.5) * 0.5,
+            rotation: (Math.random() - 0.5) * 2.5,
           });
         }
       }
@@ -118,7 +118,7 @@ function HomeScreen({ onStart, uploaded, fileName, imagePreview, fileInputRef, i
         ctx.save();
         ctx.translate(icon.x, icon.y);
         ctx.rotate(icon.rotation);
-        ctx.strokeStyle = `rgba(29,29,29,${icon.opacity})`;
+        ctx.strokeStyle = `rgba(191,192,198,1,${icon.opacity})`;
         ctx.lineWidth = 1.2;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
