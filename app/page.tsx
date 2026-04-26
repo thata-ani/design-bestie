@@ -164,10 +164,10 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
       </nav>
 
       {/* SPLIT SCREEN */}
-      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", overflow: "hidden" }}>
+      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 24, padding: "24px 48px", overflow: "hidden" }}>
 
         {/* LEFT — After Design */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 40px", borderRight: "1px solid rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.6)", backdropFilter: "blur(20px)" }}>
+        <div style={{ flex: 1, maxWidth: 560, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 36px", background: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", borderRadius: 24, border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
           {/* Icon */}
           <div style={{ width: 56, height: 56, background: "linear-gradient(135deg,#2D0A4E,#5A1F8A)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 8px 24px rgba(45,10,78,0.25)" }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -225,12 +225,10 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
         </div>
 
         {/* DIVIDER */}
-        <div style={{ width: 1, background: "rgba(0,0,0,0.08)", flexShrink: 0, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ position: "absolute", width: 32, height: 32, background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#AEAEB2", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>OR</div>
-        </div>
+        <div style={{ flexShrink: 0, width: 36, height: 36, background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#AEAEB2", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", zIndex: 2 }}>OR</div>
 
         {/* RIGHT — Before Design */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 40px", background: "rgba(245,245,247,0.6)", backdropFilter: "blur(20px)" }}>
+        <div style={{ flex: 1, maxWidth: 560, display: "flex", flexDirection: "column", justifyContent: "center", padding: "32px 36px", background: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", borderRadius: 24, border: "1px solid rgba(0,0,0,0.07)", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
           {/* Icon */}
           <div style={{ width: 56, height: 56, background: "linear-gradient(135deg,#1a4a7a,#0A2540)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, boxShadow: "0 8px 24px rgba(10,37,64,0.25)" }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
