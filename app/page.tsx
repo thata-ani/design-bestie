@@ -85,7 +85,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
             y: by + (Math.random() - 0.5) * 6,
             baseX: bx, baseY: by,
             size: 10 + Math.random() * 16,
-            opacity: 0.14 + Math.random() * 0.10,
+            opacity: 0.18 + Math.random() * 0.10,
             vx: 0, vy: 0,
             rotation: (Math.random() - 0.5) * 0.5,
           });
