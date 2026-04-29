@@ -1113,7 +1113,7 @@ export default function DesignBestie() {
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => { setBriefResult(null); setBriefText(""); setScreen("home"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73" }}>← New Brief</button>
-            <button onClick={() => setScreen("home")} style={{ background: "linear-gradient(135deg,#2563EB,#0EA5E9)", color: "#fff", border: "none", borderRadius: 20, padding: "8px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, boxShadow: "0 4px 16px rgba(124,58,237,0.4)" }}>Review a Design →</button>
+            <button onClick={() => { setUploaded(false); setFileName(""); setImagePreview(null); setScreen("home"); setTimeout(() => { const el = document.querySelector('.db-cards'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 100); }} style={{ background: "linear-gradient(135deg,#2563EB,#0EA5E9)", color: "#fff", border: "none", borderRadius: 20, padding: "8px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, boxShadow: "0 4px 16px rgba(124,58,237,0.4)" }}>Review a Design →</button>
           </div>
         </nav>
         <div style={{ padding: "32px 48px 48px" }}>
