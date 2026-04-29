@@ -1127,8 +1127,13 @@ export default function DesignBestie() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(200px,1fr))", gap: 12 }}>
               {(briefResult.screens_needed || []).map((s: any, i: number) => (
                 <div key={i} style={{ background: "#fff", borderRadius: 12, padding: "14px 16px", border: "1px solid #E5E5EA" }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", marginBottom: 5 }}>{s.screen}</div>
-                  <div style={{ fontSize: 15, color: "#6E6E73", lineHeight: 1.6 }}>{s.purpose}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#1D1D1F", marginBottom: 4 }}>{s.screen}</div>
+                  <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.6, marginBottom: s.solution ? 8 : 0 }}>{s.purpose}</div>
+                  {s.solution && (
+                    <div style={{ background: "#F0F4FF", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#2563EB", lineHeight: 1.6, borderLeft: "3px solid #2563EB" }}>
+                      → {s.solution}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -1140,7 +1145,12 @@ export default function DesignBestie() {
                 {(briefResult.states_needed || []).map((s: any, i: number) => (
                   <div key={i} style={{ padding: "12px 14px", background: "#fff", borderRadius: 10, borderLeft: "3px solid #FF3B30" }}>
                     <div style={{ fontSize: 15, fontWeight: 700, color: "#FF3B30", marginBottom: 4 }}>{s.state}</div>
-                    <div style={{ fontSize: 14, color: "#6E6E73", lineHeight: 1.6 }}>{s.description}</div>
+                    <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.6, marginBottom: s.solution ? 8 : 0 }}>{s.description}</div>
+                    {s.solution && (
+                      <div style={{ background: "#FFF5F4", borderRadius: 8, padding: "8px 10px", fontSize: 12, color: "#CC2200", lineHeight: 1.6 }}>
+                        → {s.solution}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -1151,7 +1161,12 @@ export default function DesignBestie() {
                 {(briefResult.edge_cases || []).map((e: any, i: number) => (
                   <div key={i} style={{ padding: "12px 14px", background: "#fff", borderRadius: 10, borderLeft: "3px solid #FF9500" }}>
                     <div style={{ fontSize: 15, fontWeight: 700, color: "#FF9500", marginBottom: 4 }}>{e.case}</div>
-                    <div style={{ fontSize: 14, color: "#6E6E73", lineHeight: 1.6 }}>{e.what_to_design}</div>
+                    <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.6, marginBottom: e.solution ? 8 : 0 }}>{e.what_to_design}</div>
+                    {e.solution && (
+                      <div style={{ background: "#FFFBF0", borderRadius: 8, padding: "8px 10px", fontSize: 12, color: "#B35900", lineHeight: 1.6 }}>
+                        → {e.solution}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
