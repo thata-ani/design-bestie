@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from '@/contexts/AuthContext'
+import { UserMenu } from '@/components/UserMenu'
 
 const DESIGN_ICONS = [
   { id: 1, path: "M3 3h7v7H3zM13 3h7v7h-7zM3 13h7v7H3zM13 13h7v7h-7z" },
@@ -194,6 +195,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
           <span style={{ width: 6, height: 6, background: "#3B82F6", borderRadius: "50%", display: "inline-block" }} />
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 500, letterSpacing: 2, textTransform: "uppercase" }}>AI Design Partner</span>
         </div>
+        <UserMenu />
       </nav>
 
       {/* HERO */}
@@ -891,6 +893,7 @@ export default function DesignBestie() {
               {isTranslating ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Translating…</> : <><span>📊</span>{stakeholderResult ? "View Report" : "For Stakeholders"}</>}
             </button>
             <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setStakeholderResult(null); setExpandedCards([]); setActiveTab("analysis"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}>← New Analysis</button>
+            <UserMenu />
           </div>
         </div>
 
@@ -1130,6 +1133,7 @@ export default function DesignBestie() {
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => { setBriefResult(null); setBriefText(""); setScreen("home"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73" }}>← New Brief</button>
             <button onClick={() => { setUploaded(false); setFileName(""); setImagePreview(null); setScreen("home"); setTimeout(() => { const el = document.querySelector('.db-cards'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 100); }} style={{ background: "linear-gradient(135deg,#2563EB,#0EA5E9)", color: "#fff", border: "none", borderRadius: 20, padding: "8px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, boxShadow: "0 4px 16px rgba(124,58,237,0.4)" }}>Review a Design →</button>
+            <UserMenu />
           </div>
         </nav>
         <div style={{ padding: "32px 48px 48px" }}>
