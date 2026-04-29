@@ -12,44 +12,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a senior UX designer and product consultant helping a designer prepare before they open Figma.
+    const prompt = `You are a senior UX designer at a top product company — the kind who's shipped dozens of features and knows exactly what junior designers miss before they open Figma.
 
 The designer has received these requirements from their PM, BA, or team:
 ---
 ${requirements}
 ---
 
-Your job: analyse these requirements and give the designer everything they need to know before they start designing.
+Your job: tear these requirements apart and give the designer everything they need before they start designing. Be specific to THESE requirements — no generic advice.
 
 Generate:
 
 1. "feature_name": short name for this feature (3-5 words max)
 
-2. "summary": 2 sentences — what this feature does and who it's for
+2. "summary": 2 sentences — what this feature does and who it's for. Be direct and specific.
 
-3. "screens_needed": list every screen that needs to be designed. For each:
+3. "screens_needed": every screen that needs designing. For each:
    - "screen": screen name (e.g. "Product Scanner", "Points Dashboard")
    - "purpose": one sentence — what the user does on this screen
+   - "solution": 2-3 sentences — exactly what to design. What are the key UI elements, layout approach, and most important interaction? Be specific — mention actual components, not vague suggestions.
 
 4. "states_needed": every UI state that needs designing. For each:
-   - "state": state name (e.g. "Empty state", "Error state", "Loading state", "Offline state", "First-time user", "Success state", "Permission denied")
-   - "description": one sentence — what triggers this state and what should the user see
+   - "state": state name (e.g. "Empty state", "Error state", "Loading state")
+   - "description": one sentence — what triggers this state
+   - "solution": 2-3 sentences — exactly what to show the user in this state. What copy, illustration, CTA, or UI pattern should be used? Give a concrete direction.
 
-5. "edge_cases": things the requirements don't cover that will cause problems. For each:
-   - "case": short name (e.g. "Same product scanned twice by same user")
+5. "edge_cases": things the requirements don't cover that will cause real problems. For each:
+   - "case": short name (e.g. "Same product scanned twice")
    - "what_to_design": one sentence — what the UI needs to handle
+   - "solution": 2-3 sentences — how to solve this in the UI. What should happen, what should the user see, and how does it recover gracefully?
 
-6. "questions_to_ask": list of questions the designer must get answered before starting. Each is one sentence starting with "What happens when..." or "How should..." or "What does..."
+6. "questions_to_ask": questions the designer must get answered before starting. Each starts with "What happens when..." or "How should..." or "What does..." — make them specific to these requirements, not generic.
 
-7. "conflicts": any contradictions or ambiguities in the requirements. Each is one sentence describing the conflict. Return empty array if none.
+7. "conflicts": contradictions or ambiguities in the requirements that will cause problems later. Each is one sentence. Return empty array if none.
 
-8. "checklist": design considerations to keep in mind. Examples: "Design for mobile first", "Consider dark mode", "Ensure accessibility contrast", "Design for slow network". Return 6-8 items as plain strings.
-
-Be specific to THESE requirements — not generic. Every item must be directly related to what was described.
+8. "checklist": design considerations specific to this feature. Not generic — tied to what was described. 6-8 items as plain strings.
 
 Return ONLY raw JSON, no markdown, no backticks:
 
-{"feature_name":"name","summary":"2 sentences","screens_needed":[{"screen":"name","purpose":"one sentence"}],"states_needed":[{"state":"name","description":"one sentence"}],"edge_cases":[{"case":"name","what_to_design":"one sentence"}],"questions_to_ask":["question 1","question 2"],"conflicts":["conflict 1"],"checklist":["item 1","item 2"]}`;
+{"feature_name":"name","summary":"2 sentences","screens_needed":[{"screen":"name","purpose":"one sentence","solution":"2-3 sentences"}],"states_needed":[{"state":"name","description":"one sentence","solution":"2-3 sentences"}],"edge_cases":[{"case":"name","what_to_design":"one sentence","solution":"2-3 sentences"}],"questions_to_ask":["question 1","question 2"],"conflicts":["conflict 1"],"checklist":["item 1","item 2"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -60,7 +61,7 @@ Return ONLY raw JSON, no markdown, no backticks:
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 2000,
+        max_tokens: 2500,
         messages: [{ role: "user", content: prompt }],
       }),
     });
