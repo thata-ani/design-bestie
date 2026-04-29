@@ -1069,14 +1069,30 @@ export default function DesignBestie() {
 
   if (screen === "briefing") {
     if (!briefResult) {
-      fetch("/api/brief", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requirements: briefText }),
-      }).then(r => r.json()).then(json => {
-        if (json && json.screens_needed) { setBriefResult(json); setScreen("brief"); }
-        else { console.error("Brief API error:", json); setScreen("home"); }
-      }).catch(e => { console.error(e); setScreen("home"); });
+      // Use useEffect pattern via a ref to avoid calling API on every render
+      if (typeof window !== "undefined" && !(window as any).__briefApiCalled) {
+        (window as any).__briefApiCalled = true;
+        fetch("/api/brief", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ requirements: briefText }),
+        }).then(r => r.json()).then(json => {
+          (window as any).__briefApiCalled = false;
+          if (json && json.screens_needed) {
+            setBriefResult(json);
+            setScreen("brief");
+          } else {
+            console.error("Brief API error:", json);
+            alert("Brief generation failed — please try again.");
+            setScreen("home");
+          }
+        }).catch(e => {
+          (window as any).__briefApiCalled = false;
+          console.error(e);
+          alert("Network error — please try again.");
+          setScreen("home");
+        });
+      }
     }
     return (
       <div style={{ minHeight: "100vh", background: "#020B18", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
