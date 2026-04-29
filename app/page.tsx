@@ -158,26 +158,47 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
   }, []);
 
   return (
-    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: "#020B18", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
-      <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.35 }} />
+    <div style={{ position: "relative", minHeight: "100vh", background: "#020B18", fontFamily: "'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif", display: "flex", flexDirection: "column" }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .db-nav { padding: 0 20px !important; }
+          .db-ai-label { display: none !important; }
+          .db-hero { padding: 16px 20px 0 !important; }
+          .db-hero h1 { font-size: 38px !important; letter-spacing: -1.5px !important; }
+          .db-hero-bg { display: none !important; }
+          .db-cards { flex-direction: column !important; padding: 16px 20px 24px !important; gap: 16px !important; overflow: visible !important; }
+          .db-card { max-width: 100% !important; max-height: none !important; height: auto !important; }
+          .db-or { flex-direction: row !important; height: auto !important; width: 100% !important; }
+          .db-or-line { width: 40px !important; height: 1px !important; flex: 1 !important; background: linear-gradient(to right, transparent, rgba(59,130,246,0.15)) !important; }
+          .db-or-line-2 { background: linear-gradient(to left, transparent, rgba(59,130,246,0.15)) !important; }
+          .db-social { padding: 12px 20px 20px !important; }
+          .db-trust-badges { display: none !important; }
+        }
+        @media (max-width: 1100px) and (min-width: 769px) {
+          .db-nav { padding: 0 24px !important; }
+          .db-hero h1 { font-size: 44px !important; }
+          .db-cards { padding: 16px 24px 16px !important; gap: 12px !important; }
+        }
+      `}</style>
+      <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.35 }} />
 
       {/* NAV */}
-      <nav style={{ position: "relative", zIndex: 10, padding: "0 48px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+      <nav className="db-nav" style={{ position: "relative", zIndex: 10, padding: "0 48px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 32, height: 32, background: "linear-gradient(135deg,#2563EB,#0EA5E9)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(37,99,235,0.4)" }}>
             <span style={{ color: "#fff", fontSize: 16 }}>✦</span>
           </div>
           <span style={{ fontWeight: 800, color: "#fff", fontSize: 18, letterSpacing: "-0.5px" }}>Design Bestie</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div className="db-ai-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ width: 6, height: 6, background: "#3B82F6", borderRadius: "50%", display: "inline-block" }} />
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 500, letterSpacing: 2, textTransform: "uppercase" }}>AI Design Partner</span>
         </div>
       </nav>
 
       {/* HERO */}
-      <div style={{ position: "relative", zIndex: 5, textAlign: "center", padding: "20px 24px 0", flexShrink: 0 }}>
-        <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", fontSize: 140, fontWeight: 900, color: "rgba(37,99,235,0.04)", letterSpacing: 20, whiteSpace: "nowrap", pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>DESIGN</div>
+      <div className="db-hero" style={{ position: "relative", zIndex: 5, textAlign: "center", padding: "20px 24px 0", flexShrink: 0 }}>
+        <div className="db-hero-bg" style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", fontSize: 140, fontWeight: 900, color: "rgba(37,99,235,0.04)", letterSpacing: 20, whiteSpace: "nowrap", pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>DESIGN</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16, position: "relative" }}>
           <span style={{ width: 6, height: 6, background: "#3B82F6", borderRadius: "50%", display: "inline-block", boxShadow: "0 0 8px rgba(59,130,246,0.8)" }} />
           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600, letterSpacing: 4, textTransform: "uppercase" }}>Your AI Design Partner</span>
@@ -189,10 +210,10 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
       </div>
 
       {/* CARDS */}
-      <div style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: "16px 40px 12px", overflow: "hidden" }}>
+      <div className="db-cards" style={{ position: "relative", zIndex: 5, flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: "16px 40px 12px", overflow: "visible" }}>
 
         {/* LEFT CARD */}
-        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 500, display: "flex", flexDirection: "column", padding: "28px 32px 24px", background: "linear-gradient(145deg,#040D1E,#071628)", borderRadius: 28, border: "1px solid rgba(37,99,235,0.18)", boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)", position: "relative", overflow: "hidden" }}>
+        <div className="db-card" style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 500, display: "flex", flexDirection: "column", padding: "28px 32px 24px", background: "linear-gradient(145deg,#040D1E,#071628)", borderRadius: 28, border: "1px solid rgba(37,99,235,0.18)", boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -80, right: -80, width: 240, height: 240, background: "radial-gradient(circle,rgba(37,99,235,0.15),transparent 70%)", pointerEvents: "none" }} />
           <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
@@ -240,14 +261,14 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
         </div>
 
         {/* OR DIVIDER */}
-        <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 0, height: 200 }}>
-          <div style={{ width: 1, flex: 1, background: "linear-gradient(to bottom,transparent,rgba(59,130,246,0.15))" }} />
+        <div className="db-or" style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 0, height: 200 }}>
+          <div className="db-or-line" style={{ width: 1, flex: 1, background: "linear-gradient(to bottom,transparent,rgba(59,130,246,0.15))" }} />
           <div style={{ width: 32, height: 32, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.2)", letterSpacing: 1.5, flexShrink: 0 }}>OR</div>
-          <div style={{ width: 1, flex: 1, background: "linear-gradient(to bottom,rgba(59,130,246,0.15),transparent)" }} />
+          <div className="db-or-line db-or-line-2" style={{ width: 1, flex: 1, background: "linear-gradient(to bottom,rgba(59,130,246,0.15),transparent)" }} />
         </div>
 
         {/* RIGHT CARD */}
-        <div style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 500, display: "flex", flexDirection: "column", padding: "28px 32px 24px", background: "linear-gradient(145deg,#061220,#0B1E35)", borderRadius: 28, border: "1px solid rgba(96,165,250,0.12)", boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)", position: "relative", overflow: "hidden" }}>
+        <div className="db-card" style={{ flex: 1, maxWidth: 520, height: "100%", maxHeight: 500, display: "flex", flexDirection: "column", padding: "28px 32px 24px", background: "linear-gradient(145deg,#061220,#0B1E35)", borderRadius: 28, border: "1px solid rgba(96,165,250,0.12)", boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -80, left: -80, width: 240, height: 240, background: "radial-gradient(circle,rgba(14,165,233,0.1),transparent 70%)", pointerEvents: "none" }} />
           <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
@@ -276,7 +297,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
       </div>
 
       {/* SOCIAL PROOF */}
-      <div style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "8px 24px 14px", flexShrink: 0 }}>
+      <div className="db-social" style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "8px 24px 14px", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ display: "flex" }}>
             {["#1D4ED8","#2563EB","#0EA5E9","#0284C7","#38BDF8"].map((c, i) => (
@@ -285,7 +306,7 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
           </div>
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 500 }}>Trusted by designers worldwide</span>
         </div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
+        <div className="db-trust-badges" style={{ display: "flex", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
           {["50+ UX Laws", "WCAG 2.2", "Nielsen Heuristics", "Gestalt Principles", "Reading Patterns", "Business Impact"].map((b) => (
             <span key={b} style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20, padding: "4px 12px" }}>{b}</span>
           ))}
