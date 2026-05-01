@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateUXScore } from "@/lib/scoringEngine";
+import { calculateBenchmark } from "@/lib/benchmarkEngine";
 
 export const maxDuration = 60;
 
