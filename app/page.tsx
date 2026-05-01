@@ -833,7 +833,7 @@ export default function DesignBestie() {
   if (screen === "results" && analysisResult) {
     const issues = [
       ...(analysisResult.issues || []).map((i: any) => ({ ...i, law: i.rule_violated, learnWhy: i.learn_why })),
-      ...(analysisResult.wins || []).map((i: any) => ({ ...i, law: i.rule_violated, learnWhy: i.learn_why })),
+      ...(analysisResult.wins || []).map((i: any, idx: number) => ({ ...i, id: 1000 + idx, ...i, law: i.rule_violated, learnWhy: i.learn_why })),
     ];
     const overallScore: number = analysisResult.score?.score ?? analysisResult.overall_score ?? 0;
     const summary: string = analysisResult.summary || "";
