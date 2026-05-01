@@ -837,7 +837,7 @@ export default function DesignBestie() {
     ];
     const overallScore: number = analysisResult.score?.score ?? analysisResult.overall_score ?? 0;
     const summary: string = analysisResult.summary || "";
-    const scores = { usability: analysisResult.score?.breakdown?.clarity ?? 0, accessibility: analysisResult.score?.breakdown?.accessibility ?? 0, visual_design: analysisResult.score?.breakdown?.consistency ?? 0, hierarchy: analysisResult.score?.breakdown?.hierarchy ?? 0, cognitive_load: analysisResult.score?.breakdown?.cognitive_load ?? 0 }; { usability: analysisResult.score?.breakdown?.clarity ?? 0, accessibility: analysisResult.score?.breakdown?.accessibility ?? 0, visual_design: analysisResult.score?.breakdown?.consistency ?? 0, hierarchy: analysisResult.score?.breakdown?.hierarchy ?? 0, cognitive_load: analysisResult.score?.breakdown?.cognitive_load ?? 0 };
+    const scores = { usability: analysisResult.score?.breakdown?.clarity ?? 0, accessibility: analysisResult.score?.breakdown?.accessibility ?? 0, visual_design: analysisResult.score?.breakdown?.consistency ?? 0, hierarchy: analysisResult.score?.breakdown?.hierarchy ?? 0, cognitive_load: analysisResult.score?.breakdown?.cognitive_load ?? 0 };
     const priorityFixes: string[] = analysisResult.priority_fixes || [];
     const readingPattern = analysisResult.reading_pattern || null;
     const pm = readingPattern ? (patternMeta[readingPattern.type] || patternMeta["No Clear Pattern"]) : null;
