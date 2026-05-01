@@ -875,7 +875,7 @@ export default function DesignBestie() {
               {analysisResult.benchmark && (
               <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "Top 20%" ? "#34C759" : analysisResult.benchmark.benchmark === "Middle Range" ? "#FF9500" : "#FF3B30", fontWeight: 600, marginTop: 2 }}>
                 {analysisResult.benchmark.benchmark}
-  </div>
+                {analysisResult.benchmark.benchmark}</div><div style={{ fontSize: 10, color: "rgba(0,0,0,0.4)", marginTop: 2 }}>{analysisResult.benchmark.message}</div>
 )}
             </div>
           </div>
