@@ -873,8 +873,8 @@ export default function DesignBestie() {
               <div style={{ fontSize: 10, color: "#AEAEB2", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Design Score</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
               {analysisResult.benchmark && (
-  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "above_average" ? "#34C759" : analysisResult.benchmark.benchmark === "average" ? "#FF9500" : "#FF3B30", fontWeight: 600, marginTop: 2 }}>
-    {analysisResult.benchmark.benchmark === "above_average" ? "⬆ Above Average" : analysisResult.benchmark.benchmark === "average" ? "➡ Average" : "⬇ Below Average"}
+              <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "Top 20%" ? "#34C759" : analysisResult.benchmark.benchmark === "Middle Range" ? "#FF9500" : "#FF3B30", fontWeight: 600, marginTop: 2 }}>
+                {analysisResult.benchmark.benchmark}
   </div>
 )}
             </div>
