@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { calculateUXScore } from "@/lib/scoringEngine";
 
 export const maxDuration = 60;
 
@@ -19,6 +20,7 @@ Find exactly 3 issues and 2 wins.
 For each issue:
 - "element": plain name of the UI element
 - "severity": exactly one of: "critical", "high", "medium"
+- "type": exactly one of: "missing_cta", "low_contrast", "too_many_cta", "cluttered_layout", "poor_spacing", "other"
 - "rule_violated": the UX law or research source (e.g. "Fitts's Law", "Baymard Institute — Checkout UX", "Nielsen Norman — Visibility of System Status")
 - "problem": ONE sentence in the user's voice. What they feel or do.
 - "learn_why": exactly 4 bullet points, each max 15 words. Format:
@@ -32,6 +34,7 @@ For each issue:
 For each win:
 - "element": plain name
 - "severity": exactly "win"
+- "type": "other"
 - "rule_violated": the principle being followed
 - "problem": ""
 - "learn_why": exactly 2 bullet points (max 15 words each):
@@ -63,7 +66,7 @@ NEVER invent statistics. Only cite principles you are certain about.
 
 Return ONLY raw JSON, no markdown, no backticks:
 
-{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"one crisp sentence","reading_pattern":{"type":"F-Pattern","is_following":true,"explanation":"one sentence for the designer","impact":"one sentence on user impact"},"issues":[{"id":1,"element":"name","severity":"critical","category":"ux","rule_violated":"law name and source","problem":"one sentence in user voice","learn_why":"• point 1\n• point 2\n• point 3\n• point 4","fix":"Consider or What if...","zone":"top-center"}],"wins":[{"id":1,"element":"name","severity":"win","category":"ux","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","zone":"bottom-center"}],"priority_fixes":["Your user [X]. This costs [impact]. Consider [direction].","second","third"]}`;
+{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"one crisp sentence","reading_pattern":{"type":"F-Pattern","is_following":true,"explanation":"one sentence for the designer","impact":"one sentence on user impact"},"issues":[{"id":1,"element":"name","severity":"critical","type":"missing_cta","category":"ux","rule_violated":"law name and source","problem":"one sentence in user voice","learn_why":"• point 1\n• point 2\n• point 3\n• point 4","fix":"Consider or What if...","zone":"top-center"}],"wins":[{"id":1,"element":"name","severity":"win","type":"other","category":"ux","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","zone":"bottom-center"}],"priority_fixes":["Your user [X]. This costs [impact]. Consider [direction].","second","third"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -108,7 +111,25 @@ Return ONLY raw JSON, no markdown, no backticks:
       }
     }
 
-    return NextResponse.json(result);
+    // Run scoring engine on issues
+    const scoringIssues = (result.issues || []).map((issue: { type?: string; severity?: string }) => ({
+      type: issue.type || "other",
+      severity: (issue.severity as "low" | "medium" | "high") || "medium",
+    }));
+
+    const uxScore = calculateUXScore(scoringIssues);
+
+    return NextResponse.json({
+      score: uxScore,
+      issues: result.issues || [],
+      wins: result.wins || [],
+      summary: result.summary || "",
+      reading_pattern: result.reading_pattern || null,
+      priority_fixes: result.priority_fixes || [],
+      overall_score: result.overall_score || 0,
+      benchmark: null,
+      justification: [],
+    });
 
   } catch (error) {
     console.error("API Error:", error);
