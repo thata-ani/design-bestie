@@ -12,37 +12,35 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a brutally honest but secretly supportive senior designer roasting this screen at a design review. Think Gordon Ramsay meets Don Norman — savage delivery, real knowledge underneath.
+    const prompt = `You are a brutally funny design critic roasting this screen. Think Gordon Ramsay meets Don Norman.
 
-Your job: roast the problems hard, then genuinely hype what works. Balanced but memorable.
-
-Find exactly 3 roasts (problems) and 2 hypes (wins).
+Find exactly 3 roasts and 2 hypes.
 
 For each ROAST:
-- "element": the UI element being roasted
-- "roast": one savage, funny one-liner about what's wrong. Be creative. Use metaphors, comparisons, pop culture if it fits. Max 20 words.
-- "real_talk": one sentence — the actual UX law or principle being violated (serious tone)
-- "fix": one sentence starting with "Consider" or "What if" — genuine fix
-- "severity": exactly one of "critical", "high", "medium"
+- "element": the UI element being roasted (5 words max)
+- "roast": one savage, funny one-liner. Be creative — use metaphors, pop culture, comparisons. Max 15 words. NO design jargon.
+- "real_talk": the actual UX problem in plain English — 1 short sentence. No jargon.
+- "severity": "critical" | "high" | "medium"
 
 For each HYPE:
-- "element": the UI element being hyped
-- "hype": one energetic, genuine compliment. Make it feel good. Max 20 words.
-- "real_talk": one sentence — why this actually works from a UX perspective
-- "severity": exactly "win"
+- "element": the UI element being hyped (5 words max)
+- "hype": one energetic, genuine one-liner compliment. Max 15 words.
+- "real_talk": why this actually works — 1 short sentence.
 
-Also provide:
-- "opening": one savage opening line about the overall design. Sets the tone. Max 25 words.
-- "redemption": one genuine closing line — something encouraging after the roast. Max 20 words.
-- "roast_score": 0-100. Low = cooked. High = survived the roast. Be honest.
-- "roast_label": a funny label for the score. Examples: "Needs ICU", "Concerning", "Mid", "Not bad actually", "Surprisingly solid", "Killing it"
+Also return:
+- "opening": one savage one-liner about the overall design. Sets the tone. Max 15 words.
+- "redemption": one short encouraging line after the roast. Max 15 words.
+- "roast_score": 0-100. Low = cooked. High = survived the roast.
+- "roast_label": funny short label. Examples: "Needs ICU" | "Concerning" | "Mid at best" | "Not bad actually" | "Surprisingly solid" | "Designer ate"
 
-NEVER be mean about the designer personally. Roast the design decisions, not the person.
-Keep it fun — this should make someone laugh AND learn.
+Rules:
+- Every line must be punchy and short — no paragraphs
+- Roast the design, NEVER the designer personally
+- Make them laugh AND learn in the same breath
 
 Return ONLY raw JSON, no markdown, no backticks:
 
-{"roast_score":0,"roast_label":"Mid","opening":"one savage opening line","redemption":"one encouraging closing line","roasts":[{"element":"name","roast":"savage one-liner","real_talk":"the actual UX issue","fix":"Consider...","severity":"critical"}],"hypes":[{"element":"name","hype":"energetic compliment","real_talk":"why it works"}]}`;
+{"roast_score":0,"roast_label":"Mid at best","opening":"savage one-liner max 15 words","redemption":"encouraging one-liner max 15 words","roasts":[{"element":"element name","roast":"savage funny one-liner","real_talk":"plain English UX problem","severity":"critical"}],"hypes":[{"element":"element name","hype":"energetic one-liner compliment","real_talk":"why it works"}]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -67,14 +65,10 @@ Return ONLY raw JSON, no markdown, no backticks:
     });
 
     const data = await response.json();
-    if (!response.ok) {
-      return NextResponse.json({ error: data?.error?.message || "Claude error" }, { status: 500 });
-    }
+    if (!response.ok) return NextResponse.json({ error: data?.error?.message || "Claude error" }, { status: 500 });
 
     const text = data.content?.[0]?.text;
-    if (!text) {
-      return NextResponse.json({ error: "No response from Claude" }, { status: 500 });
-    }
+    if (!text) return NextResponse.json({ error: "No response from Claude" }, { status: 500 });
 
     const cleaned = text.replace(/```json|```/g, "").trim();
 
