@@ -460,7 +460,7 @@ function AnnotatedImage({ imagePreview, issues, activeIssueId }: { imagePreview:
           const isActive = activeIssueId === issue.id;
           const isDimmed = activeIssueId !== null && !isActive;
           return (
-            <div key={issue.id} style={{ position: "absolute", top: pos.top, left: pos.left, transform: pos.transform, width: isActive ? 28 : 22, height: isActive ? 28 : 22, background: s.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isActive ? 13 : 11, color: "#fff", fontWeight: 700, boxShadow: isActive ? `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)` : "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)", pointerEvents: "none", opacity: isDimmed ? 0.3 : 1, transition: "all 0.25s", zIndex: isActive ? 10 : 5 }}>
+            <div key={`issue-${issue.id}-${issue.element}`} style={{ position: "absolute", top: pos.top, left: pos.left, transform: pos.transform, width: isActive ? 28 : 22, height: isActive ? 28 : 22, background: s.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isActive ? 13 : 11, color: "#fff", fontWeight: 700, boxShadow: isActive ? `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)` : "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)", pointerEvents: "none", opacity: isDimmed ? 0.3 : 1, transition: "all 0.25s", zIndex: isActive ? 10 : 5 }}>
               {issue.id}
             </div>
           );
@@ -975,7 +975,7 @@ export default function DesignBestie() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {filtered.map((issue: any) => (
-                      <IssueCard key={issue.id} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
+                      <IssueCard key={`issue-${issue.id}-${issue.element}`} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
                     ))}
                   </div>
                 </div>
@@ -1055,7 +1055,7 @@ export default function DesignBestie() {
                         <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 12 }}>Issues & wins for this persona</div>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                           {stressIssues.map((issue: any) => (
-                            <IssueCard key={issue.id} issue={issue} expanded={stressExpandedCards.includes(issue.id)} onToggle={() => { toggleStressCard(issue.id); setActiveStressIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeStressIssueId === issue.id} />
+                            <IssueCard key={`issue-${issue.id}-${issue.element}`} issue={issue} expanded={stressExpandedCards.includes(issue.id)} onToggle={() => { toggleStressCard(issue.id); setActiveStressIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeStressIssueId === issue.id} />
                           ))}
                         </div>
                       </div>
