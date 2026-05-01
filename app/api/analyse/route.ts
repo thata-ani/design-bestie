@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateUXScore } from "@/lib/scoringEngine";
-import { calculateBenchmark } from "@/lib/benchmarkEngine";
+import { getBenchmark } from "@/lib/benchmarkEngine";
 
 export const maxDuration = 60;
 
@@ -113,7 +113,7 @@ Return ONLY raw JSON, no markdown, no backticks:
       severity: (issue.severity as "low" | "medium" | "high") || "medium",
     }));
 
-    const uxScore = calculateUXScore(scoringIssues);
+    const benchmark = getBenchmark(uxScore.score, result.issues || []);
 
     return NextResponse.json({
       score: uxScore,
@@ -123,7 +123,7 @@ Return ONLY raw JSON, no markdown, no backticks:
       reading_pattern: result.reading_pattern || null,
       priority_fixes: result.priority_fixes || [],
       overall_score: result.overall_score || 0,
-      benchmark: calculateBenchmark(uxScore.score),
+      benchmark: benchmark,,
       justification: [],
     });
 
