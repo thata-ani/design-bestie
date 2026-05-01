@@ -14,8 +14,6 @@ const PERSONA_DESCRIPTIONS: Record<string, string> = {
   "Non-native Speaker": "a user for whom English is a second language. Jargon, idioms, and dense text create barriers.",
 };
 
-const ZONES = `Choose the zone that best describes where this element appears. Exactly one of: "top-left", "top-center", "top-right", "mid-left", "mid-center", "mid-right", "bottom-left", "bottom-center", "bottom-right"`;
-
 export async function POST(req: NextRequest) {
   try {
     const { imageBase64, mimeType, personas } = await req.json();
@@ -37,16 +35,36 @@ export async function POST(req: NextRequest) {
 
 ${personaBlocks}
 
-Rules:
-- Each persona gets exactly 2 issues and 1 win
-- "problem" must be written in THAT persona's voice
-- "zone": ${ZONES}
-- "severity": exactly one of "critical", "high", "medium" for issues; "win" for wins
-- "persona_score": 0-100 how well this screen serves this persona
+For each ISSUE return:
+- "element": name of the UI element (5 words max)
+- "severity": "critical" | "high" | "medium"
+- "what": what is wrong for THIS persona — 6-8 words
+- "why": UX principle being violated — cite law + one line
+- "user_impact": what THIS persona feels or does — 1 sentence in their voice
+- "business_impact": what this costs the business — 1 sentence
+- "direction": quality the element needs to serve this persona — max 15 words. Guide, don't prescribe.
+- "zone": exactly one of: "top-left" | "top-center" | "top-right" | "mid-left" | "mid-center" | "mid-right" | "bottom-left" | "bottom-center" | "bottom-right"
 
-Return ONLY this exact JSON shape, no markdown, no backticks:
+For each WIN return:
+- "element": name of the UI element
+- "severity": "win"
+- "what": what works for THIS persona — 6-8 words
+- "why": principle being followed — 1 line
+- "user_impact": why this persona benefits — 1 sentence
+- "business_impact": why good for business — 1 sentence
+- "direction": "Keep this pattern"
+- "zone": one of the 9 zones
 
-{"overall_stress_score":0,"weakest_persona":"name","strongest_persona":"name","cross_persona_insight":"one sentence","personas":[{"name":"persona name","persona_score":0,"issues":[{"id":1,"element":"element name","severity":"critical","rule_violated":"UX law","problem":"one sentence in persona voice","learn_why":"• point 1\n• point 2","fix":"Consider...","zone":"top-center"}],"wins":[{"id":1,"element":"element name","severity":"win","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","zone":"bottom-center"}]}]}`;
+Also return:
+- "persona_score": 0-100 — how well this screen serves this persona
+- "overall_stress_score": 0-100 — average across all personas
+- "weakest_persona": name of persona with lowest score
+- "strongest_persona": name of persona with highest score
+- "cross_persona_insight": 1 sentence — the most important pattern across all personas
+
+Return ONLY raw JSON, no markdown, no backticks:
+
+{"overall_stress_score":0,"weakest_persona":"name","strongest_persona":"name","cross_persona_insight":"one sentence","personas":[{"name":"persona name","persona_score":0,"issues":[{"id":1,"element":"element name","severity":"critical","what":"what is wrong 6-8 words","why":"law — one line","user_impact":"one sentence in persona voice","business_impact":"one sentence","direction":"quality needed max 15 words","zone":"top-center"}],"wins":[{"id":1,"element":"element name","severity":"win","what":"what works","why":"principle — one line","user_impact":"why persona benefits","business_impact":"why good for business","direction":"Keep this pattern","zone":"bottom-center"}]}]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
