@@ -123,7 +123,7 @@ Return ONLY raw JSON, no markdown, no backticks:
       reading_pattern: result.reading_pattern || null,
       priority_fixes: result.priority_fixes || [],
       overall_score: result.overall_score || 0,
-      benchmark: benchmark,,
+      benchmark: benchmark,
       justification: [],
     });
 
