@@ -6,11 +6,11 @@ type BenchmarkOutput = {
 export function getBenchmark(score: number, issues: any[]): BenchmarkOutput {
   let benchmark: string;
   if (score >= 80) {
-    benchmark = "Top 20%";
+    benchmark = "Better than 80% of designs";
   } else if (score >= 60) {
-    benchmark = "Middle Range";
+    benchmark = "Better than 40% of designs";
   } else {
-    benchmark = "Bottom 30%";
+    benchmark = "Needs significant work";
   }
 
   const types = issues.map((i: any) => i.type || "");
