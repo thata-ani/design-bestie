@@ -34,7 +34,7 @@ For each ISSUE return:
 - "why": the UX principle being violated — cite law + one line explanation
 - "user_impact": what the user feels or does — 1 sentence in user voice
 - "business_impact": what this costs the business — 1 sentence
-- "direction": guide toward the quality needed — NOT what to do, but what quality to achieve. Max 15 words.
+- "direction": describe the QUALITY this element needs — not a solution, not a placement instruction. What characteristic must it have? Max 12 words. Example: "Needs clear visual dominance and immediate recognisability as primary action"
 - "zone": exactly one of: "top-left" | "top-center" | "top-right" | "mid-left" | "mid-center" | "mid-right" | "bottom-left" | "bottom-center" | "bottom-right"
 
 For each WIN return:
