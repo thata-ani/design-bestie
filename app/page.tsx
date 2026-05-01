@@ -415,51 +415,7 @@ function IssueCard({ issue, expanded, onToggle, highlighted }: { issue: any; exp
       )}
     </div>
   );
-}({ issue, expanded, onToggle, highlighted }: { issue: any; expanded: boolean; onToggle: () => void; highlighted?: boolean }) {
-  const style = getSeverityStyle(issue.severity);
-  const bullets = parseBullets(issue.learn_why || issue.learnWhy);
-  return (
-    <div style={{ background: highlighted ? `${style.bg}` : "#fff", border: highlighted ? `2px solid ${style.color}` : "1px solid #E5E5EA", borderLeft: `3px solid ${style.color}`, borderRadius: 10, overflow: "hidden", transition: "all 0.2s" }}>
-      <button onClick={onToggle} style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "flex-start", gap: 12 }}>
-        <div style={{ width: 22, height: 22, background: style.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{issue.id}</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F" }}>{issue.element}</span>
-            {(issue.rule_violated || issue.law) && (
-              <span style={{ background: "#F0F0FF", color: "#5856D6", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 8 }}>{issue.rule_violated || issue.law}</span>
-            )}
-          </div>
-          {issue.problem && <div style={{ fontSize: 13, color: "#6E6E73", lineHeight: 1.5 }}>{issue.problem}</div>}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <span style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 600, padding: "3px 8px", borderRadius: 10 }}>{style.label}</span>
-          <span style={{ color: "#C7C7CC", fontSize: 11 }}>{expanded ? "▴" : "▾"}</span>
-        </div>
-      </button>
-      {expanded && (
-        <div style={{ padding: "0 16px 16px 50px", borderTop: "1px solid #F2F2F7" }}>
-          {bullets.length > 0 && (
-            <div style={{ marginTop: 12, marginBottom: 12 }}>
-              {bullets.map((b, idx) => (
-                <div key={idx} style={{ display: "flex", gap: 10, marginBottom: 8 }}>
-                  <span style={{ color: "#5856D6", fontWeight: 700, fontSize: 13, flexShrink: 0, marginTop: 1 }}>•</span>
-                  <span style={{ fontSize: 13, color: "#3A3A3C", lineHeight: 1.55 }}>{b}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {issue.fix && (
-            <div style={{ background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 8, padding: "10px 14px", display: "flex", gap: 10 }}>
-              <span style={{ color: "#34C759", fontSize: 14, flexShrink: 0, fontWeight: 700 }}>→</span>
-              <span style={{ fontSize: 13, color: "#1C4A26", lineHeight: 1.55 }}>{issue.fix}</span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
 }
-
 const ZONE_POSITIONS: Record<string, { top: string; left: string; transform: string }> = {
   "top-left":      { top: "10%",  left: "15%",  transform: "translate(-50%,-50%)" },
   "top-center":    { top: "10%",  left: "50%",  transform: "translate(-50%,-50%)" },
@@ -880,7 +836,7 @@ export default function DesignBestie() {
   if (screen === "results" && analysisResult) {
     const issues = [
       ...(analysisResult.issues || []).map((i: any) => ({ ...i, law: i.rule_violated, learnWhy: i.learn_why })),
-      ...(analysisResult.wins || []).map((i: any, idx: number) => ({ ...i, id: 1000 + idx, ...i, law: i.rule_violated, learnWhy: i.learn_why })),
+      ...(analysisResult.wins || []).map((i: any, idx: number) => ({ ...i, id: 1000 + idx })),
     ];
     const overallScore: number = analysisResult.score?.score ?? analysisResult.overall_score ?? 0;
     const summary: string = analysisResult.summary || "";
