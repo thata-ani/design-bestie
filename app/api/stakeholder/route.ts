@@ -12,44 +12,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a senior product consultant translating a UX audit into business language for a CEO, CPO, or PM who doesn't speak design.
+    const prompt = `You are a senior product consultant translating a UX audit into business language for a CEO, CPO, or PM.
 
-Here is the UX analysis result:
+UX analysis:
 ${JSON.stringify(analysisResult, null, 2)}
 
-Your job: rewrite this entire critique in business terms. No UX jargon. No design terminology. Pure business impact language.
+Rewrite this in pure business language. No UX jargon. No design terms.
 
-Generate:
+Return:
 
-1. "executive_summary": 2-3 sentences. What is the overall state of this product experience and what does it mean for the business? Use words like revenue, retention, conversion, churn, support cost.
+1. "executive_summary": 2 sentences max. State of the product experience + what it means for business. Use: revenue, retention, conversion, churn, support cost.
 
-2. "business_issues": for each issue in the analysis, reframe it as a business problem. Each item:
+2. "business_issues": for each issue, reframe as a business problem:
    - "element": same element name
-   - "business_impact": one sentence — what this costs the business (revenue, users, trust, support tickets)
-   - "user_impact": one sentence — what the user does because of this (leaves, gets confused, calls support, doesn't convert)
-   - "effort": "Low" / "Medium" / "High" — estimated dev effort to fix
-   - "priority": "Ship this sprint" / "Next sprint" / "Backlog"
+   - "business_impact": 1 sentence — what this costs (revenue, users, trust, tickets)
+   - "user_impact": 1 sentence — what the user does (leaves, gets confused, doesn't convert)
+   - "effort": "Low" | "Medium" | "High"
+   - "priority": "Ship this sprint" | "Next sprint" | "Backlog"
 
-3. "wins_to_keep": for each win, one sentence on why it's good for the business — not design language, business language.
+3. "wins_to_keep": 1 short sentence per win — business value only, no design language.
 
-4. "priority_matrix": exactly 3 items ordered by highest ROI (impact vs effort). Each:
-   - "action": one short action in plain English
-   - "why": one sentence business case
-   - "effort": "Low" / "Medium" / "High"
-   - "impact": "Low" / "Medium" / "High"
+4. "priority_matrix": exactly 3 items, highest ROI first:
+   - "action": short plain English action
+   - "why": 1 sentence business case
+   - "effort": "Low" | "Medium" | "High"
+   - "impact": "Low" | "Medium" | "High"
 
-5. "sprint_recommendation": exactly 3 ticket-ready items a PM could paste straight into Jira or Linear. Format: "[Action] [element] to [business outcome]". Example: "Increase CTA size to improve conversion on checkout screen"
+5. "sprint_recommendation": exactly 3 Jira-ready tickets.
+   Format: "[Action] [element] to [business outcome]"
 
-6. "overall_business_score": 0-100. How business-ready is this product experience right now?
+6. "overall_business_score": 0-100
 
-7. "score_label": one short phrase. Examples: "Not ready to scale", "Needs work before launch", "Good enough to ship", "Strong foundation"
+7. "score_label": short phrase. Examples: "Not ready to scale" | "Needs work before launch" | "Good enough to ship" | "Strong foundation"
 
-NEVER use words like: Fitts's Law, heuristics, cognitive load, visual hierarchy, gestalt, affordance, UX, UI.
-ALWAYS use words like: conversion, revenue, retention, churn, support cost, user trust, drop-off, engagement.
+NEVER use: Fitts's Law, heuristics, cognitive load, visual hierarchy, gestalt, affordance, UX, UI.
+ALWAYS use: conversion, revenue, retention, churn, support cost, user trust, drop-off, engagement.
 
 Return ONLY raw JSON, no markdown, no backticks:
 
-{"overall_business_score":0,"score_label":"phrase","executive_summary":"2-3 sentences","business_issues":[{"element":"name","business_impact":"one sentence","user_impact":"one sentence","effort":"Low","priority":"Ship this sprint"}],"wins_to_keep":["one sentence per win"],"priority_matrix":[{"action":"short action","why":"one sentence","effort":"Low","impact":"High"}],"sprint_recommendation":["ticket 1","ticket 2","ticket 3"]}`;
+{"overall_business_score":0,"score_label":"phrase","executive_summary":"2 sentences max","business_issues":[{"element":"name","business_impact":"1 sentence","user_impact":"1 sentence","effort":"Low","priority":"Ship this sprint"}],"wins_to_keep":["1 sentence per win"],"priority_matrix":[{"action":"short action","why":"1 sentence","effort":"Low","impact":"High"}],"sprint_recommendation":["ticket 1","ticket 2","ticket 3"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
