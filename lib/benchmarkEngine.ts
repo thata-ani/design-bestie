@@ -6,11 +6,11 @@ type BenchmarkOutput = {
 export function getBenchmark(score: number, issues: any[]): BenchmarkOutput {
   let benchmark: string;
   if (score >= 80) {
-    benchmark = "Better than 80% of designs";
+    benchmark = "You're in the top 20% of designers";
   } else if (score >= 60) {
-    benchmark = "Better than 40% of designs";
+    benchmark = "You're in the top 40% of designers";
   } else {
-    benchmark = "Needs significant work";
+    benchmark = "You're in the bottom 30% — keep pushing";
   }
 
   const types = issues.map((i: any) => i.type || "");
@@ -34,8 +34,8 @@ export function getBenchmark(score: number, issues: any[]): BenchmarkOutput {
     message = score >= 80
       ? `Solid design — minor improvements needed around ${top}.`
       : score >= 60
-      ? `Average design — focus on improving ${top} to move up.`
-      : `Below average — critical work needed on ${top}.`;
+      ? `Focus on improving ${top} to move up.`
+      : `Critical work needed on ${top} to level up.`;
   }
 
   return { benchmark, message };
