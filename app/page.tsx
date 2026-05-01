@@ -980,7 +980,7 @@ export default function DesignBestie() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {filtered.map((issue: any) => (
-                      <IssueCard key={issue.id} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
+                      <IssueCard key={`issue-${issue.id}-${issue.element}`} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
                     ))}
                   </div>
                 </div>
