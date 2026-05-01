@@ -460,7 +460,7 @@ function AnnotatedImage({ imagePreview, issues, activeIssueId }: { imagePreview:
           const isActive = activeIssueId === issue.id;
           const isDimmed = activeIssueId !== null && !isActive;
           return (
-            <div key={`issue-${issue.id}-${issue.element}`} style={{ position: "absolute", top: pos.top, left: pos.left, transform: pos.transform, width: isActive ? 28 : 22, height: isActive ? 28 : 22, background: s.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isActive ? 13 : 11, color: "#fff", fontWeight: 700, boxShadow: isActive ? `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)` : "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)", pointerEvents: "none", opacity: isDimmed ? 0.3 : 1, transition: "all 0.25s", zIndex: isActive ? 10 : 5 }}>
+            <div key={issue.id} style={{ position: "absolute", top: pos.top, left: pos.left, transform: pos.transform, width: isActive ? 28 : 22, height: isActive ? 28 : 22, background: s.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isActive ? 13 : 11, color: "#fff", fontWeight: 700, boxShadow: isActive ? `0 0 0 3px #fff, 0 4px 12px rgba(0,0,0,0.3)` : "0 0 0 2px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.25)", pointerEvents: "none", opacity: isDimmed ? 0.3 : 1, transition: "all 0.25s", zIndex: isActive ? 10 : 5 }}>
               {issue.id}
             </div>
           );
@@ -872,6 +872,11 @@ export default function DesignBestie() {
             <div>
               <div style={{ fontSize: 10, color: "#AEAEB2", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Design Score</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
+              {analysisResult.benchmark && (
+  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "above_average" ? "#34C759" : analysisResult.benchmark.benchmark === "average" ? "#FF9500" : "#FF3B30", fontWeight: 600, marginTop: 2 }}>
+    {analysisResult.benchmark.benchmark === "above_average" ? "⬆ Above Average" : analysisResult.benchmark.benchmark === "average" ? "➡ Average" : "⬇ Below Average"}
+  </div>
+)}
             </div>
           </div>
           <div style={{ display: "flex", gap: 6, flex: 1, flexWrap: "wrap" }}>
@@ -975,7 +980,7 @@ export default function DesignBestie() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {filtered.map((issue: any) => (
-                      <IssueCard key={`issue-${issue.id}-${issue.element}`} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
+                      <IssueCard key={issue.id} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
                     ))}
                   </div>
                 </div>
