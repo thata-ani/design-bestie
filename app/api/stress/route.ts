@@ -42,7 +42,7 @@ For each ISSUE return:
 - "why": UX principle being violated — cite law + one line
 - "user_impact": what THIS persona feels or does — 1 sentence in their voice
 - "business_impact": what this costs the business — 1 sentence
-- "direction": quality the element needs to serve this persona — max 15 words. Guide, don't prescribe.
+- "direction": describe the QUALITY this element needs for THIS persona — not a solution. What characteristic must it have? Max 12 words.
 - "zone": exactly one of: "top-left" | "top-center" | "top-right" | "mid-left" | "mid-center" | "mid-right" | "bottom-left" | "bottom-center" | "bottom-right"
 
 For each WIN return:
