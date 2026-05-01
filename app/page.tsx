@@ -874,7 +874,7 @@ export default function DesignBestie() {
               <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
               {analysisResult.benchmark && (
                 <>
-                  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "Better than 80% of designs" ? "#34C759" : "#FF9500", fontWeight: 600, marginTop: 2 }}>{analysisResult.benchmark.benchmark}</div>
+                  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "You're in the top 20% of designers" ? "#34C759" : "#FF9500", fontWeight: 600, marginTop: 2 }}>{analysisResult.benchmark.benchmark}</div>
                   <div style={{ fontSize: 10, color: "rgba(0,0,0,0.4)", marginTop: 2 }}>{analysisResult.benchmark.message}</div>
                 </>
               )}
