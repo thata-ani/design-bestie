@@ -14,55 +14,54 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a senior UX researcher reviewing this screen with a designer. Be sharp and concise.
+    const prompt = `You are a senior UX researcher giving feedback to a designer. Be sharp, concise, and educational — not prescriptive.
 
-Find exactly 3 issues and 2 wins.
+Analyse this screen. Find exactly 3 issues and 2 wins.
 
-For each issue, you MUST classify the "type" field using ONLY these exact values:
-- "missing_cta" → if the screen has no clear primary call-to-action, or the CTA is hidden/buried
-- "low_contrast" → if text or UI elements have poor contrast against background
-- "too_many_cta" → if there are multiple competing primary actions confusing the user
-- "cluttered_layout" → if the layout feels overwhelming, too dense, or visually noisy
-- "poor_spacing" → if elements are too cramped, lack breathing room, or have inconsistent spacing
-- "other" → only if none of the above apply
+ISSUE TYPE — classify each issue as exactly one of:
+- "missing_cta" → no clear primary action, or CTA is hidden/buried
+- "low_contrast" → poor contrast between text/elements and background
+- "too_many_cta" → multiple competing primary actions
+- "cluttered_layout" → overwhelming, too dense, visually noisy
+- "poor_spacing" → cramped elements, inconsistent spacing
+- "other" → only if none above apply
 
-For each issue:
-- "element": plain name of the UI element
-- "severity": exactly one of: "critical", "high", "medium"
-- "type": exactly one of the 6 types above — pick the BEST match, avoid "other" unless truly necessary
-- "rule_violated": the UX law or research source
-- "problem": ONE sentence in the user's voice
-- "learn_why": exactly 4 bullet points, each max 15 words. Format:
-  • What the law says
-  • How it applies to THIS specific element on THIS screen
-  • What the user does when this goes wrong
-  • How [Stripe / Swiggy / Amazon / Linear / Apple] handles this
-- "fix": one sentence starting with "Consider" or "What if"
-- "zone": exactly one of: "top-left", "top-center", "top-right", "mid-left", "mid-center", "mid-right", "bottom-left", "bottom-center", "bottom-right"
+For each ISSUE return:
+- "element": name of the UI element (5 words max)
+- "severity": "critical" | "high" | "medium"
+- "type": one of the 6 types above
+- "what": what is wrong — 6-8 words, plain English
+- "why": the UX principle being violated — cite law + one line explanation
+- "user_impact": what the user feels or does — 1 sentence in user voice
+- "business_impact": what this costs the business — 1 sentence
+- "direction": guide toward the quality needed — NOT what to do, but what quality to achieve. Max 15 words.
+- "zone": exactly one of: "top-left" | "top-center" | "top-right" | "mid-left" | "mid-center" | "mid-right" | "bottom-left" | "bottom-center" | "bottom-right"
 
-For each win:
-- "element": plain name
-- "severity": exactly "win"
+For each WIN return:
+- "element": name of the UI element
+- "severity": "win"
 - "type": "other"
-- "rule_violated": the principle being followed
-- "problem": ""
-- "learn_why": exactly 2 bullet points (max 15 words each)
-- "fix": "Keep this pattern"
-- "zone": one of the 9 zones above
+- "what": what is working — 6-8 words
+- "why": the principle being followed — 1 line
+- "user_impact": why users benefit — 1 sentence
+- "business_impact": why good for business — 1 sentence
+- "direction": "Keep this pattern"
+- "zone": one of the 9 zones
 
-Reading pattern: Choose exactly one: "F-Pattern", "Z-Pattern", "Gutenberg Pattern", "Spotted Pattern", "Layer Cake Pattern", "No Clear Pattern"
-- "type": pattern name
-- "is_following": true or false
-- "explanation": one sentence for the designer
-- "impact": one sentence on user impact
+READING PATTERN:
+Choose one: "F-Pattern" | "Z-Pattern" | "Gutenberg Pattern" | "Spotted Pattern" | "Layer Cake Pattern" | "No Clear Pattern"
+- "is_following": true if used correctly, false if broken
+- "explanation": 1 sentence for the designer
+- "impact": 1 sentence on user effect
 
-Summary: 1 crisp sentence about the most important thing on this screen.
+SUMMARY: 1 sharp sentence — the single most important insight.
 
-Priority fixes: 3 items. Each: "Your user [does X]. This costs [impact]. Consider [direction]."
+PRIORITY FIXES: exactly 3 items.
+Format: "Fix [element] — [quality it needs] → [what it prevents]"
 
 Return ONLY raw JSON, no markdown, no backticks:
 
-{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"one crisp sentence","reading_pattern":{"type":"F-Pattern","is_following":true,"explanation":"one sentence","impact":"one sentence"},"issues":[{"id":1,"element":"name","severity":"critical","type":"missing_cta","category":"ux","rule_violated":"law name","problem":"one sentence in user voice","learn_why":"• point 1\n• point 2\n• point 3\n• point 4","fix":"Consider...","zone":"top-center"}],"wins":[{"id":1,"element":"name","severity":"win","type":"other","category":"ux","rule_violated":"principle","problem":"","learn_why":"• point 1\n• point 2","fix":"Keep this pattern","zone":"bottom-center"}],"priority_fixes":["Your user [X]. This costs [impact]. Consider [direction].","second","third"]}`;
+{"overall_score":0,"scores":{"usability":0,"accessibility":0,"visual_design":0,"hierarchy":0,"cognitive_load":0},"summary":"one sharp sentence","reading_pattern":{"type":"F-Pattern","is_following":true,"explanation":"one sentence","impact":"one sentence"},"issues":[{"id":1,"element":"element name","severity":"critical","type":"missing_cta","what":"what is wrong in 6-8 words","why":"UX law — one line explanation","user_impact":"one sentence in user voice","business_impact":"one sentence on business cost","direction":"quality to achieve max 15 words","zone":"top-center"}],"wins":[{"id":1,"element":"element name","severity":"win","type":"other","what":"what is working","why":"principle — one line","user_impact":"why users benefit","business_impact":"why good for business","direction":"Keep this pattern","zone":"bottom-center"}],"priority_fixes":["Fix [element] — [quality needed] → [what it prevents]","second","third"]}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -107,7 +106,6 @@ Return ONLY raw JSON, no markdown, no backticks:
       }
     }
 
-    // Run scoring engine on issues
     const scoringIssues = (result.issues || []).map((issue: { type?: string; severity?: string }) => ({
       type: issue.type || "other",
       severity: (issue.severity as "low" | "medium" | "high") || "medium",
