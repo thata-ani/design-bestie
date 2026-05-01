@@ -370,6 +370,53 @@ function PersonaModal({ onClose, onRun }: { onClose: () => void; onRun: (p: stri
 
 function IssueCard({ issue, expanded, onToggle, highlighted }: { issue: any; expanded: boolean; onToggle: () => void; highlighted?: boolean }) {
   const style = getSeverityStyle(issue.severity);
+  const isWin = issue.severity === "win";
+  return (
+    <div style={{ background: highlighted ? style.bg : "#fff", border: highlighted ? `2px solid ${style.color}` : "1px solid #E5E5EA", borderLeft: `3px solid ${style.color}`, borderRadius: 10, overflow: "hidden", transition: "all 0.2s" }}>
+      <button onClick={onToggle} style={{ width: "100%", background: "none", border: "none", padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "flex-start", gap: 12 }}>
+        <div style={{ width: 22, height: 22, background: style.color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{issue.id}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F" }}>{issue.element}</span>
+            <span style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 8 }}>{style.label}</span>
+          </div>
+          {issue.what && <div style={{ fontSize: 13, color: "#3A3A3C", fontWeight: 500, marginBottom: 3 }}>{issue.what}</div>}
+          {issue.why && <div style={{ fontSize: 11, color: "#5856D6", background: "#F0F0FF", padding: "2px 8px", borderRadius: 6, display: "inline-block" }}>{issue.why}</div>}
+        </div>
+        <span style={{ color: "#C7C7CC", fontSize: 11, flexShrink: 0 }}>{expanded ? "▴" : "▾"}</span>
+      </button>
+      {expanded && (
+        <div style={{ padding: "0 16px 16px 50px", borderTop: "1px solid #F2F2F7" }}>
+          {!isWin && issue.user_impact && (
+            <div style={{ marginTop: 12, display: "flex", gap: 10, alignItems: "flex-start" }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#6E6E73", minWidth: 80, paddingTop: 2 }}>USER</span>
+              <span style={{ fontSize: 13, color: "#3A3A3C", lineHeight: 1.55 }}>{issue.user_impact}</span>
+            </div>
+          )}
+          {!isWin && issue.business_impact && (
+            <div style={{ marginTop: 8, display: "flex", gap: 10, alignItems: "flex-start" }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#6E6E73", minWidth: 80, paddingTop: 2 }}>BUSINESS</span>
+              <span style={{ fontSize: 13, color: "#3A3A3C", lineHeight: 1.55 }}>{issue.business_impact}</span>
+            </div>
+          )}
+          {issue.direction && issue.direction !== "Keep this pattern" && (
+            <div style={{ marginTop: 10, background: "#F0FFF4", border: "1px solid #B0F0C0", borderRadius: 8, padding: "10px 14px", display: "flex", gap: 10 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#34C759", minWidth: 80, paddingTop: 2 }}>DIRECTION</span>
+              <span style={{ fontSize: 13, color: "#1C4A26", lineHeight: 1.55 }}>{issue.direction}</span>
+            </div>
+          )}
+          {isWin && issue.user_impact && (
+            <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#6E6E73", minWidth: 80, paddingTop: 2 }}>WHY IT WORKS</span>
+              <span style={{ fontSize: 13, color: "#3A3A3C", lineHeight: 1.55 }}>{issue.user_impact}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}({ issue, expanded, onToggle, highlighted }: { issue: any; expanded: boolean; onToggle: () => void; highlighted?: boolean }) {
+  const style = getSeverityStyle(issue.severity);
   const bullets = parseBullets(issue.learn_why || issue.learnWhy);
   return (
     <div style={{ background: highlighted ? `${style.bg}` : "#fff", border: highlighted ? `2px solid ${style.color}` : "1px solid #E5E5EA", borderLeft: `3px solid ${style.color}`, borderRadius: 10, overflow: "hidden", transition: "all 0.2s" }}>
@@ -873,11 +920,10 @@ export default function DesignBestie() {
               <div style={{ fontSize: 10, color: "#AEAEB2", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Design Score</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
               {analysisResult.benchmark && (
-                <>
-                  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "You're in the top 20% of designers" ? "#34C759" : "#FF9500", fontWeight: 600, marginTop: 2 }}>{analysisResult.benchmark.benchmark}</div>
-                  <div style={{ fontSize: 10, color: "rgba(0,0,0,0.4)", marginTop: 2 }}>{analysisResult.benchmark.message}</div>
-                </>
-              )}
+  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "above_average" ? "#34C759" : analysisResult.benchmark.benchmark === "average" ? "#FF9500" : "#FF3B30", fontWeight: 600, marginTop: 2 }}>
+    {analysisResult.benchmark.benchmark}
+  </div>
+)}
             </div>
           </div>
           <div style={{ display: "flex", gap: 6, flex: 1, flexWrap: "wrap" }}>
