@@ -1,23 +1,42 @@
 type BenchmarkOutput = {
-  benchmark: "below_average" | "average" | "above_average";
+  benchmark: string;
   message: string;
 };
 
-export function calculateBenchmark(score: number): BenchmarkOutput {
-  if (score >= 75) {
-    return {
-      benchmark: "above_average",
-      message: "Better than most designs — strong foundation with minor refinements needed.",
-    };
-  } else if (score >= 50) {
-    return {
-      benchmark: "average",
-      message: "Meets basic UX standards but has clear areas for improvement.",
-    };
+export function getBenchmark(score: number, issues: any[]): BenchmarkOutput {
+  let benchmark: string;
+  if (score >= 80) {
+    benchmark = "Top 20%";
+  } else if (score >= 60) {
+    benchmark = "Middle Range";
   } else {
-    return {
-      benchmark: "below_average",
-      message: "Significant UX issues detected — prioritise fixes before shipping.",
-    };
+    benchmark = "Bottom 30%";
   }
+
+  const types = issues.map((i: any) => i.type || "");
+  const problems: string[] = [];
+
+  if (types.includes("missing_cta")) problems.push("CTA clarity");
+  if (types.includes("low_contrast")) problems.push("accessibility");
+  if (types.includes("cluttered_layout")) problems.push("visual hierarchy");
+  if (types.includes("too_many_cta")) problems.push("focus");
+  if (types.includes("poor_spacing")) problems.push("consistency");
+
+  let message: string;
+  if (problems.length === 0) {
+    message = score >= 80
+      ? "Strong design — no major UX pattern violations detected."
+      : score >= 60
+      ? "Meets basic UX standards but has room for improvement."
+      : "Several UX issues detected — prioritise fixes before shipping.";
+  } else {
+    const top = problems.slice(0, 2).join(" and ");
+    message = score >= 80
+      ? `Solid design — minor improvements needed around ${top}.`
+      : score >= 60
+      ? `Average design — focus on improving ${top} to move up.`
+      : `Below average — critical work needed on ${top}.`;
+  }
+
+  return { benchmark, message };
 }
