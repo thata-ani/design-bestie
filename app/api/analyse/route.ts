@@ -113,6 +113,7 @@ Return ONLY raw JSON, no markdown, no backticks:
       severity: (issue.severity as "low" | "medium" | "high") || "medium",
     }));
 
+    const uxScore = calculateUXScore(scoringIssues);
     const benchmark = getBenchmark(uxScore.score, result.issues || []);
 
     return NextResponse.json({
