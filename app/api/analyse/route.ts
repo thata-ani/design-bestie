@@ -8,13 +8,18 @@ const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 export async function POST(req: NextRequest) {
   try {
-    const { imageBase64, mimeType } = await req.json();
+    const { imageBase64, mimeType, context } = await req.json();
 
     if (!ANTHROPIC_API_KEY) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const prompt = `You are a senior UX researcher giving feedback to a designer. Be sharp, concise, and educational — not prescriptive.
+    const contextBlock =
+      typeof context === "string" && context.trim()
+        ? `\n\nContext from the designer:\n${context.trim()}`
+        : "";
+
+    const prompt = `You are a senior UX researcher giving feedback to a designer. Be sharp, concise, and educational — not prescriptive.${contextBlock}
 
 Analyse this screen. Find exactly 3 issues and 2 wins.
 

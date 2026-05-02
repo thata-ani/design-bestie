@@ -37,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased">
+    <html lang="en" style={{ background: '#08090F' }}>
+      <body className="font-sans antialiased" style={{ background: '#08090F' }}>
         <AuthProvider>
           {children}
           <LoginModal />
