@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from '@/contexts/AuthContext'
 import { UserMenu } from '@/components/UserMenu'
+import ResultsPage from '@/components/results/ResultsPage'
 
 const DESIGN_ICONS = [
   { id: 1, path: "M3 3h7v7H3zM13 3h7v7h-7zM3 13h7v7H3zM13 13h7v7h-7z" },
@@ -55,7 +56,7 @@ function getSeverityStyle(severity: string) {
   return { color: "#34C759", bg: "#F0FFF4", label: "Win" };
 }
 
-function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileName, imagePreview, fileInputRef, isDragging, setIsDragging, handleInputChange, handleDrop }: any) {
+function HomeScreen({ onStart, onBrief, onLaunchFirstFive, selectedMode, setSelectedMode, briefText, setBriefText, uploaded, fileName, imagePreview, fileInputRef, isDragging, setIsDragging, handleInputChange, handleDrop }: any) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const iconsRef = useRef<any[]>([]);
@@ -225,10 +226,39 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
             <h2 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 6px", letterSpacing: "-1px", lineHeight: 1.1 }}>Review your</h2>
             <h2 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 12px", letterSpacing: "-1px", lineHeight: 1.1, opacity: 0.5 }}>design.</h2>
             <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", margin: "0 0 16px", lineHeight: 1.65, letterSpacing: 0.2 }}>Upload any screen. Get research-backed critique, stress test, roast and stakeholder report.</p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 16 }}>
-              {[["🔍", "Issues & Wins"], ["🧪", "Stress Test"], ["🔥", "Roast Mode"], ["📊", "Stakeholder"]].map(([emoji, label]) => (
-                <span key={label} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, fontWeight: 600, color: "rgba(147,197,253,0.7)", background: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)", borderRadius: 20, padding: "3px 9px" }}><span>{emoji}</span>{label}</span>
-              ))}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+              {([
+                { mode: "analyse", emoji: "🔍", label: "Analyse" },
+                { mode: "stress", emoji: "🧪", label: "Stress Test" },
+                { mode: "roast", emoji: "🔥", label: "Roast Mode" },
+                { mode: "firstfive", emoji: "👁️", label: "First 5 Seconds" },
+              ] as const).map(({ mode, emoji, label }) => {
+                const isSel = selectedMode === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setSelectedMode(mode)}
+                    style={{
+                      all: "unset",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: isSel ? "#fff" : "rgba(147,197,253,0.7)",
+                      background: isSel ? "rgba(96,165,250,0.28)" : "rgba(37,99,235,0.1)",
+                      border: isSel ? "1px solid rgba(147,197,253,0.6)" : "1px solid rgba(37,99,235,0.15)",
+                      borderRadius: 20,
+                      padding: "4px 11px",
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    <span>{emoji}</span>{label}
+                  </button>
+                );
+              })}
             </div>
             <div
               onClick={() => fileInputRef.current?.click()}
@@ -256,8 +286,12 @@ function HomeScreen({ onStart, onBrief, briefText, setBriefText, uploaded, fileN
                 </div>
               )}
             </div>
-            <button onClick={onStart} style={{ width: "100%", background: uploaded ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.03)", color: uploaded ? "#fff" : "rgba(255,255,255,0.2)", border: uploaded ? "1px solid rgba(96,165,250,0.5)" : "1px solid rgba(255,255,255,0.06)", padding: "14px", borderRadius: 14, fontSize: 14, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 0 20px rgba(59,130,246,0.25), inset 0 1px 0 rgba(255,255,255,0.12)" : "none", backdropFilter: "blur(16px)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, letterSpacing: uploaded ? "-0.3px" : 0 }}>
-              {uploaded ? <>Analyse My Design <span style={{ fontSize: 16 }}>→</span></> : "Select a Screenshot to Begin"}
+            <button onClick={() => selectedMode === "firstfive" ? onLaunchFirstFive() : onStart()} style={{ width: "100%", background: uploaded ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.03)", color: uploaded ? "#fff" : "rgba(255,255,255,0.2)", border: uploaded ? "1px solid rgba(96,165,250,0.5)" : "1px solid rgba(255,255,255,0.06)", padding: "14px", borderRadius: 14, fontSize: 14, fontWeight: 700, cursor: uploaded ? "pointer" : "default", transition: "all 0.25s", boxShadow: uploaded ? "0 0 20px rgba(59,130,246,0.25), inset 0 1px 0 rgba(255,255,255,0.12)" : "none", backdropFilter: "blur(16px)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, letterSpacing: uploaded ? "-0.3px" : 0 }}>
+              {uploaded
+                ? (selectedMode === "firstfive"
+                    ? <>Start First 5 Seconds Test <span style={{ fontSize: 16 }}>→</span></>
+                    : <>Analyse My Design <span style={{ fontSize: 16 }}>→</span></>)
+                : "Select a Screenshot to Begin"}
             </button>
           </div>
         </div>
@@ -620,12 +654,159 @@ function RoastModal({ roastResult, onClose }: { roastResult: any; onClose: () =>
   );
 }
 
+const FIRST_FEELING_STYLES: Record<string, { bg: string; color: string; emoji: string }> = {
+  safe:         { bg: "#0E2A1A", color: "#34C759", emoji: "🛡️" },
+  trustworthy:  { bg: "#0E1F3A", color: "#60A5FA", emoji: "🤝" },
+  exciting:     { bg: "#3A1E0A", color: "#FF9F0A", emoji: "⚡" },
+  boring:       { bg: "#1F1F22", color: "#8E8E93", emoji: "💤" },
+  confusing:    { bg: "#3A0A1E", color: "#FF453A", emoji: "❓" },
+  overwhelming: { bg: "#2E0A3A", color: "#BF5AF2", emoji: "🌀" },
+};
+
+function getFirstFeelingStyle(feeling: string) {
+  const key = (feeling || "").toLowerCase().trim();
+  return FIRST_FEELING_STYLES[key] || { bg: "#1F1F22", color: "#AEAEB2", emoji: "👁️" };
+}
+
+function FirstFiveResultsScreen({ result, imagePreview, onReset, onRoast, isRoasting }: { result: any; imagePreview: string | null; onReset: () => void; onRoast: () => void; isRoasting: boolean }) {
+  const feeling = (result?.firstFeeling || "").toLowerCase().trim();
+  const FEELING_TINTS: Record<string, string> = {
+    overwhelming: "#e05252",
+    confusing: "#e05252",
+    exciting: "#5dcaa5",
+    trustworthy: "#5dcaa5",
+    safe: "#5a47b0",
+    boring: "#f0a500",
+  };
+  const tint = FEELING_TINTS[feeling] || "#5dcaa5";
+  const noticed: string[] = Array.isArray(result?.noticed) ? result.noticed : [];
+  const missed: string[] = Array.isArray(result?.missed) ? result.missed : [];
+  const misunderstood: string[] = Array.isArray(result?.misunderstood) ? result.misunderstood : [];
+  const score = typeof result?.attentionScore === "number" ? Math.max(0, Math.min(100, result.attentionScore)) : 0;
+  const scoreColor = score >= 70 ? "#34C759" : score >= 40 ? "#FF9F0A" : "#FF453A";
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#08090F", fontFamily: "'SF Pro Display',-apple-system,sans-serif", color: "#fff" }}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <nav style={{ padding: "0 32px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#F472B6,#A855F7)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontSize: 15 }}>👁️</span>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: "rgba(244,114,182,0.85)", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>First 5 Seconds</div>
+            <span style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>Raw first impression</span>
+          </div>
+        </div>
+        <button onClick={onReset} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "rgba(255,255,255,0.7)" }}>← New Test</button>
+      </nav>
+
+      <div style={{ maxWidth: 820, margin: "0 auto", padding: "20px 24px 40px", display: "flex", flexDirection: "column", gap: 14 }}>
+
+        {/* IMAGE */}
+        {imagePreview && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <img
+              src={imagePreview}
+              alt="Tested design"
+              style={{ maxHeight: 200, maxWidth: "100%", objectFit: "contain", borderRadius: 10, border: "1px solid rgba(255,255,255,0.12)", display: "block" }}
+            />
+          </div>
+        )}
+
+        {/* FEELING BADGE — full width, tinted by feeling */}
+        <div style={{ width: "100%", boxSizing: "border-box", padding: "18px 24px", borderRadius: 14, background: `${tint}22`, border: `1px solid ${tint}66`, textAlign: "center", boxShadow: `0 0 40px ${tint}1a` }}>
+          <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", fontWeight: 700, color: `${tint}cc`, marginBottom: 6 }}>First Feeling</div>
+          <div style={{ fontSize: 52, fontWeight: 900, color: tint, letterSpacing: -1.5, textTransform: "lowercase", lineHeight: 1 }}>{feeling || "—"}</div>
+        </div>
+
+        {/* NOTICE FIRST CALLOUT — full width, eye icon */}
+        <div style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "14px 18px", borderRadius: 12, background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.25)", borderLeft: "4px solid #60A5FA" }}>
+          <span style={{ fontSize: 20, lineHeight: 1.3, flexShrink: 0 }}>👁️</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 10, color: "#60A5FA", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 4 }}>Eye Goes To First</div>
+            <div style={{ fontSize: 15, color: "#fff", lineHeight: 1.5, fontWeight: 500 }}>{result?.noticeFirst || "—"}</div>
+          </div>
+        </div>
+
+        {/* NOTICED vs MISSED — two columns, dot + text rows, no extra boxes */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
+          <div>
+            <div style={{ fontSize: 10, color: "#34C759", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Noticed</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {noticed.length > 0 ? noticed.map((item, idx) => (
+                <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34C759", marginTop: 7, flexShrink: 0 }} />
+                  <span style={{ fontSize: 14, color: "rgba(255,255,255,0.88)", lineHeight: 1.5 }}>{item}</span>
+                </div>
+              )) : <span style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>—</span>}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: "#FF453A", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Missed</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {missed.length > 0 ? missed.map((item, idx) => (
+                <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#FF453A", marginTop: 7, flexShrink: 0 }} />
+                  <span style={{ fontSize: 14, color: "rgba(255,255,255,0.88)", lineHeight: 1.5 }}>{item}</span>
+                </div>
+              )) : <span style={{ fontSize: 13, color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>—</span>}
+            </div>
+          </div>
+        </div>
+
+        {/* MISUNDERSTOOD — amber warning rows, full width */}
+        {misunderstood.length > 0 && (
+          <div>
+            <div style={{ fontSize: 10, color: "#FF9F0A", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 10 }}>Misunderstood</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {misunderstood.map((item, idx) => (
+                <div key={idx} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 14px", borderRadius: 10, background: "rgba(255,159,10,0.08)", border: "1px solid rgba(255,159,10,0.25)", borderLeft: "3px solid #FF9F0A" }}>
+                  <span style={{ fontSize: 14, lineHeight: 1.4, flexShrink: 0 }}>⚠</span>
+                  <span style={{ fontSize: 14, color: "rgba(255,255,255,0.9)", lineHeight: 1.5 }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ATTENTION SCORE — large number on right, label + bar on left, single row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "14px 18px", borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", marginBottom: 8 }}>Attention Score</div>
+            <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${score}%`, background: `linear-gradient(90deg, ${scoreColor}88, ${scoreColor})`, borderRadius: 4, transition: "width 0.8s ease", boxShadow: `0 0 12px ${scoreColor}66` }} />
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4, flexShrink: 0 }}>
+            <span style={{ fontSize: 44, fontWeight: 900, color: scoreColor, lineHeight: 1, letterSpacing: -1.5 }}>{score}</span>
+            <span style={{ fontSize: 14, color: "rgba(255,255,255,0.35)", fontWeight: 600 }}>/100</span>
+          </div>
+        </div>
+
+        {/* VERDICT — large centered italic, muted */}
+        <div style={{ textAlign: "center", padding: "6px 8px" }}>
+          <div style={{ fontSize: 22, fontStyle: "italic", color: "rgba(255,255,255,0.55)", lineHeight: 1.45, fontWeight: 500, letterSpacing: -0.3 }}>“{result?.verdict || "—"}”</div>
+        </div>
+
+        {/* ACTIONS */}
+        <div style={{ display: "flex", gap: 12, marginTop: 4 }}>
+          <button onClick={onReset} style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)", borderRadius: 12, padding: "14px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>↻ Test Another Design</button>
+          <button onClick={onRoast} disabled={isRoasting} style={{ flex: 1, background: isRoasting ? "rgba(255,69,58,0.4)" : "linear-gradient(135deg,#FF453A,#FF6B35)", border: "none", color: "#fff", borderRadius: 12, padding: "14px", fontSize: 14, fontWeight: 700, cursor: isRoasting ? "default" : "pointer", boxShadow: "0 8px 24px rgba(255,69,58,0.35)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {isRoasting ? <><div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Roasting…</> : <>🔥 Switch to Roast Mode</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DesignBestie() {
   const { openLoginModal, user, loading } = useAuth()
   const [uploaded, setUploaded] = useState(false);
   const [fileName, setFileName] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [screen, setScreen] = useState<"home" | "analysing" | "results" | "brief" | "briefing">("home");
+  const [screen, setScreen] = useState<"home" | "analysing" | "results" | "brief" | "briefing" | "firstfive-countdown" | "firstfive-analysing" | "firstfive-results">("home");
   const [briefText, setBriefText] = useState("");
   const [briefResult, setBriefResult] = useState<any>(null);
   const [step, setStep] = useState(0);
@@ -653,6 +834,11 @@ export default function DesignBestie() {
   const [context, setContext] = useState("");
   const bootstrappedRef = useRef(false);
   const [bootChecked, setBootChecked] = useState(false);
+  const [firstFiveResult, setFirstFiveResult] = useState<any>(null);
+  const [firstFiveCountdown, setFirstFiveCountdown] = useState<number>(5);
+  const [firstFiveBlurred, setFirstFiveBlurred] = useState<boolean>(false);
+  const [isFirstFiving, setIsFirstFiving] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<"analyse" | "stress" | "roast" | "firstfive">("analyse");
 
   useEffect(() => {
     if (loading || bootstrappedRef.current) return;
@@ -726,6 +912,62 @@ export default function DesignBestie() {
     return () => clearInterval(interval);
   }, [screen]);
 
+  useEffect(() => {
+    if (screen !== "firstfive-countdown") return;
+    setFirstFiveCountdown(5);
+    setFirstFiveBlurred(false);
+    let n = 5;
+    const interval = setInterval(() => {
+      n -= 1;
+      if (n > 0) {
+        setFirstFiveCountdown(n);
+      } else {
+        clearInterval(interval);
+        setFirstFiveBlurred(true);
+        setTimeout(() => setScreen("firstfive-analysing"), 700);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [screen]);
+
+  useEffect(() => {
+    if (screen !== "firstfive-analysing") return;
+    setFirstFiveResult(null);
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!imagePreview) { setScreen("home"); return; }
+        const base64 = imagePreview.split(",")[1];
+        const mimeType = imagePreview.split(";")[0].split(":")[1];
+        const res = await fetch("/api/firstfive", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageBase64: base64, mimeType }) });
+        const json = await res.json();
+        if (cancelled) return;
+        if (res.status === 401) { setScreen("home"); openLoginModal(); return; }
+        if (res.ok && json && json.firstFeeling) {
+          setFirstFiveResult(json);
+          setScreen("firstfive-results");
+        } else {
+          console.error("FirstFive API error:", json);
+          alert("First 5 Seconds failed: " + (json?.error || "Unknown error"));
+          setScreen("home");
+        }
+      } catch (e) {
+        if (cancelled) return;
+        console.error("FirstFive fetch error:", e);
+        alert("First 5 Seconds network error.");
+        setScreen("home");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [screen]);
+
+  const launchFirstFive = () => {
+    if (!user) { openLoginModal(); return; }
+    if (!uploaded || !imagePreview) { fileInputRef.current?.click(); return; }
+    setFirstFiveResult(null);
+    setScreen("firstfive-countdown");
+  };
+
   const runStressTest = async (personas: string[]) => {
     setShowPersonaModal(false); setStressPersonas(personas); setIsStressTesting(true); setStressStep(0); setStressResult(null); setActivePersona(0); setStressExpandedCards([]);
     let current = 0;
@@ -741,14 +983,14 @@ export default function DesignBestie() {
     finally { clearInterval(interval); setIsStressTesting(false); }
   };
 
-  const runRoast = async () => {
+  const runRoast = async (openModal: boolean = false) => {
     setIsRoasting(true); setRoastResult(null);
     try {
       const base64 = imagePreview!.split(",")[1];
       const mimeType = imagePreview!.split(";")[0].split(":")[1];
       const res = await fetch("/api/roast", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageBase64: base64, mimeType }) });
       const json = await res.json();
-      if (res.ok && json && json.roasts) { setRoastResult(json); setShowRoastModal(true); }
+      if (res.ok && json && json.roasts) { setRoastResult(json); if (openModal) setShowRoastModal(true); }
       else { console.error("Roast API error:", json); alert("Roast failed: " + (json?.error || "Unknown error")); }
     } catch (e) { console.error("Roast fetch error:", e); alert("Roast network error."); }
     finally { setIsRoasting(false); }
@@ -760,10 +1002,25 @@ export default function DesignBestie() {
     try {
       const res = await fetch("/api/stakeholder", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ analysisResult }) });
       const json = await res.json();
-      if (res.ok && json && json.executive_summary) { setStakeholderResult(json); setShowStakeholderModal(true); }
+      if (res.ok && json && json.executive_summary) { setStakeholderResult(json); }
       else { console.error("Stakeholder API error:", json); alert("Translation failed: " + (json?.error || "Unknown error")); }
     } catch (e) { console.error("Stakeholder fetch error:", e); alert("Network error."); }
     finally { setIsTranslating(false); }
+  };
+
+  const runFirstFiveInline = async () => {
+    if (!imagePreview) return;
+    setIsFirstFiving(true); setFirstFiveResult(null);
+    try {
+      const base64 = imagePreview.split(",")[1];
+      const mimeType = imagePreview.split(";")[0].split(":")[1];
+      const res = await fetch("/api/firstfive", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageBase64: base64, mimeType }) });
+      const json = await res.json();
+      if (res.status === 401) { openLoginModal(); return; }
+      if (res.ok && json && json.firstFeeling) { setFirstFiveResult(json); }
+      else { console.error("FirstFive API error:", json); alert("First 5 Seconds failed: " + (json?.error || "Unknown error")); }
+    } catch (e) { console.error("FirstFive fetch error:", e); alert("First 5 Seconds network error."); }
+    finally { setIsFirstFiving(false); }
   };
 
   const handleFile = (file: File | undefined) => {
@@ -781,21 +1038,26 @@ export default function DesignBestie() {
   }
 
   if (screen === "home") {
-    return <HomeScreen
-      onStart={() => {
-        if (!user) { openLoginModal(); return; }
-        if (uploaded && imagePreview) { setActiveTab("analysis"); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setScreen("analysing"); } else fileInputRef.current?.click();
-      }}
-      onBrief={() => {
-        if (!user) { openLoginModal(); return; }
-        if (briefText.trim().length > 10) setScreen("briefing");
-      }}
-      briefText={briefText}
-      setBriefText={setBriefText}
-      uploaded={uploaded} fileName={fileName} imagePreview={imagePreview}
-      fileInputRef={fileInputRef} isDragging={isDragging} setIsDragging={setIsDragging}
-      handleInputChange={handleInputChange} handleDrop={handleDrop}
-    />;
+    return (
+      <HomeScreen
+        onStart={() => {
+          if (!user) { openLoginModal(); return; }
+          if (uploaded && imagePreview) { setActiveTab("analysis"); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setScreen("analysing"); } else fileInputRef.current?.click();
+        }}
+        onBrief={() => {
+          if (!user) { openLoginModal(); return; }
+          if (briefText.trim().length > 10) setScreen("briefing");
+        }}
+        onLaunchFirstFive={launchFirstFive}
+        selectedMode={selectedMode}
+        setSelectedMode={setSelectedMode}
+        briefText={briefText}
+        setBriefText={setBriefText}
+        uploaded={uploaded} fileName={fileName} imagePreview={imagePreview}
+        fileInputRef={fileInputRef} isDragging={isDragging} setIsDragging={setIsDragging}
+        handleInputChange={handleInputChange} handleDrop={handleDrop}
+      />
+    );
   }
 
   if (screen === "analysing") {
@@ -881,247 +1143,31 @@ export default function DesignBestie() {
   }
 
   if (screen === "results" && analysisResult) {
-    const issues = [
-      ...(analysisResult.issues || []).map((i: any) => ({ ...i, law: i.rule_violated, learnWhy: i.learn_why })),
-      ...(analysisResult.wins || []).map((i: any, idx: number) => ({ ...i, id: 1000 + idx })),
-    ];
-    const overallScore: number = analysisResult.score?.score ?? analysisResult.overall_score ?? 0;
-    const summary: string = analysisResult.summary || "";
-    const scores = { usability: analysisResult.score?.breakdown?.clarity ?? 0, accessibility: analysisResult.score?.breakdown?.accessibility ?? 0, visual_design: analysisResult.score?.breakdown?.consistency ?? 0, hierarchy: analysisResult.score?.breakdown?.hierarchy ?? 0, cognitive_load: analysisResult.score?.breakdown?.cognitive_load ?? 0 };
-    const priorityFixes: string[] = analysisResult.priority_fixes || [];
-    const readingPattern = analysisResult.reading_pattern || null;
-    const pm = readingPattern ? (patternMeta[readingPattern.type] || patternMeta["No Clear Pattern"]) : null;
-    const toggleCard = (id: number) => setExpandedCards((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-    const filtered = activeFilter === "all" ? issues : activeFilter === "wins" ? issues.filter((i: any) => i.severity === "win") : activeFilter === "critical" ? issues.filter((i: any) => i.severity === "critical") : activeFilter === "high" ? issues.filter((i: any) => i.severity === "high" || i.severity === "moderate") : issues.filter((i: any) => i.severity === "medium" || i.severity === "minor");
-    const hasTabs = stressResult || isStressTesting;
-    const topBarH = 82;
-    const tabBarH = hasTabs ? 48 : 0;
-    const mainH = `calc(100vh - ${topBarH + tabBarH}px)`;
-    const persona = stressResult?.personas?.[activePersona];
-    const stressIssues = persona ? [...(persona.issues || []), ...(persona.wins || [])] : [];
-    const toggleStressCard = (id: number) => setStressExpandedCards((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-
     return (
-      <div style={{ minHeight: "100vh", background: "#F5F5F7", fontFamily: "'SF Pro Display',-apple-system,sans-serif" }}>
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <>
         {showRoastModal && roastResult && <RoastModal roastResult={roastResult} onClose={() => setShowRoastModal(false)} />}
         {showStakeholderModal && stakeholderResult && <StakeholderModal result={stakeholderResult} onClose={() => setShowStakeholderModal(false)} />}
         {showPersonaModal && <PersonaModal onClose={() => setShowPersonaModal(false)} onRun={runStressTest} />}
-
-        <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "10px 24px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", height: topBarH, boxSizing: "border-box" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-            <div style={{ position: "relative", width: 52, height: 52 }}>
-              <svg width="52" height="52" viewBox="0 0 52 52">
-                <circle cx="26" cy="26" r="22" fill="none" stroke="#E5E5EA" strokeWidth="4" />
-                <circle cx="26" cy="26" r="22" fill="none" stroke="#1D1D1F" strokeWidth="4" strokeDasharray="138" strokeDashoffset={138 - (138 * overallScore / 100)} strokeLinecap="round" transform="rotate(-90 26 26)" />
-              </svg>
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F" }}>{overallScore}</span>
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 10, color: "#AEAEB2", fontWeight: 500, letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 2 }}>Design Score</div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: overallScore >= 80 ? "#34C759" : overallScore >= 60 ? "#FF9500" : "#FF3B30" }}>{overallScore >= 80 ? "Good Design" : overallScore >= 60 ? "Needs Work" : "Critical Issues"}</div>
-              {analysisResult.benchmark && (
-  <div style={{ fontSize: 11, color: analysisResult.benchmark.benchmark === "above_average" ? "#34C759" : analysisResult.benchmark.benchmark === "average" ? "#FF9500" : "#FF3B30", fontWeight: 600, marginTop: 2 }}>
-    {analysisResult.benchmark.benchmark}
-  </div>
-)}
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 6, flex: 1, flexWrap: "wrap" }}>
-            {([["Usability", scores.usability, "#FF9500"], ["Accessibility", scores.accessibility, "#FF3B30"], ["Visual", scores.visual_design, "#34C759"], ["Hierarchy", scores.hierarchy, "#007AFF"], ["Cognitive", scores.cognitive_load, "#FF9500"]] as [string, number, string][]).map(([label, score, color]) => (
-              <div key={label} style={{ background: "#F5F5F7", border: "1px solid #E5E5EA", borderRadius: 10, padding: "6px 12px", textAlign: "center", minWidth: 72 }}>
-                <div style={{ fontSize: 18, fontWeight: 700, color, lineHeight: 1 }}>{score}</div>
-                <div style={{ fontSize: 10, color: "#AEAEB2", marginTop: 3 }}>{label}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
-            <button onClick={() => setShowPersonaModal(true)} style={{ background: stressResult ? "#2D0A4E" : "none", color: stressResult ? "#fff" : "#2D0A4E", border: `1px solid ${stressResult ? "#2D0A4E" : "#C4B0D8"}`, borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
-              {isStressTesting ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Running…</> : <><span>🧪</span>{stressResult ? "Stress Test ✓" : "Stress Test"}</>}
-            </button>
-            <button onClick={() => { if (isRoasting) return; if (roastResult) setShowRoastModal(true); else runRoast(); }} style={{ background: roastResult ? "#FF3B30" : "none", color: roastResult ? "#fff" : "#FF3B30", border: `1px solid ${roastResult ? "#FF3B30" : "#FFBAB6"}`, borderRadius: 20, padding: "8px 16px", cursor: isRoasting ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
-              {isRoasting ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Roasting…</> : <><span>🔥</span>{roastResult ? "View Roast" : "Roast It"}</>}
-            </button>
-            <button onClick={() => { if (isTranslating) return; if (stakeholderResult) setShowStakeholderModal(true); else runStakeholder(); }} style={{ background: stakeholderResult ? "#007AFF" : "none", color: stakeholderResult ? "#fff" : "#007AFF", border: `1px solid ${stakeholderResult ? "#007AFF" : "#99C8FF"}`, borderRadius: 20, padding: "8px 16px", cursor: isTranslating ? "default" : "pointer", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
-              {isTranslating ? <><div style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid currentColor", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} /> Translating…</> : <><span>📊</span>{stakeholderResult ? "View Report" : "For Stakeholders"}</>}
-            </button>
-            <button onClick={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setStakeholderResult(null); setExpandedCards([]); setActiveTab("analysis"); }} style={{ background: "none", border: "1px solid #D2D2D7", borderRadius: 20, padding: "8px 16px", cursor: "pointer", fontSize: 13, color: "#6E6E73", fontWeight: 500 }}>← New Analysis</button>
-            <UserMenu />
-          </div>
-        </div>
-
-        {hasTabs && (
-          <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "0 24px", display: "flex", height: tabBarH, boxSizing: "border-box" }}>
-            {(["analysis", "stress"] as const).map((key) => (
-              <button key={key} onClick={() => { if (!isStressTesting || key === "analysis") setActiveTab(key); }} style={{ background: "none", border: "none", padding: "0 20px", fontSize: 14, fontWeight: 600, cursor: "pointer", color: activeTab === key ? "#1D1D1F" : "#AEAEB2", borderBottom: activeTab === key ? "2px solid #1D1D1F" : "2px solid transparent" }}>
-                {key === "analysis" ? "Analysis" : isStressTesting ? "Running Stress Test…" : `Stress Test · ${stressPersonas.length} persona${stressPersonas.length > 1 ? "s" : ""}`}
-              </button>
-            ))}
-          </div>
-        )}
-
-        <div style={{ display: "flex", height: mainH }}>
-          {activeTab === "analysis" && (
-            <>
-              <div style={{ width: "38%", borderRight: "1px solid #E5E5EA", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                <div style={{ padding: "14px 18px", borderBottom: "1px solid #E5E5EA", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontWeight: 600, fontSize: 14, color: "#1D1D1F" }}>Annotated Design</span>
-                  <div style={{ display: "flex", gap: 12 }}>
-                    {([["#FF3B30", "Critical"], ["#FF9500", "High"], ["#FF6B00", "Medium"]] as [string, string][]).map(([c, l]) => (
-                      <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: c }} />
-                        <span style={{ fontSize: 11, color: "#AEAEB2" }}>{l}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {imagePreview && <AnnotatedImage imagePreview={imagePreview} issues={issues} activeIssueId={activeIssueId} />}
-              </div>
-              <div style={{ flex: 1, overflow: "auto", background: "#F5F5F7" }}>
-                <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "18px 24px" }}>
-                  <div style={{ fontSize: 10, letterSpacing: "2px", color: "#AEAEB2", fontWeight: 600, marginBottom: 7, textTransform: "uppercase" }}>The Bottom Line</div>
-                  <p style={{ fontSize: 15, color: "#1D1D1F", lineHeight: 1.55, margin: 0, fontWeight: 500 }}>{summary}</p>
-                </div>
-                {readingPattern && pm && (
-                  <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "14px 24px", display: "flex", alignItems: "flex-start", gap: 14 }}>
-                    <div style={{ width: 38, height: 38, borderRadius: 10, background: pm.color, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <span style={{ color: "#fff", fontSize: 15, fontWeight: 800 }}>{pm.icon}</span>
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: "#1D1D1F" }}>{readingPattern.type}</span>
-                        <span style={{ background: readingPattern.is_following ? "#F0FFF4" : "#FFF5F4", color: readingPattern.is_following ? "#34C759" : "#FF3B30", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 10 }}>{readingPattern.is_following ? "✓ Following" : "✗ Not following"}</span>
-                      </div>
-                      <p style={{ fontSize: 13, color: "#6E6E73", margin: "0 0 3px", lineHeight: 1.55 }}>{readingPattern.explanation}</p>
-                      <p style={{ fontSize: 12, color: "#AEAEB2", margin: 0, lineHeight: 1.4 }}>{readingPattern.impact}</p>
-                    </div>
-                  </div>
-                )}
-                {priorityFixes.length > 0 && (
-                  <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "18px 24px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                      <span style={{ fontSize: 16 }}>🎯</span>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F" }}>If you only fix three things</span>
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                      {priorityFixes.slice(0, 3).map((text, idx) => {
-                        const colors = ["#FF3B30", "#FF9500", "#FF6B00"];
-                        return (
-                          <div key={idx} style={{ display: "flex", gap: 12, padding: "12px 14px", background: "#F5F5F7", borderRadius: 10, borderLeft: `3px solid ${colors[idx]}` }}>
-                            <div style={{ width: 20, height: 20, background: colors[idx], borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{idx + 1}</div>
-                            <p style={{ fontSize: 13, color: "#3A3A3C", lineHeight: 1.55, margin: 0 }}>{text}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-                <div style={{ padding: "18px 24px" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F" }}>Detailed critique</span>
-                    <span style={{ fontSize: 12, color: "#C7C7CC" }}>Click any card to expand</span>
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
-                    {([["all", `All (${issues.length})`], ["critical", `Critical (${issues.filter((i: any) => i.severity === "critical").length})`], ["high", `High (${issues.filter((i: any) => i.severity === "high" || i.severity === "moderate").length})`], ["medium", `Medium (${issues.filter((i: any) => i.severity === "medium" || i.severity === "minor").length})`], ["wins", `Wins (${issues.filter((i: any) => i.severity === "win").length})`]] as [string, string][]).map(([val, label]) => (
-                      <button key={val} onClick={() => setActiveFilter(val)} style={{ padding: "6px 14px", borderRadius: 16, border: activeFilter === val ? "none" : "1px solid #D2D2D7", background: activeFilter === val ? "#1D1D1F" : "#fff", color: activeFilter === val ? "#fff" : "#6E6E73", fontSize: 12, fontWeight: 500, cursor: "pointer" }}>{label}</button>
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {filtered.map((issue: any) => (
-                      <IssueCard key={`issue-${issue.id}-${issue.element}`} issue={issue} expanded={expandedCards.includes(issue.id)} onToggle={() => { toggleCard(issue.id); setActiveIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeIssueId === issue.id} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {activeTab === "stress" && (
-            isStressTesting ? (
-              <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#F5F5F7" }}>
-                <div style={{ maxWidth: 420, width: "100%", padding: 40 }}>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: "#1D1D1F", marginBottom: 8 }}>Running Stress Test</div>
-                  <p style={{ fontSize: 15, color: "#6E6E73", marginBottom: 32 }}>Testing: {stressPersonas.join(", ")}</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                    {stressSteps.map((s, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                        <div style={{ width: 26, height: 26, borderRadius: "50%", background: i < stressStep ? "#2D0A4E" : "transparent", border: i < stressStep ? "none" : i === stressStep ? "2px solid #2D0A4E" : "2px solid #D2D2D7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
-                          {i < stressStep ? <span style={{ color: "#fff", fontSize: 12 }}>✓</span> : i === stressStep ? <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#2563EB" }} /> : null}
-                        </div>
-                        <span style={{ fontSize: 15, color: i <= stressStep ? "#1D1D1F" : "#C7C7CC", transition: "all 0.3s" }}>{s}</span>
-                        {i < stressStep && <span style={{ marginLeft: "auto", fontSize: 12, color: "#34C759", fontWeight: 600 }}>Done</span>}
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginTop: 28, height: 4, background: "#E5E5EA", borderRadius: 2 }}>
-                    <div style={{ height: "100%", background: "#2563EB", borderRadius: 2, width: `${(stressStep / stressSteps.length) * 100}%`, transition: "width 0.6s ease" }} />
-                  </div>
-                </div>
-              </div>
-            ) : stressResult ? (
-              <div style={{ display: "flex", width: "100%", overflow: "hidden" }}>
-                <div style={{ width: "38%", borderRight: "1px solid #E5E5EA", background: "#fff", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                  <div style={{ padding: "14px 18px", borderBottom: "1px solid #E5E5EA", background: "#FAFAFA" }}>
-                    <div style={{ fontSize: 10, letterSpacing: "1.5px", color: "#AEAEB2", fontWeight: 600, textTransform: "uppercase", marginBottom: 6 }}>Cross-Persona Insight</div>
-                    <p style={{ fontSize: 13, color: "#1D1D1F", margin: "0 0 10px", lineHeight: 1.55, fontWeight: 500 }}>{stressResult.cross_persona_insight}</p>
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: 11, background: "#FFF5F4", color: "#FF3B30", padding: "3px 10px", borderRadius: 8, fontWeight: 600 }}>Weakest: {stressResult.weakest_persona}</span>
-                      <span style={{ fontSize: 11, background: "#F0FFF4", color: "#34C759", padding: "3px 10px", borderRadius: 8, fontWeight: 600 }}>Strongest: {stressResult.strongest_persona}</span>
-                    </div>
-                  </div>
-                  <div style={{ padding: "12px 16px", borderBottom: "1px solid #E5E5EA", display: "flex", flexDirection: "column", gap: 6 }}>
-                    {stressResult.personas.map((p: any, idx: number) => {
-                      const meta = ALL_PERSONAS.find((ap) => ap.name === p.name);
-                      const isActive = idx === activePersona;
-                      const sc: number = p.persona_score || 0;
-                      return (
-                        <button key={p.name} onClick={() => { setActivePersona(idx); setStressExpandedCards([]); }} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, border: isActive ? "2px solid #2D0A4E" : "1px solid #E5E5EA", background: isActive ? "rgba(45,10,78,0.04)" : "#fff", cursor: "pointer", textAlign: "left", transition: "all 0.15s" }}>
-                          <span style={{ fontSize: 18 }}>{meta?.emoji || "👤"}</span>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: "#1D1D1F" }}>{p.name}</div>
-                            <div style={{ fontSize: 11, color: "#6E6E73" }}>{(p.issues || []).length} issues · {(p.wins || []).length} win</div>
-                          </div>
-                          <div style={{ fontSize: 16, fontWeight: 700, color: sc >= 70 ? "#34C759" : sc >= 50 ? "#FF9500" : "#FF3B30" }}>{sc}</div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {imagePreview && persona && <AnnotatedImage imagePreview={imagePreview} issues={stressIssues} activeIssueId={activeStressIssueId} />}
-                </div>
-                <div style={{ flex: 1, overflow: "auto", background: "#F5F5F7" }}>
-                  {persona && (
-                    <>
-                      <div style={{ background: "#fff", borderBottom: "1px solid #E5E5EA", padding: "18px 24px", display: "flex", alignItems: "center", gap: 14 }}>
-                        <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(45,10,78,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>
-                          {ALL_PERSONAS.find((ap) => ap.name === persona.name)?.emoji || "👤"}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 18, fontWeight: 700, color: "#1D1D1F" }}>{persona.name}</div>
-                          <div style={{ fontSize: 13, color: "#6E6E73", marginTop: 2 }}>{ALL_PERSONAS.find((ap) => ap.name === persona.name)?.desc}</div>
-                        </div>
-                        <div style={{ textAlign: "center" }}>
-                          <div style={{ fontSize: 28, fontWeight: 800, color: (persona.persona_score || 0) >= 70 ? "#34C759" : (persona.persona_score || 0) >= 50 ? "#FF9500" : "#FF3B30", lineHeight: 1 }}>{persona.persona_score || 0}</div>
-                          <div style={{ fontSize: 11, color: "#AEAEB2", marginTop: 2 }}>Score</div>
-                        </div>
-                      </div>
-                      <div style={{ padding: "18px 24px" }}>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: "#1D1D1F", marginBottom: 12 }}>Issues & wins for this persona</div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                          {stressIssues.map((issue: any) => (
-                            <IssueCard key={`issue-${issue.id}-${issue.element}`} issue={issue} expanded={stressExpandedCards.includes(issue.id)} onToggle={() => { toggleStressCard(issue.id); setActiveStressIssueId(prev => prev === issue.id ? null : issue.id); }} highlighted={activeStressIssueId === issue.id} />
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            ) : null
-          )}
-        </div>
-      </div>
+        <ResultsPage
+          analysisResult={analysisResult}
+          roastResult={roastResult}
+          stressResult={stressResult}
+          stakeholderResult={stakeholderResult}
+          firstFiveResult={firstFiveResult}
+          imagePreview={imagePreview || ""}
+          onNewAnalysis={() => { setScreen("home"); setUploaded(false); setFileName(""); setImagePreview(null); setAnalysisResult(null); setStressResult(null); setRoastResult(null); setStakeholderResult(null); setFirstFiveResult(null); setExpandedCards([]); }}
+          onRunRoast={() => runRoast(false)}
+          onRunStress={() => setShowPersonaModal(true)}
+          onRunStakeholder={runStakeholder}
+          onRunFirstFive={runFirstFiveInline}
+          isRoasting={isRoasting}
+          isStressing={isStressTesting}
+          isStakeholdering={isTranslating}
+          isFirstFiving={isFirstFiving}
+          expandedCards={expandedCards}
+          setExpandedCards={setExpandedCards}
+        />
+      </>
     );
   }
 
@@ -1287,6 +1333,74 @@ export default function DesignBestie() {
           </div>
         </div>
       </div>
+    );
+  }
+
+  if (screen === "firstfive-countdown") {
+    return (
+      <div style={{ position: "fixed", inset: 0, background: "#08090F", fontFamily: "'SF Pro Display',-apple-system,sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: "hidden", zIndex: 100, padding: 24, gap: 24 }}>
+        {imagePreview && (
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <img
+              src={imagePreview}
+              alt="Design"
+              style={{ display: "block", maxWidth: 600, maxHeight: "70vh", width: "auto", height: "auto", objectFit: "contain" }}
+            />
+            {!firstFiveBlurred && (
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+                <div style={{ width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(circle, rgba(0,0,0,0.65) 30%, rgba(0,0,0,0) 75%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 120, fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: -4, textShadow: "0 4px 24px rgba(0,0,0,0.6)" }}>{firstFiveCountdown}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", margin: 0, fontWeight: 500, letterSpacing: 0.3 }}>Look at the design. What sticks? What's missed?</p>
+      </div>
+    );
+  }
+
+  if (screen === "firstfive-analysing") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#08090F", fontFamily: "'SF Pro Display',-apple-system,sans-serif", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", padding: 40 }}>
+        <style>{`
+          @keyframes spin{to{transform:rotate(360deg)}}
+          @keyframes ffaPulse{0%,100%{opacity:0.4}50%{opacity:1}}
+        `}</style>
+        <div style={{ position: "absolute", top: 28, left: 32, display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 30, height: 30, background: "linear-gradient(135deg,#F472B6,#A855F7)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: "#fff", fontSize: 15 }}>👁️</span>
+          </div>
+          <div style={{ fontSize: 11, color: "rgba(244,114,182,0.85)", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase" }}>First 5 Seconds</div>
+        </div>
+
+        <div style={{ maxWidth: 480, width: "100%", textAlign: "center" }}>
+          {imagePreview && (
+            <div style={{ width: 200, height: 130, margin: "0 auto 28px", borderRadius: 14, overflow: "hidden", filter: "blur(16px) brightness(0.6)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <img src={imagePreview} alt="Design" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
+          )}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(244,114,182,0.85)", letterSpacing: 4, textTransform: "uppercase", marginBottom: 14, animation: "ffaPulse 1.6s ease-in-out infinite" }}>● Processing first impression</div>
+          <h2 style={{ fontSize: 36, fontWeight: 900, color: "#fff", margin: "0 0 8px", letterSpacing: -1.2 }}>Reading your brain.</h2>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", margin: "0 0 32px", lineHeight: 1.6 }}>Capturing what registered, what slipped by, and what got misunderstood — before conscious thought kicked in.</p>
+          <div style={{ width: 36, height: 36, margin: "0 auto", borderRadius: "50%", border: "2px solid rgba(244,114,182,0.25)", borderTopColor: "#F472B6", animation: "spin 0.8s linear infinite" }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (screen === "firstfive-results" && firstFiveResult) {
+    return (
+      <>
+        <FirstFiveResultsScreen
+          result={firstFiveResult}
+          imagePreview={imagePreview}
+          onReset={() => { setFirstFiveResult(null); setScreen("home"); }}
+          onRoast={() => { if (isRoasting) return; if (roastResult) { setShowRoastModal(true); } else { runRoast(true); } }}
+          isRoasting={isRoasting}
+        />
+        {showRoastModal && roastResult && <RoastModal roastResult={roastResult} onClose={() => setShowRoastModal(false)} />}
+      </>
     );
   }
 

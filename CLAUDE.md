@@ -88,7 +88,7 @@ Touching any of these three gates — modal `navigating`, layout body bg, or `/a
 - Audit tool moved from `app/page.tsx` to `app/analyse/page.tsx`.
 - Flash fixes — black-screen transition before analysing, body bg locked to `#08090F`.
 - `lenis` and `gsap` installed via pnpm.
-- `public/` folder created (still needs `macbook.png`; metadata icons in `app/layout.tsx` will 404 until added).
+- `public/` folder created.
 
 ## Next session priorities
 

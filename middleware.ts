@@ -16,6 +16,7 @@ const PROTECTED_API_ROUTES = [
   '/api/roast',
   '/api/stakeholder',
   '/api/brief',
+  '/api/firstfive',
 ]
 
 export async function middleware(request: NextRequest) {
@@ -77,6 +78,7 @@ export const config = {
     '/api/roast/:path*',
     '/api/stakeholder/:path*',
     '/api/brief/:path*',
+    '/api/firstfive/:path*',
     // Also run on all page routes so session stays fresh
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
