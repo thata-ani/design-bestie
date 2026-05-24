@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     // Check usage limits
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    let currentUsage: any = null;
 
     if (!user) {
       // Guest user - check x-usage-count header
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
       }
 
       const now = new Date();
-      let currentUsage = usage;
+      currentUsage = usage;
 
       if (!currentUsage) {
         // Create new usage record
@@ -177,9 +178,15 @@ CRITICAL: Every zone field must use only the 9 allowed values listed above. Defa
 
     // Increment usage count for logged-in users
     if (user) {
+      const { data: latestUsage } = await supabase
+        .from('usage')
+        .select('count')
+        .eq('user_id', user.id)
+        .single();
+
       await supabase
         .from('usage')
-        .update({ count: supabase.raw('count + 1') })
+        .update({ count: (latestUsage?.count || 0) + 1 })
         .eq('user_id', user.id);
     }
 

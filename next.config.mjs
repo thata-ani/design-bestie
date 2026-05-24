@@ -1,5 +1,3 @@
-import { withSentryConfig } from '@sentry/nextjs';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -10,8 +8,4 @@ const nextConfig = {
   },
 }
 
-export default withSentryConfig(nextConfig, {
-  silent: true,
-  org: 'deisgnbesti',
-  project: 'javascript-nextjs',
-});
+export default nextConfig;
