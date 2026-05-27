@@ -10,6 +10,7 @@ import StakeholderResults from "./modes/StakeholderResults";
 import FirstFiveResults from "./modes/FirstFiveResults";
 import UsageCounter from "@/components/UsageCounter";
 import mixpanel from "@/lib/mixpanel";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Mode = "analyse" | "roast" | "stress" | "stakeholder" | "firstfive";
 
@@ -86,10 +87,12 @@ export default function ResultsPage({
   expandedCards,
   setExpandedCards,
 }: Props) {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Mode>("analyse");
   const [displayScore, setDisplayScore] = useState(0);
   const [scoreAnimated, setScoreAnimated] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
+  const [isCreatingBattle, setIsCreatingBattle] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -164,6 +167,65 @@ export default function ResultsPage({
     }
   };
 
+  const handleCreateBattle = async () => {
+    setIsCreatingBattle(true);
+    mixpanel.track('Roast Battle Clicked');
+
+    try {
+      // Convert image to base64 if it's not already
+      let imageBase64 = imagePreview;
+      let mimeType = 'image/png';
+
+      if (imagePreview.startsWith('data:')) {
+        // Already base64
+        const match = imagePreview.match(/^data:(image\/\w+);base64,(.+)$/);
+        if (match) {
+          mimeType = match[1];
+          imageBase64 = match[2];
+        }
+      } else {
+        // Fetch and convert to base64
+        const response = await fetch(imagePreview);
+        const blob = await response.blob();
+        const reader = new FileReader();
+        imageBase64 = await new Promise<string>((resolve) => {
+          reader.onloadend = () => {
+            const result = reader.result as string;
+            const match = result.match(/^data:(image\/\w+);base64,(.+)$/);
+            if (match) {
+              mimeType = match[1];
+              resolve(match[2]);
+            } else {
+              resolve(result);
+            }
+          };
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      const response = await fetch('/api/battle/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64,
+          mimeType,
+          creatorName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Anonymous',
+        }),
+      });
+
+      if (response.ok) {
+        const { slug } = await response.json();
+        window.location.href = `/battle/${slug}`;
+      } else {
+        alert('Failed to create battle. Please try again.');
+      }
+    } catch (error) {
+      console.error('Battle creation error:', error);
+      alert('Failed to create battle. Please try again.');
+    }
+    setIsCreatingBattle(false);
+  };
+
   const tabs: { key: Mode; label: string }[] = [
     { key: "analyse", label: "Analyse" },
     { key: "roast", label: "Roast" },
@@ -187,6 +249,15 @@ export default function ResultsPage({
         </div>
         <div className="flex items-center gap-3">
           <UsageCounter />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCreateBattle}
+            disabled={isCreatingBattle}
+            className="rounded-lg border-slate-200 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-[#5a47b0] text-sm"
+          >
+            {isCreatingBattle ? 'Creating...' : '⚔️ Roast Battle'}
+          </Button>
           <Button
             variant="outline"
             size="sm"
